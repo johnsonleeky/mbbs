@@ -451,6 +451,49 @@ header.top{
   .quiz-meta{flex-wrap:wrap;}
 }
 
+/* ================= home page: the halo band ================= */
+.halo{display:grid; gap:16px; margin:22px 0;}
+.halo-row{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+.hub-band{display:flex; align-items:center; gap:22px; padding:20px 24px; border-radius:24px;
+  border:1px solid var(--glass-brd); background:linear-gradient(150deg, rgba(255,255,255,.86), rgba(255,228,239,.72));
+  box-shadow:var(--glass-shadow); backdrop-filter:var(--glass-filter);}
+.hub-medal{position:relative; width:104px; height:104px; display:grid; place-items:center; flex:0 0 auto; color:var(--accent);}
+.hub-ring{position:absolute; inset:0; width:100%; height:100%; transform:rotate(-90deg);}
+.hub-ring .track{fill:none; stroke:rgba(177,45,99,.15); stroke-width:7;}
+.hub-ring .fill{fill:none; stroke:url(#hubRingGrad); stroke-width:7; stroke-linecap:round;}
+.hub-flower{width:58px; height:58px; display:block;}
+.hub-figures{display:flex; flex-direction:column; gap:1px; min-width:0;}
+.hub-figures b{font-size:33px; font-weight:800; color:var(--navy); line-height:1.05; letter-spacing:-.02em;}
+.hub-figures span{font-size:12.5px; color:var(--muted);}
+.hub-chips{display:flex; gap:7px; flex-wrap:wrap;}
+.hub-chip{font-size:11.5px; font-weight:700; color:var(--accent); background:rgba(255,255,255,.75);
+  border:1px solid var(--line); border-radius:999px; padding:4px 10px; white-space:nowrap;}
+.hub-actions{display:flex; gap:9px; flex-wrap:wrap; align-items:center; margin-left:auto;}
+.hub-actions .btn{white-space:nowrap;}
+.hub-last{font-size:12.5px; font-weight:700; color:var(--accent); white-space:nowrap;}
+@media (max-width:970px){
+  .halo-row{grid-template-columns:repeat(2,1fr);}
+  .hub-band{flex-wrap:wrap; gap:16px;}
+  .hub-actions{margin-left:0; width:100%;}
+}
+@media (max-width:620px){
+  .halo-row{grid-template-columns:1fr;}
+  .hub-band{justify-content:center; text-align:center;}
+  .hub-figures{align-items:center;}
+  .hub-chips{justify-content:center;}
+  .hub-actions{justify-content:center;}
+}
+
+/* --- Mixed Review: pool rows --- */
+.mix-row{display:flex; justify-content:space-between; gap:12px; align-items:baseline;
+  padding:8px 2px; border-bottom:1px dashed var(--line); font-size:13.5px;}
+.mix-row:last-child{border-bottom:0;}
+.mix-row b{color:var(--accent); font-variant-numeric:tabular-nums;}
+.mix-row b.zero{color:var(--muted); font-weight:600;}
+.mix-len input{width:78px; padding:8px 10px; border:1.5px solid var(--line); border-radius:9px;
+  font:inherit; font-size:13.5px; text-align:center; color:var(--ink); background:rgba(255,255,255,.72);}
+.mix-len input:focus{outline:3px solid var(--accent-soft); border-color:var(--accent);}
+
 </style>
 </head>
 <body>
@@ -481,8 +524,8 @@ header.top{
 
   <!-- ============ HUB ============ -->
   <section id="screen-categories" class="hidden">
-<div class="disclaimer" role="note">Questions, answers, and explanations (either recalled by students or AI-generated) may contain errors and are not guaranteed to be accurate. Use this as a revision aid and verify important points against reliable, current sources.</div>
-<div id="categoryCards" class="category-grid"></div></section>
+<div id="categoryCards" class="halo"></div>
+<div class="disclaimer" role="note">Questions, answers, and explanations (either recalled by students or AI-generated) may contain errors and are not guaranteed to be accurate. Use this as a revision aid and verify important points against reliable, current sources.</div></section>
 <section id="screen-hub" class="hidden">
     <div class="card">
       <h2>Overall progress <span class="sub">— pick a part below; Save &amp; Quit lets you pause and resume any part</span></h2>
@@ -505,6 +548,51 @@ header.top{
     </div>
     <div id="areaBlocks" role="tabpanel" aria-labelledby="tabChoice" tabindex="0"></div>
 
+  </section>
+
+  <!-- ============ MIXED REVIEW ============ -->
+  <section id="screen-mixed" class="hidden">
+    <div class="card">
+      <div class="back-bar"><button class="btn ghost small" id="btnMixedBack">← &nbsp;Specialties</button><span class="muted">Free random draw across all seven specialties</span></div>
+      <h2>Mixed Review <span class="sub">— random questions you have not attempted yet</span></h2>
+      <div class="stat-grid">
+        <div class="stat"><b id="mxPool">0</b><span>Questions in the pool</span></div>
+        <div class="stat"><b id="mxAreas">0 of 7</b><span>Specialties with questions left</span></div>
+        <div class="stat"><b id="mxPerRun">20</b><span>Questions per run</span></div>
+        <div class="stat"><b id="mxRuns">0</b><span>Mixed runs so far</span></div>
+      </div>
+      <div class="btn-row" style="margin-top:6px;">
+        <button class="btn primary" id="btnMixedStart">▶ &nbsp;Start</button>
+        <button class="btn ghost small hidden" id="btnMixedFresh">↻ &nbsp;Start a fresh draw</button>
+        <span class="muted" id="mxNote" style="font-size:13px; align-self:center;"></span>
+      </div>
+      <div class="btn-row" style="margin-top:14px;">
+        <span class="muted" style="font-size:13px; align-self:center;">Question kinds</span>
+        <button class="btn small" id="mxKindBoth" data-mxkind="both" type="button" aria-pressed="true">Both</button>
+        <button class="btn small" id="mxKindMcq" data-mxkind="mcq" type="button" aria-pressed="false">MCQ / EMQ</button>
+        <button class="btn small" id="mxKindSaq" data-mxkind="saq" type="button" aria-pressed="false">SAQ cases</button>
+        <span class="muted" style="font-size:12.5px; align-self:center;">— a run draws from whichever you pick</span>
+      </div>
+      <div class="btn-row mix-len" style="margin-top:10px;">
+        <span class="muted" style="font-size:13px; align-self:center;">Questions per run</span>
+        <button class="btn ghost small" data-mxlen="10" type="button">10</button>
+        <button class="btn ghost small" data-mxlen="20" type="button">20</button>
+        <button class="btn ghost small" data-mxlen="40" type="button">40</button>
+        <input id="mxLenCustom" type="number" min="1" max="500" step="1" inputmode="numeric" aria-label="Number of questions per run" title="Any number from 1 to 500">
+        <span class="muted" style="font-size:12.5px; align-self:center;">or type your own (1–500)</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Pool by specialty <span class="sub">— unseen questions left in each</span></h2>
+      <div id="mxPoolList"></div>
+    </div>
+    <div class="card">
+      <h2>Mixed review history <span class="sub">— every mixed run is logged like any other session</span></h2>
+      <div class="btn-row">
+        <button class="btn ghost small" id="btnMixedLogs">📋 &nbsp;Attempt history &amp; session logs</button>
+        <button class="btn ghost small danger" id="btnMixedClear">🗑 &nbsp;Clear mixed review history</button>
+      </div>
+    </div>
   </section>
 
   <!-- ============ QUIZ ============ -->
@@ -675,6 +763,13 @@ header.top{
     <div class="guide-body">
       <p class="guide-intro">A short guide to the tools available while you revise.</p>
 
+      <h4>Specialties screen</h4>
+      <p>The Specialties screen opens with the rose band, then the seven specialties and Mixed Review as cards in two rows
+      of four, and closes with the accuracy note. The band is the dashboard: the ring and the figure say how much of the
+      bank you have attempted, and the chips count what the revision sets hold and how many runs are paused. When a run is
+      paused, <b>Resume last run</b> drops you straight back into the newest one, with the specialty it belongs to named
+      beside the button (a mixed draw is named <b>Mixed Review</b>). Mixed Review itself is entered from its own card.</p>
+
       <h4>Flagging questions</h4>
       <p>Use the <b>Flag</b> button on any question to mark it for attention, then open <b>Flagged</b> to move between the flagged questions in that topic. Flags are independent of revision sets.</p>
 
@@ -686,6 +781,9 @@ header.top{
 
       <h4>Revision sets</h4>
       <p>Every question you answer incorrectly is added to that part's revision set. Answer it correctly in a later run — either a full run or an incorrect-set review — and it is removed automatically. Deleting a recorded attempt from a part&#39;s session log also removes the questions that only that attempt got wrong.</p>
+
+      <h4>Mixed Review</h4>
+      <p>The <b>Mixed Review</b> card on the Specialties screen draws at random from every question you have not attempted yet, across all seven specialties. Its screen lets you choose which kinds of question a run draws &#8212; <b>Both</b>, <b>MCQ / EMQ</b> only, or <b>SAQ cases</b> only &#8212; and how many per run: one of the three presets, or any number you type (1&#8211;500; a run simply stops when the pool runs out). A wrong answer joins the revision set of the specialty the question came from and a right one clears it there, so the specialty hubs stay accurate, while part scores and attempt counts are untouched. Mixed runs are logged under their own part name, with each question&#39;s specialty marked in the log.</p>
 
       <h4>Autosave</h4>
       <p>While a quiz is open, your progress is saved every five seconds and whenever the page is hidden or closed (where your browser supports it). Autosave covers your position, checked answers, selections and written drafts. Progress is stored in this browser only and is not synced between devices.</p>
@@ -832,7 +930,10 @@ function renderAiSug(q){
 }
 function bloomSvg(size, cls){ return `<svg class="bloom ${cls||""}" aria-hidden="true" width="${size}" height="${size}" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><g transform="translate(32 32)"><ellipse rx="6.1" ry="11.4" cy="-12"/><ellipse rx="6.1" ry="11.4" cy="-12" transform="rotate(72)"/><ellipse rx="6.1" ry="11.4" cy="-12" transform="rotate(144)"/><ellipse rx="6.1" ry="11.4" cy="-12" transform="rotate(216)"/><ellipse rx="6.1" ry="11.4" cy="-12" transform="rotate(288)"/><circle r="3.1"/></g></svg>`; }
 function topicName(k){ const t = TOPICS()[k]; return t ? t.name : k; }
-function findPart(key){ return PARTS.find(p => p.key === key); }
+function findPart(key){
+  if(key === MIXED_KEY) return mixedRun || MIXED_META;
+  return PARTS.find(p => p.key === key);
+}
 
 /* ================= persistence ================= */
 function storageError(error){
@@ -882,6 +983,7 @@ function answerText(q){
 }
 function scoreLabel(rec){ return rec.s === null ? "N/A" : rec.s + "%"; }
 function buildLogText(partObj, rec, withHeader){
+  if(partObj && partObj.mixed) return mixedLogText(rec, withHeader);
   const qs = partObj.questions;
   const lines = [];
   if(withHeader !== false){
@@ -1017,6 +1119,412 @@ function bindCards(){
   document.querySelectorAll("[data-logs]").forEach(b=>b.addEventListener("click", ()=>openLogs(b.dataset.logs)));
 }
 
+/* ================= mixed review ================= */
+const MIXED_KEY = "MixedReview";
+const MIXED_AREA = { key: MIXED_KEY, name: "Mixed Review", parts: [] };
+const MIXED_META = { key: MIXED_KEY, mixed: true, kind: "choice", title: "Mixed Review",
+  fullTitle: "Mixed Review — random unseen questions from all seven specialties",
+  topics: {}, questions: [] };
+let mixedRun = null;                     // the drawn run in progress (or just finished)
+
+/* Run length: the three presets on the mixed screen, or any number typed
+   into its box (1..500; a run stops at whatever the pool still holds). */
+function mixedLength(){
+  const n = Math.round(Number(localStorage.getItem("hku_mbbs_mixed_length_v1")));
+  return Number.isFinite(n) && n >= 1 ? Math.min(n, 500) : 20;
+}
+function setMixedLength(n){
+  const v = Math.min(500, Math.max(1, Math.round(Number(n)) || 20));
+  try{ localStorage.setItem("hku_mbbs_mixed_length_v1", String(v)); }catch(e){ storageError(e); }
+  return v;
+}
+/* Which kinds of question a run draws: "both", "mcq" (everything that is
+   not a self-assessed written case) or "saq" (only those cases). */
+function mixedKinds(){
+  const k = localStorage.getItem("hku_mbbs_mixed_kinds_v1");
+  return k === "mcq" || k === "saq" ? k : "both";
+}
+function setMixedKinds(k){
+  const v = k === "mcq" || k === "saq" ? k : "both";
+  try{ localStorage.setItem("hku_mbbs_mixed_kinds_v1", v); }catch(e){ storageError(e); }
+  return v;
+}
+/* "Attempted" means the question was in the queue of a finished run of its
+   own part, or was drawn in a finished mixed run. A paused run does not
+   count, and deleting an attempt makes its questions drawable again. */
+function attemptedSet(){
+  const seen = new Set();
+  PARTS.forEach(p => loadRecords(p.key).forEach(r => (r.q || []).forEach(n => seen.add(p.key + "#" + n))));
+  loadRecords(MIXED_KEY).forEach(r => (r.mq || []).forEach(pair => { if(pair) seen.add(pair[0] + "#" + pair[1]); }));
+  return seen;
+}
+/* The pool being drawn from right now: everything not attempted yet,
+   narrowed to the kinds switched on. Both kind counts are returned even
+   when one kind is switched off, so the chips can still show them. */
+function mixedPool(){
+  const kinds = mixedKinds(), seen = attemptedSet(), items = [];
+  let mcq = 0, saq = 0;
+  PARTS.forEach(p => p.questions.forEach(q => {
+    if(seen.has(p.key + "#" + q.n)) return;
+    if(q.written) saq++; else mcq++;
+    if(kinds === "mcq" && q.written) return;
+    if(kinds === "saq" && !q.written) return;
+    items.push({ p: p, q: q });
+  }));
+  return { items: items, mcq: mcq, saq: saq };
+}
+function mixedItems(){ return mixedPool().items; }   // [{p: part, q: question}]
+function mixedPairs(partObj){ return partObj.questions.map(q => [q.__mp, q.__mq]); }
+function mixedPartFrom(items, kinds){
+  const k = kinds === "mcq" || kinds === "saq" ? kinds : mixedKinds();
+  const topics = {};
+  const questions = items.map((it, i) => {
+    const area = subjectForPart(it.p);
+    const t = it.p.topics[it.q.topic] || { name: it.p.title, advice: "" };
+    topics[it.q.topic] = { name: area.name + " · " + t.name, advice: t.advice };
+    return Object.assign({}, it.q, { n: i + 1, __mp: it.p.key, __mq: it.q.n });
+  });
+  const what = k === "mcq" ? "MCQ / EMQ " : k === "saq" ? "SAQ " : "";
+  return { key: MIXED_KEY, mixed: true, kind: "choice", title: "Mixed Review", kinds: k,
+    fullTitle: "Mixed Review — " + questions.length + " random unseen " + what + "questions from all seven specialties",
+    topics: topics, questions: questions };
+}
+function mixedItemsFromPairs(pairs){
+  const items = [];
+  (pairs || []).forEach(pair => {
+    if(!Array.isArray(pair)) return;
+    const p = findPart(pair[0]);
+    const q = p && p.questions.find(x => x.n === pair[1]);
+    if(p && q) items.push({ p: p, q: q });
+  });
+  return items;
+}
+function startMixedItems(items, m){
+  /* Flags, highlights and scratchpad notes are stored by question number,
+     and a mixed run numbers its questions 1..N, so a new draw must start
+     from a clean slate — otherwise a note left on Q5 of one run would
+     reappear on Q5 of the next. Resuming does not come through here. */
+  ["flags", "highlights", "scratchpad"].forEach(kind => writeAnnotations(MIXED_KEY, kind, {}));
+  mixedRun = mixedPartFrom(items);
+  part = mixedRun;
+  activeArea = MIXED_AREA;
+  specialtyTabs[MIXED_AREA.key] = "choice";
+  mode = m || "full";
+  answers = {};
+  drafts = {};
+  checked = {};
+  revealed = {};
+  runFinished = false;
+  currentRecord = null;
+  queue = mixedRun.questions.map((q, i) => i);
+  idx = 0;
+  hideAll();
+  $("quizPartName").textContent = mixedRun.title;
+  $("screen-quiz").classList.remove("hidden");
+  renderQ();
+}
+function startMixedRun(){
+  const items = mixedItems();
+  if(!items.length){ enterMixed(); return; }
+  for(let i = items.length - 1; i > 0; i--){       // free random across the whole pool
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = items[i]; items[i] = items[j]; items[j] = t;
+  }
+  startMixedItems(items.slice(0, Math.min(mixedLength(), items.length)), "full");
+}
+function resumeMixedRun(sess){
+  const items = mixedItemsFromPairs(sess.mq);
+  if(!items.length){ clearSession(MIXED_KEY); enterMixed(); return; }
+  mixedRun = mixedPartFrom(items, sess.mk);      // numbers must match the session's queue
+  part = mixedRun;
+  beginSession(MIXED_KEY, sess, sess.i);
+}
+function restartMixed(){                          // the same draw again
+  const items = [];
+  QS().forEach(q => {
+    const p = findPart(q.__mp);
+    const orig = p && p.questions.find(x => x.n === q.__mq);
+    if(p && orig) items.push({ p: p, q: orig });
+  });
+  if(items.length) startMixedItems(items, "full");
+}
+function startMixedReviewWrong(){                 // just the ones this run got wrong
+  if(!currentRecord || !currentRecord.mq) return;
+  const items = [];
+  (currentRecord.w || []).forEach(n => {
+    const pair = currentRecord.mq[n - 1];
+    const p = pair && findPart(pair[0]);
+    const q = p && p.questions.find(x => x.n === pair[1]);
+    if(p && q) items.push({ p: p, q: q });
+  });
+  if(items.length) startMixedItems(items, "review");
+}
+/* A mixed run files each wrong answer into the revision set of the part it
+   came from, so deleting mixed history has to revisit those sets too. */
+function stillWrongInSomeRecord(key, qid){
+  if(loadRecords(key).some(r => !r.mq && (r.w || []).includes(qid))) return true;
+  return loadRecords(MIXED_KEY).some(r => (r.mq || []).some((pair, i) =>
+    pair && pair[0] === key && pair[1] === qid && (r.w || []).includes(i + 1)));
+}
+function pruneMixedRevisionSets(removed){
+  const candidates = {};
+  removed.forEach(r => (r.w || []).forEach(n => {
+    const pair = (r.mq || [])[n - 1];
+    if(Array.isArray(pair)) (candidates[pair[0]] = candidates[pair[0]] || []).push(pair[1]);
+  }));
+  Object.keys(candidates).forEach(key => {
+    const ws = loadWrongSet(key);
+    let dropped = 0;
+    candidates[key].forEach(qid => {
+      if(ws[qid] && !stillWrongInSomeRecord(key, qid)){ delete ws[qid]; dropped++; }
+    });
+    if(dropped) saveWrongSet(key, ws);
+  });
+}
+function mixedLogText(rec, withHeader){
+  const pairs = rec.mq || [];
+  const lines = [];
+  if(withHeader !== false){
+    const tally = {};
+    pairs.forEach(pair => {
+      if(!Array.isArray(pair)) return;
+      const p = findPart(pair[0]);
+      const name = p ? subjectForPart(p).name : pair[0];
+      tally[name] = (tally[name] || 0) + 1;
+    });
+    const drawn = AREAS.map(a => a.name).filter(name => tally[name])
+      .map(name => name + " " + tally[name]).join(" · ");
+    lines.push("==============================================");
+    lines.push("HKU MBBS QUESTION BANK — SESSION LOG");
+    lines.push("==============================================");
+    lines.push("Part      : " + (rec.mk === "mcq" ? "Mixed Review — random unseen MCQ / EMQ questions from all seven specialties"
+      : rec.mk === "saq" ? "Mixed Review — random unseen SAQ cases from all seven specialties"
+      : "Mixed Review — random unseen questions from all seven specialties"));
+    lines.push("Date      : " + fmtDate(rec.d));
+    lines.push("Score     : " + scoreLabel(rec) + "  (" + (rec.t - (rec.w || []).length) + "/" + rec.t + ")");
+    lines.push("Run       : " + rec.q.length + " questions, " + rec.u.length + " unanswered (not checked)");
+    if(drawn) lines.push("Drawn from: " + drawn);
+    lines.push("Scorable unanswered questions count as incorrect.");
+    lines.push("");
+  }
+  (rec.q || []).forEach((n, i) => {
+    const pair = pairs[i];
+    const src = Array.isArray(pair) ? findPart(pair[0]) : null;
+    const q = src && src.questions.find(x => x.n === pair[1]);
+    if(!q){ lines.push("[?] Q" + n + " · the source question is no longer in the bank."); lines.push(""); return; }
+    const chosen = rec.a[n];
+    const complete = !!rec.c[n];
+    const status = !complete ? "[UNANSWERED]" : q.noAns ? "[UNSCORED]" : (rec.w || []).includes(n) ? "[WRONG]" : "[CORRECT]";
+    lines.push(`${status} Q${n} · ${subjectForPart(src).name} · ${q.sourceId}. ${q.stem}`);
+    lines.push(`   Your answer : ${complete ? optText(q, chosen) : chosen ? optText(q, chosen) + " (selected, not checked)" : "(not answered)"}`);
+    lines.push(`   Correct     : ${q.noAns ? "No usable key in source; not scored" : answerText(q)}`);
+    if(q.written) lines.push(`   Written response : ${(rec.x || {})[n] || "(not entered)"}`);
+    lines.push(`   Source key  : ${q.sourceAnswer}${q.sourceUncertain ? " (tentative)" : ""}`);
+    if(q.aiSug && q.aiSug.t) lines.push(`   AI suggested: ${q.aiSug.a ? q.aiSug.a + ". " : ""}${q.aiSug.t}`);
+    lines.push(`   Topic       : ${topicNameFor(src, q.topic)}`);
+    lines.push("");
+  });
+  return lines.join("\n").trim();
+}
+function totalRevSet(){ return PARTS.reduce((sum, p) => sum + wrongSetQids(p.key).length, 0); }
+function enterMixed(){
+  part = MIXED_META;
+  mixedRun = null;
+  activeArea = null;
+  hideAll();
+  renderMixed();
+  $("screen-mixed").classList.remove("hidden");
+}
+function backToHub(){
+  if(part && part.mixed){ enterMixed(); return; }
+  showHub();
+}
+function renderMixed(){
+  const pool = mixedPool();
+  const items = pool.items;
+  const kinds = mixedKinds();
+  const sess = loadSession(MIXED_KEY);
+  const recs = loadRecords(MIXED_KEY);
+  const per = AREAS.map(area => ({
+    name: area.name,
+    count: items.filter(it => area.parts.some(p => p.key === it.p.key)).length
+  }));
+  $("mxPool").textContent = items.length.toLocaleString();
+  $("mxAreas").textContent = per.filter(row => row.count).length + " of " + AREAS.length;
+  $("mxPerRun").textContent = mixedLength();
+  $("mxRuns").textContent = recs.length;
+  $("mxPoolList").innerHTML = per.map(row =>
+    `<div class="mix-row"><span>${esc(row.name)}</span><b${row.count ? "" : " class=\"zero\""}>${row.count ? row.count.toLocaleString() : "— all attempted"}</b></div>`).join("");
+  /* One chip per choice, so switching kinds is a single click. */
+  const counts = { both: pool.mcq + pool.saq, mcq: pool.mcq, saq: pool.saq };
+  document.querySelectorAll("[data-mxkind]").forEach(chip => {
+    const kind = chip.dataset.mxkind;
+    chip.className = "btn small" + (kinds === kind ? "" : " ghost");
+    chip.setAttribute("aria-pressed", String(kinds === kind));
+    chip.innerHTML = (kind === "both" ? "Both" : kind === "mcq" ? "MCQ / EMQ" : "SAQ cases")
+      + " · " + counts[kind].toLocaleString();
+  });
+  const lenInput = $("mxLenCustom");
+  if(document.activeElement !== lenInput) lenInput.value = mixedLength();
+  const btn = $("btnMixedStart");
+  btn.disabled = !items.length && !sess;
+  btn.innerHTML = sess
+    ? `▶ &nbsp;Resume the paused run (Q ${Math.min(sess.i + 1, sess.q.length)}/${sess.q.length})`
+    : items.length
+      ? `▶ &nbsp;Start a ${Math.min(mixedLength(), items.length)}-question mixed run`
+      : `▶ &nbsp;Nothing left to draw`;
+  $("btnMixedFresh").classList.toggle("hidden", !sess || !items.length);
+  document.querySelectorAll("[data-mxlen]").forEach(b => {
+    b.className = "btn small" + (Number(b.dataset.mxlen) === mixedLength() ? "" : " ghost");
+  });
+  const kindNote = kinds === "mcq" ? "Drawing MCQ / EMQ only. "
+    : kinds === "saq" ? "Drawing the self-assessed SAQ cases only. " : "";
+  let note;
+  if(!items.length && sess){
+    note = "Every question has been attempted by now, but your paused run can still be resumed.";
+  }else if(!items.length){
+    if(pool.mcq + pool.saq > 0){
+      note = (kinds === "mcq" ? "No unseen MCQ / EMQ questions left" : "No unseen SAQ cases left")
+        + " — switch the other kind of question on to draw from what remains.";
+    }else{
+      const rev = totalRevSet();
+      note = "Nothing left to draw — every question has been attempted at least once"
+        + (rev ? `. The specialty revision sets still hold ${rev} question${rev === 1 ? "" : "s"} to re-do.` : ".");
+    }
+  }else if(sess){
+    note = kindNote + "Paused mid-run on " + fmtDate(sess.u).slice(0, 10)
+      + " — resume it, or start a fresh draw (which discards the paused run).";
+  }else{
+    note = kindNote + "Free random: every unseen question has the same chance, so the large specialties fill most of a run.";
+  }
+  $("mxNote").textContent = note;
+}
+function mixedCardHtml(){
+  const pool = mixedItems().length;
+  const attempts = loadRecords(MIXED_KEY).length;
+  const paused = !!loadSession(MIXED_KEY);
+  const kinds = mixedKinds();
+  const what = kinds === "mcq" ? "MCQ / EMQ " : kinds === "saq" ? "SAQ " : "";
+  return `<button class="category-card" data-category="${MIXED_KEY}">
+      <span class="category-icon">${specMark(MIXED_AREA)}</span>
+      <span class="category-title">Mixed Review</span>
+      <span class="muted">Random unseen ${what}questions from all 7 specialties</span>
+      <span class="category-meta">${pool.toLocaleString()} in the pool · ${attempts} attempt${attempts === 1 ? "" : "s"}${paused ? " · 1 paused" : ""}</span>
+      <span class="category-enter">Enter mixed review →</span>
+    </button>`;
+}
+function clearMixedHistory(){
+  const recs = loadRecords(MIXED_KEY);
+  if(!recs.length) return;
+  const paused = loadSession(MIXED_KEY) ? " Your paused run is not affected." : "";
+  if(!confirm("Delete all " + recs.length + " recorded mixed run" + (recs.length === 1 ? "" : "s") + " and " + (recs.length === 1 ? "its" : "their") + " session logs?\n\nThis cannot be undone. Questions that no other recorded attempt got wrong are removed from the revision sets of the specialties they came from." + paused)) return;
+  saveRecords(MIXED_KEY, []);
+  pruneMixedRevisionSets(recs);
+  renderMixed();
+}
+$("btnMixedBack").addEventListener("click", showCategories);
+$("btnMixedStart").addEventListener("click", () => {
+  const sess = loadSession(MIXED_KEY);
+  if(sess) resumeMixedRun(sess); else startMixedRun();
+});
+$("btnMixedFresh").addEventListener("click", () => {
+  if(!confirm("Discard the paused mixed run and draw a fresh set of questions?")) return;
+  clearSession(MIXED_KEY);
+  startMixedRun();
+});
+$("btnMixedLogs").addEventListener("click", () => openLogs(MIXED_KEY));
+$("btnMixedClear").addEventListener("click", clearMixedHistory);
+document.querySelectorAll("[data-mxkind]").forEach(chip => chip.addEventListener("click", () => {
+  setMixedKinds(chip.dataset.mxkind);
+  renderMixed();
+}));
+$("mxLenCustom").addEventListener("change", () => {
+  const raw = Math.round(Number($("mxLenCustom").value));
+  setMixedLength(Number.isFinite(raw) && raw >= 1 ? raw : mixedLength());
+  $("mxLenCustom").value = mixedLength();
+  renderMixed();
+});
+$("mxLenCustom").addEventListener("keydown", event => {
+  if(event.key === "Enter"){ event.preventDefault(); $("mxLenCustom").blur(); }
+});
+document.querySelectorAll("[data-mxlen]").forEach(b => b.addEventListener("click", () => {
+  setMixedLength(Number(b.dataset.mxlen));
+  renderMixed();
+}));
+
+/* ================= home page: the halo band ================= */
+/* The order of the cards on the Specialties screen: two rows of four with
+   the band between them, Mixed Review always last. */
+const HOME_ORDER = ["Surg_O&T", "Orthopaedics", "O&G", "Med", "Psy", "FamilyMedicine", "Paed", MIXED_KEY];
+/* The band's bloom: the same five-petal rose the theme is drawn with. */
+const HUB_FLOWER = '<svg class="hub-flower" viewBox="0 0 64 64" fill="none" stroke="currentColor"'
+  + ' stroke-width="2.1" stroke-linejoin="round" aria-hidden="true">'
+  + '<g transform="translate(32 32)">'
+  + '<ellipse rx="6.1" ry="11.4" cy="-12"/><ellipse rx="6.1" ry="11.4" cy="-12" transform="rotate(72)"/>'
+  + '<ellipse rx="6.1" ry="11.4" cy="-12" transform="rotate(144)"/><ellipse rx="6.1" ry="11.4" cy="-12" transform="rotate(216)"/>'
+  + '<ellipse rx="6.1" ry="11.4" cy="-12" transform="rotate(288)"/><circle r="3.1"/></g></svg>';
+/* Where the reader is, at a glance: how much of the bank has been
+   attempted, what the revision sets hold, how many runs are paused, and
+   and the one action there is - back into the newest paused run, named
+   beside the button. Below 10% the figure
+   keeps a decimal (and below 0.1% reads as such), so the first few runs
+   still move it. */
+function hubBandHtml(){
+  const total = PARTS.reduce((sum, p) => sum + p.questions.length, 0);
+  const done = attemptedSet().size;
+  const exact = total ? done / total * 100 : 0;
+  const pct = exact <= 0 ? "0%" : exact < 0.1 ? "&lt;0.1%"
+    : exact >= 10 ? Math.round(exact) + "%" : (Math.round(exact * 10) / 10) + "%";
+  const rev = totalRevSet();
+  const paused = PARTS.filter(p => loadSession(p.key)).length + (loadSession(MIXED_KEY) ? 1 : 0);
+  const last = latestRun();
+  const circ = 2 * Math.PI * 62;
+  return `<div class="hub-band">
+      <div class="hub-medal">
+        <svg class="hub-ring" viewBox="0 0 140 140" aria-hidden="true">
+          <defs><linearGradient id="hubRingGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#B12D63"/><stop offset="1" stop-color="#FF7FB6"/></linearGradient></defs>
+          <circle class="track" cx="70" cy="70" r="62"/>
+          <circle class="fill" cx="70" cy="70" r="62" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${(circ * (1 - exact / 100)).toFixed(1)}"/>
+        </svg>
+        ${HUB_FLOWER}
+      </div>
+      <div class="hub-figures"><b>${done.toLocaleString()}</b><span>of ${total.toLocaleString()} questions attempted</span></div>
+      <div class="hub-chips">
+        <span class="hub-chip">${pct} of the bank</span>
+        <span class="hub-chip">${rev.toLocaleString()} to revise</span>
+        <span class="hub-chip">${paused} paused</span>
+      </div>
+      ${last ? `<div class="hub-actions">
+        <button class="btn primary" id="hubResume">▶ &nbsp;Resume last run</button>
+        <span class="hub-last">${esc(runLabel(last.key))}</span>
+      </div>` : ""}
+    </div>`;
+}
+/* The newest paused run of all, whichever specialty it belongs to. */
+function latestRun(){
+  const runs = PARTS.map(p => ({ key: p.key, sess: loadSession(p.key) })).filter(r => r.sess && r.sess.u);
+  const mixed = loadSession(MIXED_KEY);
+  if(mixed && mixed.u) runs.push({ key: MIXED_KEY, sess: mixed });
+  runs.sort((a, b) => new Date(b.sess.u) - new Date(a.sess.u));
+  return runs[0] || null;
+}
+function runLabel(key){
+  if(key === MIXED_KEY) return "Mixed Review";
+  const area = subjectForPart(findPart(key));
+  return area ? area.name : key;
+}
+function resumeLatestRun(){
+  const run = latestRun();
+  if(!run) return;
+  if(run.key === MIXED_KEY){ resumeMixedRun(run.sess); return; }
+  beginSession(run.key, run.sess, run.sess.i);
+}
+function wireHubBand(){
+  const resume = $("hubResume");
+  if(resume) resume.addEventListener("click", resumeLatestRun);
+}
+
 /* ================= quiz flow ================= */
 function startPart(key){
   part = findPart(key);
@@ -1046,6 +1554,7 @@ function beginSession(key, sess, startIdx){
   runFinished = false;
   queue = sess.q.map(id => QS().findIndex(q => q.n === Number(id))).filter(i => i >= 0);
   if(!queue.length){
+    if(part.mixed){ enterMixed(); return; }
     showHub();
     return;
   }
@@ -1096,7 +1605,7 @@ function hideAll(){
   closeFlags(false);
   dismissHighlightPopup();
   $("btnCategories").classList.remove("hidden");
-  ["screen-categories","screen-hub","screen-quiz","screen-result","screen-logs","screen-review-summary"].forEach(id => $(id).classList.add("hidden"));
+  ["screen-categories","screen-hub","screen-mixed","screen-quiz","screen-result","screen-logs","screen-review-summary"].forEach(id => $(id).classList.add("hidden"));
   $("incompleteModal").classList.add("hidden");
   window.scrollTo(0,0);
 }
@@ -1272,6 +1781,7 @@ function saveQuizProgress(){
     x: drafts,
     u: new Date().toISOString()
   };
+  if(part.mixed){ sess.mk = part.kinds; sess.mq = mixedPairs(part); }
   const saved = saveSession(part.key, sess);
   $("autosaveStatus").textContent = saved
     ? "Progress saved at " + new Date(sess.u).toLocaleTimeString()
@@ -1286,7 +1796,7 @@ function saveAndQuit(){
     if($("screen-quiz").classList.contains("hidden")) return true;
   }
   if(!saveQuizProgress()) return false;
-  showHub();
+  backToHub();
   return true;
 }
 
@@ -1319,18 +1829,37 @@ function finishRun(force=false){
   const correct = total - wrong.length;
   const pct = total ? Math.round(correct / total * 100) : 0;
   const now = new Date().toISOString();
-  const ws = loadWrongSet(part.key);
-  scorable.forEach(i => {
-    const qid = QS()[i].n;
-    if(wrong.includes(qid)){
-      ws[qid] = { w:(ws[qid] ? ws[qid].w : 0) + 1, d:now };
-    }else if(ws[qid]){
-      delete ws[qid];
-    }
-  });
-  saveWrongSet(part.key, ws);
+  let remaining;
+  if(part.mixed){
+    /* Each wrong answer joins the revision set of the specialty it came
+       from, and a right answer clears it there, exactly as if that part had
+       been sat. The mixed run itself keeps no revision set. */
+    const sets = {};
+    scorable.forEach(i => {
+      const q = QS()[i];
+      sets[q.__mp] = sets[q.__mp] || loadWrongSet(q.__mp);
+      if(wrong.includes(q.n)){
+        sets[q.__mp][q.__mq] = { w:(sets[q.__mp][q.__mq] ? sets[q.__mp][q.__mq].w : 0) + 1, d:now };
+      }else if(sets[q.__mp][q.__mq]){
+        delete sets[q.__mp][q.__mq];
+      }
+    });
+    Object.keys(sets).forEach(key => saveWrongSet(key, sets[key]));
+    remaining = wrong.length;
+  }else{
+    const ws = loadWrongSet(part.key);
+    scorable.forEach(i => {
+      const qid = QS()[i].n;
+      if(wrong.includes(qid)){
+        ws[qid] = { w:(ws[qid] ? ws[qid].w : 0) + 1, d:now };
+      }else if(ws[qid]){
+        delete ws[qid];
+      }
+    });
+    saveWrongSet(part.key, ws);
+    remaining = Object.keys(ws).length;
+  }
   clearSession(part.key);
-  const remaining = Object.keys(ws).length;
   const record = {
     nv: 2,
     d: now,
@@ -1343,6 +1872,7 @@ function finishRun(force=false){
     q: queue.map(i => QS()[i].n),
     u: missing
   };
+  if(part.mixed){ record.mk = part.kinds; record.mq = mixedPairs(part); }
   currentRecord = record;
   if(mode === "review"){
     showReviewSummary(correct, total, pct, remaining);
@@ -1423,6 +1953,15 @@ function showReviewSummary(correct, total, pct, remaining){
   hideAll();
   $("screen-review-summary").classList.remove("hidden");
   $("revSumTitle").textContent = `Incorrect-set review complete — ${part.title}`;
+  if(part.mixed){
+    $("revSumText").innerHTML =
+      `You scored <b>${correct}/${total} (${total ? pct + "%" : "N/A"})</b> on the ${total} scorable question${total===1?"":"s"} re-done in this mixed review. ` +
+      (uncheckedQids().length ? `${uncheckedQids().length} question(s) were not checked; scorable unanswered questions count as incorrect. ` : "") +
+      (remaining
+        ? `Each right answer has been <b>removed from the revision set</b> of the specialty it came from — <b>${remaining}</b> question${remaining===1?"":"s"} from this review still need revision.`
+        : `Nothing from this review is still recorded as wrong.`);
+    return;
+  }
   $("revSumText").innerHTML =
     `You scored <b>${correct}/${total} (${total ? pct + "%" : "N/A"})</b> on the ${total} scorable question${total===1?"":"s"} in this revision set. ` +
     (uncheckedQids().length ? `${uncheckedQids().length} question(s) were not checked; scorable unanswered questions count as incorrect. ` : "") +
@@ -1479,13 +2018,11 @@ function renderLogsScreen(){
 /* Deleting an attempt removes that attempt and its session log, plus the
    questions that only that attempt got wrong: the revision set lists the
    questions that are still wrong in some recorded attempt. */
-function pruneRevisionSet(key, removed, remaining){
+function pruneRevisionSet(key, removed){
   const ws = loadWrongSet(key);
-  const keep = {};
-  remaining.forEach(r => (r.w || []).forEach(qid => { keep[qid] = true; }));
   let dropped = 0;
   removed.forEach(r => (r.w || []).forEach(qid => {
-    if(!keep[qid] && ws[qid]){ delete ws[qid]; dropped++; }
+    if(ws[qid] && !stillWrongInSomeRecord(key, qid)){ delete ws[qid]; dropped++; }
   }));
   if(dropped) saveWrongSet(key, ws);
   return dropped;
@@ -1494,22 +2031,25 @@ function deleteAttempt(index){
   const recs = loadRecords(part.key);
   if(!recs[index]){ renderLogsScreen(); return; }
   const r = recs[index];
-  if(!confirm("Delete the attempt recorded on " + fmtDate(r.d) + " (" + scoreLabel(r) + ") and its session log?\n\nThis cannot be undone. Any question that no other recorded attempt got wrong is removed from the revision set too.")) return;
+  const what = part.mixed ? "mixed run" : "attempt";
+  if(!confirm("Delete the " + what + " recorded on " + fmtDate(r.d) + " (" + scoreLabel(r) + ") and its session log?\n\nThis cannot be undone. Any question that no other recorded attempt got wrong is removed from the revision set too.")) return;
   const removed = recs.splice(index, 1);
   saveRecords(part.key, recs);
-  pruneRevisionSet(part.key, removed, recs);
+  if(part.mixed) pruneMixedRevisionSets(removed); else pruneRevisionSet(part.key, removed);
   renderLogsScreen();
-  renderHub();
+  if(part.mixed) renderMixed(); else renderHub();
 }
 function deleteAllAttempts(){
   const recs = loadRecords(part.key);
   if(!recs.length) return;
   const paused = loadSession(part.key) ? " Your paused run is not affected." : "";
-  if(!confirm("Delete all " + recs.length + " recorded attempt" + (recs.length === 1 ? "" : "s") + " and " + (recs.length === 1 ? "its" : "their") + " session logs for \"" + part.title + "\"?\n\nThis cannot be undone. This also empties the revision set for this part." + paused)) return;
+  if(!confirm(part.mixed
+    ? "Delete all " + recs.length + " recorded mixed run" + (recs.length === 1 ? "" : "s") + " and " + (recs.length === 1 ? "its" : "their") + " session logs?\n\nThis cannot be undone. Questions that no other recorded attempt got wrong are removed from the revision sets of the specialties they came from." + paused
+    : "Delete all " + recs.length + " recorded attempt" + (recs.length === 1 ? "" : "s") + " and " + (recs.length === 1 ? "its" : "their") + " session logs for \"" + part.title + "\"?\n\nThis cannot be undone. This also empties the revision set for this part." + paused)) return;
   saveRecords(part.key, []);
-  saveWrongSet(part.key, {});
+  if(part.mixed) pruneMixedRevisionSets(recs); else saveWrongSet(part.key, {});
   renderLogsScreen();
-  renderHub();
+  if(part.mixed) renderMixed(); else renderHub();
 }
 function showLogView(rec, index){
   viewingLogRecord = rec;
@@ -1540,16 +2080,17 @@ function downloadLog(rec){
 
 /* ================= events ================= */
 $("btnHubFromQuiz").addEventListener("click", saveAndQuit);
-$("btnQuit").addEventListener("click", ()=>{ if(mode === "preview"){ returnFromFlagPreview(); return; } if(confirm("Abandon this run and discard any saved progress for it?")){ clearSession(part.key); showHub(); } });
+$("btnQuit").addEventListener("click", ()=>{ if(mode === "preview"){ returnFromFlagPreview(); return; } if(confirm("Abandon this run and discard any saved progress for it?")){ clearSession(part.key); backToHub(); } });
 $("btnSaveQuit").addEventListener("click", saveAndQuit);
-$("btnHubFromRes").addEventListener("click", showHub);
-$("btnHubFromLogs").addEventListener("click", showHub);
-$("btnHubFromRev").addEventListener("click", showHub);
+$("btnHubFromRes").addEventListener("click", backToHub);
+$("btnHubFromLogs").addEventListener("click", backToHub);
+$("btnHubFromRev").addEventListener("click", backToHub);
 $("btnSubmit").addEventListener("click", submit);
 $("btnNext").addEventListener("click", next);
-$("btnRestart").addEventListener("click", ()=>{ currentRecord = null; clearSession(part.key); startReviewFrom(part.key, QS().map(q=>q.n), "full"); });
-$("btnRestart2").addEventListener("click", ()=>{ clearSession(part.key); startReviewFrom(part.key, QS().map(q=>q.n), "full"); });
+$("btnRestart").addEventListener("click", ()=>{ currentRecord = null; clearSession(part.key); if(part.mixed){ restartMixed(); return; } startReviewFrom(part.key, QS().map(q=>q.n), "full"); });
+$("btnRestart2").addEventListener("click", ()=>{ clearSession(part.key); if(part.mixed){ restartMixed(); return; } startReviewFrom(part.key, QS().map(q=>q.n), "full"); });
 $("btnReviewWrongRes").addEventListener("click", ()=>{
+  if(part && part.mixed){ startMixedReviewWrong(); return; }
   const qids = wrongSetQids(part.key);
   if(qids.length) startReviewFrom(part.key, qids, "review");
 });
@@ -1614,6 +2155,10 @@ function specMark(area){
   return '<svg class="spec-mark" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'
     + stem + '<g transform="translate(20.8 9.8) scale(0.7)" stroke-width="3.43">' + g + '</g></svg>';
 }
+/* Mixed Review is not a specialty, so its emblem is not anatomy: two
+   crossing arrows, the usual sign for a shuffle. */
+SPEC_GLYPH[MIXED_KEY] = '<path d="M6 26 26 6"/><path d="M19 6h7v7"/>'
+  + '<path d="M6 6 26 26"/><path d="M26 19v7h-7"/>';
 function showCategories(){
   if(!$("screen-quiz").classList.contains("hidden") && part){
     if(!saveAndQuit()) return;
@@ -1622,7 +2167,7 @@ function showCategories(){
   activeArea = null;
   $("screen-categories").classList.remove("hidden");
   $("btnCategories").classList.add("hidden");
-  $("categoryCards").innerHTML = AREAS.map(area => {
+  const cardOf = area => {
     const questions = area.parts.flatMap(p => p.questions);
     const written = area.parts.filter(p => p.kind === "written").reduce((sum, p) => sum + p.questions.length, 0);
     const attempts = area.parts.reduce((sum, p) => sum + loadRecords(p.key).length, 0);
@@ -1634,9 +2179,18 @@ function showCategories(){
       <span class="category-meta">${area.parts.length} sections · ${attempts} attempts${paused ? ` · ${paused} paused` : ""}</span>
       <span class="category-enter">Enter specialty →</span>
     </button>`;
-  }).join("");
+  };
+  const order = HOME_ORDER.filter(k => k === MIXED_KEY || AREAS.some(a => a.key === k));
+  AREAS.forEach(a => { if(!order.includes(a.key)) order.push(a.key); });
+  const cards = order.map(k => k === MIXED_KEY ? mixedCardHtml() : cardOf(AREAS.find(a => a.key === k)));
+  $("categoryCards").innerHTML =
+      hubBandHtml()
+    + '<div class="halo-row">' + cards.slice(0, 4).join("") + '</div>'
+    + '<div class="halo-row">' + cards.slice(4).join("") + '</div>';
+  wireHubBand();
   $("categoryCards").querySelectorAll("[data-category]").forEach(button => {
     button.addEventListener("click", () => {
+      if(button.dataset.category === MIXED_KEY){ enterMixed(); return; }
       activeArea = AREAS.find(area => area.key === button.dataset.category);
       showHub();
     });
@@ -1644,6 +2198,7 @@ function showCategories(){
 }
 
 function subjectForPart(partObj){
+  if(partObj && partObj.mixed) return MIXED_AREA;
   return AREAS.find(area => area.parts.some(p => p.key === partObj.key));
 }
 
@@ -1654,8 +2209,9 @@ function prepareWritten(q){
   $("qOpts").classList.toggle("hidden", q.written);
   $("btnSubmit").textContent = q.written ? "Reveal source answer" : "Check answer";
   $("btnSubmit").disabled = q.written ? false : true;
+  const srcPrefix = q.__mp ? (findPart(q.__mp) || part).sourcePrefix : part.sourcePrefix;
   $("sourceNote").textContent = q.sourceDoc ? `${q.sourceDoc} · source paragraph ${q.sourceParagraphQ}` :
-    `${part.sourcePrefix} (Q).pdf · page ${q.sourcePageQ}` +
+    `${srcPrefix} (Q).pdf · page ${q.sourcePageQ}` +
     (q.sourcePageA ? ` · ${part.sourcePrefix} (A).pdf · page ${q.sourcePageA}` : " · no answer-sheet entry") +
     " · Historical source; verify important points against current references.";
   if(q.sourceWarning){
@@ -1844,7 +2400,7 @@ function refreshQuestionFlag(){
 }
 function renderFlagList(){
   const category = subjectForPart(flagPanelPart);
-  $("flagPanelTopic").textContent = category.name + " / " + flagPanelPart.title;
+  $("flagPanelTopic").textContent = flagPanelPart.mixed ? flagPanelPart.title : category.name + " / " + flagPanelPart.title;
   const questions = flaggedQuestions(flagPanelPart.key);
   $("flagList").innerHTML = questions.length ? questions.map(q => {
     const current = part && part.key === flagPanelPart.key && !$("screen-quiz").classList.contains("hidden") && QS()[queue[idx]].n === q.n;
