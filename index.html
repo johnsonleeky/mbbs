@@ -514,7 +514,7 @@ header.top{
 <header class="top">
   <div class="wrap">
     <h1>HKU MBBS Question Bank</h1>
-    <div class="src">Medicine · Family Medicine · Obstetrics &amp; Gynecology · Pediatrics · Psychiatry · Surgery · Orthopedics &amp; Traumatology</div>
+    <div class="src">Surgery · Orthopedics &amp; Traumatology · Obstetrics &amp; Gynecology · Medicine · Psychiatry · Family Medicine · Pediatrics</div>
     <nav class="header-nav" aria-label="Quiz navigation"><button class="btn ghost small" id="btnCategories">← Specialties</button><button class="btn ghost small" id="btnLock">Lock Quiz</button><button class="btn ghost small" id="btnUserGuide" type="button" aria-haspopup="dialog">User Guide</button></nav>
   </div>
 </header>
@@ -766,9 +766,11 @@ header.top{
       <h4>Specialties screen</h4>
       <p>The Specialties screen opens with the rose band, then the seven specialties and Mixed Review as cards in two rows
       of four, and closes with the accuracy note. The band is the dashboard: the ring and the figure say how much of the
-      bank you have attempted, and the chips count what the revision sets hold and how many runs are paused. When a run is
-      paused, <b>Resume last run</b> drops you straight back into the newest one, with the specialty it belongs to named
-      beside the button (a mixed draw is named <b>Mixed Review</b>). Mixed Review itself is entered from its own card.</p>
+      bank you have attempted &#8212; a question counts once you have answered and checked it, even if its run is only
+      paused, and it leaves the count again if that run is started over or the attempt is deleted. The chips count what the
+      revision sets hold and how many runs are paused. When a run is paused, <b>Resume last run</b> drops you straight back
+      into the newest one, with the specialty it belongs to named beside the button (a mixed draw is named
+      <b>Mixed Review</b>). Mixed Review itself is entered from its own card.</p>
 
       <h4>Flagging questions</h4>
       <p>Use the <b>Flag</b> button on any question to mark it for attention, then open <b>Flagged</b> to move between the flagged questions in that topic. Flags are independent of revision sets.</p>
@@ -1149,13 +1151,41 @@ function setMixedKinds(k){
   try{ localStorage.setItem("hku_mbbs_mixed_kinds_v1", v); }catch(e){ storageError(e); }
   return v;
 }
-/* "Attempted" means the question was in the queue of a finished run of its
-   own part, or was drawn in a finished mixed run. A paused run does not
-   count, and deleting an attempt makes its questions drawable again. */
+/* "Attempted" means the question was done and validated: it was in the
+   queue of a finished run of its own part, was drawn in a finished mixed
+   run, or was answered and checked in a run that is merely paused. A
+   paused run counts exactly what it has checked - answer plus submit,
+   self-assessment included - so the figure falls back again when the run
+   is started over, or when its attempt is deleted from the history. */
 function attemptedSet(){
   const seen = new Set();
   PARTS.forEach(p => loadRecords(p.key).forEach(r => (r.q || []).forEach(n => seen.add(p.key + "#" + n))));
   loadRecords(MIXED_KEY).forEach(r => (r.mq || []).forEach(pair => { if(pair) seen.add(pair[0] + "#" + pair[1]); }));
+  // checked questions of a paused part run
+  PARTS.forEach(p => {
+    const sess = loadSession(p.key);
+    if(!sess) return;
+    if(sess.nv === 2){
+      Object.keys(sess.c || {}).forEach(n => {
+        const q = p.questions.find(x => x.n === Number(n));
+        if(q && sess.c[n] && q.opts.some(o => o.l === (sess.a || {})[n])) seen.add(p.key + "#" + Number(n));
+      });
+    }else{
+      // older sessions only knew that everything before the saved position had been checked
+      (sess.q || []).slice(0, sess.i || 0).forEach(n => seen.add(p.key + "#" + Number(n)));
+    }
+  });
+  // checked questions of a paused mixed draw (numbered 1..N in draw order)
+  const msess = loadSession(MIXED_KEY);
+  if(msess){
+    (msess.q || []).forEach((n, i) => {
+      const local = Number(n);
+      const pair = (msess.mq || [])[local - 1];
+      if(!pair) return;
+      const done = msess.nv === 2 ? !!(msess.c || {})[local] : i < (msess.i || 0);
+      if(done) seen.add(pair[0] + "#" + pair[1]);
+    });
+  }
   return seen;
 }
 /* The pool being drawn from right now: everything not attempted yet,
