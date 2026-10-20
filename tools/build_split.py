@@ -3,13 +3,12 @@
 Build the split, on-demand-figure version of the MBBS question bank.
 
 The master stays a single self-contained HTML file. This script reads it and
-produces a deployable folder:
+writes the deployable site to the repository root:
 
-    docs/
-      index.html          (~9 MB, no embedded images)
-      figures/            (345 figure files, loaded only when shown)
-      .nojekyll
-      robots.txt
+    index.html          (~9 MB, no embedded images)
+    figures/            (345 figure files, loaded only when shown)
+    .nojekyll
+    robots.txt
 
 Usage:
     python3 tools/build_split.py
@@ -33,7 +32,7 @@ from pathlib import Path
 
 SITE_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_SOURCE = Path("/Users/johnson/Desktop/MBBS_QBank_AI_Answers.html")
-DEFAULT_OUT = SITE_ROOT / "docs"
+DEFAULT_OUT = SITE_ROOT
 DEFAULT_ZIP = SITE_ROOT / "MBBS_QBank_split.zip"
 
 APP_DATA_RE = re.compile(
@@ -201,14 +200,20 @@ def main() -> None:
         zip_path = DEFAULT_ZIP
         if zip_path.exists():
             zip_path.unlink()
+        # Zip only the published site, never tools/README/.git or the zip itself.
+        site_files = [index_path, out / ".nojekyll", out / "robots.txt"]
         with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as archive:
-            for path in sorted(out.rglob("*")):
-                if path.is_dir():
-                    continue
+            for path in site_files:
                 archive.write(
                     path,
                     arcname=str(Path("MBBS_QBank_Split") / path.relative_to(out)),
                 )
+            for path in sorted(figures_dir.rglob("*")):
+                if path.is_file():
+                    archive.write(
+                        path,
+                        arcname=str(Path("MBBS_QBank_Split") / path.relative_to(out)),
+                    )
         print(f"Zip    : {zip_path} ({zip_path.stat().st_size / 1_000_000:.1f} MB)")
 
 

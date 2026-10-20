@@ -12,7 +12,7 @@ echo
 if [ "$status" -ne 0 ]; then
   echo "Build failed. Read the error above."
 else
-  echo "Done. The deployable site is in docs/"
+  echo "Done. The site is in the repository root."
   echo "The shareable zip is MBBS_QBank_split.zip"
 fi
 echo
