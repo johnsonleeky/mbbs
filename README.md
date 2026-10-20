@@ -1,4 +1,4 @@
-# MBBS Question Bank — split build
+# MBBS Question Bank 
 
 Live site:
 
