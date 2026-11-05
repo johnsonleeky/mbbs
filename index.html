@@ -781,7 +781,7 @@ header.top{
       </div>
       <div class="mix-controls">
         <label class="mix-field" for="mxSpecialty"><span>Specialty</span><select id="mxSpecialty"></select></label>
-        <label class="mix-field" for="mxKinds"><span>Question kinds</span>
+        <label class="mix-field" for="mxKinds"><span>Question type</span>
           <select id="mxKinds">
             <option value="both">Both</option>
             <option value="mcq">MCQ / EMQ</option>
@@ -1006,7 +1006,7 @@ header.top{
       <p>Every question you answer incorrectly is added to that part's revision set. Answer it correctly in a later run — either a full run or an incorrect-set review — and it is removed automatically. Deleting a recorded attempt from a part&#39;s session log also removes the questions that only that attempt got wrong.</p>
 
       <h4>Mixed Review</h4>
-      <p>The <b>Mixed Review</b> card on the Specialties screen draws at random from questions you have not attempted yet. Unseen questions come first; once none remain in the selected specialty (or across all seven), repeats are allowed. Its three dropdowns set the <b>Specialty</b>, the <b>Question kinds</b> (Both, MCQ / EMQ, or SAQ cases), and the <b>Questions per run</b>; the specialty choices show how many unseen questions are left for the current kind selection, or <b>repeats</b> when that scope has none left. A run stops at whatever remains if fewer than the selected length are left. If a paused run was drawn from a different specialty than the one now selected, the screen shows a resume-or-start-new choice rather than silently resuming or replacing it. A wrong answer joins the revision set of the specialty the question came from and a right one clears it there, so the specialty hubs stay accurate, while part scores and attempt counts are untouched. Mixed runs are logged under their own part name, with each question&#39;s specialty and the run&#39;s draw source recorded.</p>
+      <p>The <b>Mixed Review</b> card on the Specialties screen draws at random from questions you have not attempted yet. Unseen questions come first; once none remain in the selected specialty (or across all seven), repeats are allowed. Its three dropdowns set the <b>Specialty</b>, the <b>Question type</b> (Both, MCQ / EMQ, or SAQ cases), and the <b>Questions per run</b>; the specialty choices show how many unseen questions are left for the current type selection, or <b>repeats</b> when that scope has none left. A run stops at whatever remains if fewer than the selected length are left. If a paused run was drawn from a different specialty than the one now selected, the screen shows a resume-or-start-new choice rather than silently resuming or replacing it. A wrong answer joins the revision set of the specialty the question came from and a right one clears it there, so the specialty hubs stay accurate, while part scores and attempt counts are untouched. Mixed runs are logged under their own part name, with each question&#39;s specialty and the run&#39;s draw source recorded.</p>
 
       <h4>Autosave</h4>
       <p>While a quiz is open, your progress is saved every five seconds and whenever the page is hidden or closed (where your browser supports it). Autosave covers your position, checked answers, selections and written drafts. Progress is stored in this browser only and is not synced between devices.</p>
@@ -2567,8 +2567,8 @@ const CARD_ART = {
   [MIXED_KEY]: '<path d="M36 140C78 140 94 60 152 60"/><path d="M36 60C78 60 94 140 152 140"/><path d="M138 44l20 16-20 16"/><path d="M138 124l20 16-20 16"/>'
 };
 const SPEC_TONE = {
-  "Med": "#B12D63", "FamilyMedicine": "#C54B78", "O&G": "#C43D75", "Paed": "#D05A84",
-  "Psy": "#8A3A6B", "Surg_O&T": "#92204E", "Orthopaedics": "#7C2348", [MIXED_KEY]: "#B12D63"
+  "Med": "#B12D63", "FamilyMedicine": "#B12D63", "O&G": "#B12D63", "Paed": "#B12D63",
+  "Psy": "#B12D63", "Surg_O&T": "#B12D63", "Orthopaedics": "#B12D63", [MIXED_KEY]: "#B12D63"
 };
 function cardArt(area){
   const art = CARD_ART[area.key];
