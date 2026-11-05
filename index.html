@@ -563,25 +563,23 @@ header.top{
   .hub-last{max-width:calc(100% - 170px);}
 }
 
-/* --- Mixed Review: pool rows --- */
-.mix-row{display:flex; justify-content:space-between; gap:12px; align-items:baseline;
-  padding:8px 2px; border-bottom:1px dashed var(--line); font-size:13.5px;}
-.mix-row:last-child{border-bottom:0;}
-.mix-row b{color:var(--accent); font-variant-numeric:tabular-nums;}
-.mix-row b.zero{color:var(--muted); font-weight:600;}
-.mix-len input{width:78px; padding:8px 10px; border:1.5px solid var(--line); border-radius:9px;
-  font:inherit; font-size:13.5px; text-align:center; color:var(--ink); background:rgba(255,255,255,.72);}
-.mix-len input:focus{outline:3px solid var(--accent-soft); border-color:var(--accent);}
-.mix-specialty{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:14px;
-  padding:12px 14px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.58);}
-.mix-specialty label{font-size:13px; font-weight:800; color:var(--navy); letter-spacing:.01em;}
-.mix-specialty select{
-  min-width:230px; max-width:100%; padding:9px 12px; border:1.5px solid var(--line); border-radius:10px;
-  font:inherit; font-size:14px; font-weight:600; color:var(--ink); background:rgba(255,255,255,.9);
+/* --- Mixed Review: compact settings --- */
+.mix-stats{display:flex; gap:30px; margin:16px 0 4px;}
+.mix-stat b{display:block; font-size:24px; line-height:1.1; color:var(--navy); font-variant-numeric:tabular-nums;}
+.mix-stat span{font-size:12px; color:var(--muted);}
+.mix-controls{display:grid; grid-template-columns:1.35fr 1fr 1fr; gap:12px; margin:18px 0 10px;}
+.mix-field{display:flex; flex-direction:column; gap:6px; min-width:0;}
+.mix-field > span{font-size:10.5px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:var(--muted);}
+.mix-field select{
+  width:100%; padding:11px 12px; border:1.5px solid var(--line); border-radius:11px;
+  font:inherit; font-size:14px; font-weight:600; color:var(--ink); background:rgba(255,255,255,.92);
   cursor:pointer;
 }
-.mix-specialty select:focus{outline:3px solid var(--accent-soft); border-color:var(--accent);}
-.mix-specialty #mxSpecialtyHelp{font-size:12.5px;}
+.mix-field select:focus{outline:3px solid var(--accent-soft); border-color:var(--accent);}
+.mix-start-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:6px;}
+.mix-status{font-size:13px; color:var(--muted);}
+.mix-history-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:18px; padding-top:14px;
+  border-top:1px dashed var(--line);}
 .mix-paused{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:14px;
   padding:12px 14px; border:1px solid rgba(217,119,6,.36); border-radius:14px;
   background:rgba(254,243,199,.72);}
@@ -591,15 +589,11 @@ header.top{
 .mix-paused.attention{animation:mixPulse .55s ease 2;}
 @keyframes mixPulse{50%{box-shadow:0 0 0 5px rgba(217,119,6,.22); border-color:rgba(217,119,6,.7);}}
 @media (prefers-reduced-motion: reduce){.mix-paused.attention{animation:none; border-color:rgba(217,119,6,.7);}}
-.mix-row.selected{background:rgba(255,228,239,.62); border-radius:9px; padding-left:10px; padding-right:10px;}
-.mix-row.selected > span{font-weight:800; color:var(--accent-2);}
-.mix-tag{display:inline-block; margin-left:6px; padding:1px 7px; border-radius:999px;
-  font-size:10.5px; font-weight:800; letter-spacing:.04em; text-transform:uppercase;
-  color:var(--accent-2); background:rgba(255,255,255,.82); border:1px solid rgba(177,45,99,.18);
-  vertical-align:1px;}
+@media (max-width:720px){
+  .mix-controls{grid-template-columns:1fr;}
+  .mix-stats{gap:22px;}
+}
 @media (max-width:560px){
-  .mix-specialty select{min-width:0; width:100%;}
-  .mix-specialty #mxSpecialtyHelp{flex-basis:100%;}
   .mix-paused .btn-row{margin-left:0; width:100%;}
   .mix-paused .btn-row .btn{flex:1 1 auto; justify-content:center;}
 }
@@ -739,23 +733,26 @@ header.top{
   <!-- ============ MIXED REVIEW ============ -->
   <section id="screen-mixed" class="hidden">
     <div class="card">
-      <div class="back-bar"><button class="btn ghost small" id="btnMixedBack">← &nbsp;Specialties</button><span class="muted">Random draw from all seven specialties, or just one</span></div>
-      <h2>Mixed Review <span class="sub">— random questions you have not attempted yet</span></h2>
-      <div class="stat-grid">
-        <div class="stat"><b id="mxPool">0</b><span>Questions in the pool</span></div>
-        <div class="stat"><b id="mxAreas">0 of 7</b><span>Specialties with questions left</span></div>
-        <div class="stat"><b id="mxPerRun">20</b><span>Questions per run</span></div>
-        <div class="stat"><b id="mxRuns">0</b><span>Mixed runs so far</span></div>
+      <h2>Mixed Review</h2>
+      <div class="mix-stats">
+        <div class="mix-stat"><b id="mxPool">0</b><span>questions available</span></div>
+        <div class="mix-stat"><b id="mxRuns">0</b><span>runs completed</span></div>
       </div>
-      <div class="mix-specialty">
-        <label for="mxSpecialty">Draw from</label>
-        <select id="mxSpecialty" aria-describedby="mxSpecialtyHelp"></select>
-        <span class="muted" id="mxSpecialtyHelp">One specialty, or all seven.</span>
+      <div class="mix-controls">
+        <label class="mix-field" for="mxSpecialty"><span>Specialty</span><select id="mxSpecialty"></select></label>
+        <label class="mix-field" for="mxKinds"><span>Question kinds</span>
+          <select id="mxKinds">
+            <option value="both">Both</option>
+            <option value="mcq">MCQ / EMQ</option>
+            <option value="saq">SAQ cases</option>
+          </select>
+        </label>
+        <label class="mix-field" for="mxLength"><span>Questions per run</span><select id="mxLength"></select></label>
       </div>
-      <div class="btn-row" style="margin-top:6px;">
+      <div class="mix-start-row">
         <button class="btn primary" id="btnMixedStart">▶ &nbsp;Start</button>
-        <button class="btn ghost small hidden" id="btnMixedFresh">↻ &nbsp;Start a fresh draw</button>
-        <span class="muted" id="mxNote" style="font-size:13px; align-self:center;"></span>
+        <button class="btn ghost small hidden" id="btnMixedFresh">↻ &nbsp;Start fresh</button>
+        <span class="mix-status" id="mxStatus" role="status"></span>
       </div>
       <div class="mix-paused hidden" id="mxPausedChoice">
         <div class="mix-paused-copy">
@@ -763,35 +760,13 @@ header.top{
           <span id="mxPausedText"></span>
         </div>
         <div class="btn-row">
-          <button class="btn ghost small" id="btnMixedResumePaused" type="button">Resume paused</button>
-          <button class="btn ghost small danger" id="btnMixedReplacePaused" type="button">Discard &amp; draw fresh</button>
+          <button class="btn ghost small" id="btnMixedResumePaused" type="button">Resume</button>
+          <button class="btn ghost small danger" id="btnMixedReplacePaused" type="button">Start new</button>
         </div>
       </div>
-      <div class="btn-row" style="margin-top:14px;">
-        <span class="muted" style="font-size:13px; align-self:center;">Question kinds</span>
-        <button class="btn small" id="mxKindBoth" data-mxkind="both" type="button" aria-pressed="true">Both</button>
-        <button class="btn small" id="mxKindMcq" data-mxkind="mcq" type="button" aria-pressed="false">MCQ / EMQ</button>
-        <button class="btn small" id="mxKindSaq" data-mxkind="saq" type="button" aria-pressed="false">SAQ cases</button>
-        <span class="muted" style="font-size:12.5px; align-self:center;">— a run draws from whichever you pick</span>
-      </div>
-      <div class="btn-row mix-len" style="margin-top:10px;">
-        <span class="muted" style="font-size:13px; align-self:center;">Questions per run</span>
-        <button class="btn ghost small" data-mxlen="10" type="button">10</button>
-        <button class="btn ghost small" data-mxlen="20" type="button">20</button>
-        <button class="btn ghost small" data-mxlen="40" type="button">40</button>
-        <input id="mxLenCustom" type="number" min="1" max="500" step="1" inputmode="numeric" aria-label="Number of questions per run" title="Any number from 1 to 500">
-        <span class="muted" style="font-size:12.5px; align-self:center;">or type your own (1–500)</span>
-      </div>
-    </div>
-    <div class="card">
-      <h2>Pool by specialty <span class="sub">— unseen questions left in each</span></h2>
-      <div id="mxPoolList"></div>
-    </div>
-    <div class="card">
-      <h2>Mixed review history <span class="sub">— every mixed run is logged like any other session</span></h2>
-      <div class="btn-row">
-        <button class="btn ghost small" id="btnMixedLogs">📋 &nbsp;Attempt history &amp; session logs</button>
-        <button class="btn ghost small danger" id="btnMixedClear">🗑 &nbsp;Clear mixed review history</button>
+      <div class="mix-history-row">
+        <button class="btn ghost small" id="btnMixedLogs">Attempt history</button>
+        <button class="btn ghost small danger" id="btnMixedClear">Clear history</button>
       </div>
     </div>
   </section>
@@ -989,7 +964,7 @@ header.top{
       <p>Every question you answer incorrectly is added to that part's revision set. Answer it correctly in a later run — either a full run or an incorrect-set review — and it is removed automatically. Deleting a recorded attempt from a part&#39;s session log also removes the questions that only that attempt got wrong.</p>
 
       <h4>Mixed Review</h4>
-      <p>The <b>Mixed Review</b> card on the Specialties screen draws at random from every question you have not attempted yet, across all seven specialties. The <b>Draw from</b> dropdown can narrow the pool to one specialty; the pool count, kind chips and start button all follow that choice. The screen also lets you choose which kinds of question a run draws &#8212; <b>Both</b>, <b>MCQ / EMQ</b> only, or <b>SAQ cases</b> only &#8212; and how many per run: one of the three presets, or any number you type (1&#8211;500; a run simply stops when the pool runs out). If a paused run was drawn from a different specialty than the one now selected, the screen shows an explicit resume-or-discard choice rather than silently resuming or replacing it. A wrong answer joins the revision set of the specialty the question came from and a right one clears it there, so the specialty hubs stay accurate, while part scores and attempt counts are untouched. Mixed runs are logged under their own part name, with each question&#39;s specialty and the run&#39;s draw source recorded.</p>
+      <p>The <b>Mixed Review</b> card on the Specialties screen draws at random from questions you have not attempted yet. Its three dropdowns set the <b>Specialty</b>, the <b>Question kinds</b> (Both, MCQ / EMQ, or SAQ cases), and the <b>Questions per run</b>; the specialty choices show how many questions are available for the current kind selection. A run stops at whatever remains if fewer than the selected length are left. If a paused run was drawn from a different specialty than the one now selected, the screen shows a resume-or-start-new choice rather than silently resuming or replacing it. A wrong answer joins the revision set of the specialty the question came from and a right one clears it there, so the specialty hubs stay accurate, while part scores and attempt counts are untouched. Mixed runs are logged under their own part name, with each question&#39;s specialty and the run&#39;s draw source recorded.</p>
 
       <h4>Autosave</h4>
       <p>While a quiz is open, your progress is saved every five seconds and whenever the page is hidden or closed (where your browser supports it). Autosave covers your position, checked answers, selections and written drafts. Progress is stored in this browser only and is not synced between devices.</p>
@@ -1620,109 +1595,78 @@ function backToHub(){
   if(part && part.mixed){ enterMixed(); return; }
   showHub();
 }
-function fillMixedSpecialtySelect(){
+function fillMixedSpecialtySelect(pool){
   const sel = $("mxSpecialty");
-  if(!sel || sel.options.length) return;
-  sel.innerHTML = '<option value="all">All seven specialties</option>'
-    + AREAS.map(area => `<option value="${esc(area.key)}">${esc(area.name)}</option>`).join("");
+  if(!sel) return;
+  const counts = pool && pool.byArea ? pool.byArea : {};
+  const signature = AREAS.map(area => counts[area.key] || 0).join(",");
+  if(sel.dataset.signature !== signature){
+    const all = AREAS.reduce((sum, area) => sum + (counts[area.key] || 0), 0);
+    sel.innerHTML = `<option value="all">All seven specialties · ${all.toLocaleString()}</option>`
+      + AREAS.map(area => {
+        const count = counts[area.key] || 0;
+        return `<option value="${esc(area.key)}">${esc(area.name)} · ${count.toLocaleString()}</option>`;
+      }).join("");
+    sel.dataset.signature = signature;
+  }
+  sel.value = pool.specialty;
+}
+function fillMixedLengthSelect(){
+  const sel = $("mxLength");
+  if(!sel) return;
+  const current = mixedLength();
+  const values = [...new Set([5, 10, 20, 30, 40, 50, 100, 200, 500, current])].sort((a, b) => a - b);
+  const signature = values.join(",");
+  if(sel.dataset.signature !== signature){
+    sel.innerHTML = values.map(n => `<option value="${n}">${n} question${n === 1 ? "" : "s"}</option>`).join("");
+    sel.dataset.signature = signature;
+  }
+  sel.value = String(current);
 }
 function renderMixed(){
-  fillMixedSpecialtySelect();
   const pool = mixedPool();
   const items = pool.items;
   const kinds = mixedKinds();
   const specialty = pool.specialty;
-  const specialtyName = mixedSpecialtyName(specialty);
   const sess = loadSession(MIXED_KEY);
   const sessSpecialty = sess ? mixedSessionSpecialty(sess) : null;
   const mismatch = !!sess && sessSpecialty !== specialty;
   const recs = loadRecords(MIXED_KEY);
-  const per = AREAS.map(area => ({
-    name: area.name,
-    count: items.filter(it => area.parts.some(p => p.key === it.p.key)).length
-  }));
+
+  fillMixedSpecialtySelect(pool);
+  fillMixedLengthSelect();
+  $("mxKinds").value = kinds;
   $("mxPool").textContent = items.length.toLocaleString();
-  $("mxAreas").textContent = per.filter(row => row.count).length + " of " + AREAS.length;
-  $("mxPerRun").textContent = mixedLength();
   $("mxRuns").textContent = recs.length;
-  $("mxPoolList").innerHTML = AREAS.map(area => {
-    const count = pool.byArea[area.key] || 0;
-    const selected = area.key === specialty;
-    return `<div class="mix-row${selected ? " selected" : ""}">
-      <span>${esc(area.name)}${selected ? '<span class="mix-tag">drawing</span>' : ""}</span>
-      <b${count ? "" : " class=\"zero\""}>${count ? count.toLocaleString() : "— all attempted"}</b>
-    </div>`;
-  }).join("");
-  const sel = $("mxSpecialty");
-  if(sel && document.activeElement !== sel) sel.value = specialty;
-  $("mxSpecialtyHelp").textContent = specialty === "all"
-    ? "All seven specialties share the draw."
-    : `Only ${specialtyName} questions will be drawn.`;
-  /* One chip per choice, so switching kinds is a single click. */
-  const counts = { both: pool.mcq + pool.saq, mcq: pool.mcq, saq: pool.saq };
-  document.querySelectorAll("[data-mxkind]").forEach(chip => {
-    const kind = chip.dataset.mxkind;
-    chip.className = "btn small" + (kinds === kind ? "" : " ghost");
-    chip.setAttribute("aria-pressed", String(kinds === kind));
-    chip.innerHTML = (kind === "both" ? "Both" : kind === "mcq" ? "MCQ / EMQ" : "SAQ cases")
-      + " · " + counts[kind].toLocaleString();
-  });
-  const lenInput = $("mxLenCustom");
-  if(document.activeElement !== lenInput) lenInput.value = mixedLength();
+
   const btn = $("btnMixedStart");
-  btn.disabled = !items.length && !sess;
-  if(sess){
-    const pausedName = mixedSpecialtyName(sessSpecialty);
-    btn.innerHTML = `▶ &nbsp;Resume paused ${sessSpecialty === "all" ? "mixed" : esc(pausedName)} run (Q ${Math.min(sess.i + 1, sess.q.length)}/${sess.q.length})`;
-  }else if(items.length){
-    btn.innerHTML = `▶ &nbsp;Start a ${Math.min(mixedLength(), items.length)}-question ${specialty === "all" ? "mixed" : esc(specialtyName)} run`;
+  if(mismatch){
+    btn.disabled = true;
+    btn.innerHTML = "▶ &nbsp;Choose a paused run option";
   }else{
-    btn.innerHTML = `▶ &nbsp;Nothing left to draw`;
+    btn.disabled = !items.length && !sess;
+    if(sess){
+      btn.innerHTML = `▶ &nbsp;Resume run · Q ${Math.min(sess.i + 1, sess.q.length)}/${sess.q.length}`;
+    }else if(items.length){
+      btn.innerHTML = `▶ &nbsp;Start ${Math.min(mixedLength(), items.length)} questions`;
+    }else{
+      btn.innerHTML = "▶ &nbsp;Nothing left";
+    }
   }
-  $("btnMixedFresh").classList.toggle("hidden", !sess || !items.length);
-  document.querySelectorAll("[data-mxlen]").forEach(b => {
-    b.className = "btn small" + (Number(b.dataset.mxlen) === mixedLength() ? "" : " ghost");
-  });
+  $("btnMixedFresh").classList.toggle("hidden", !sess || !items.length || mismatch);
+  $("mxStatus").textContent = !items.length && !sess ? "No questions left in this pool." : "";
+
   const pausedChoice = $("mxPausedChoice");
   pausedChoice.classList.toggle("hidden", !mismatch);
   if(mismatch){
-    $("mxPausedTitle").textContent = `Paused run: ${mixedSpecialtyName(sessSpecialty)} (Q ${Math.min(sess.i + 1, sess.q.length)}/${sess.q.length})`;
-    $("mxPausedText").textContent = items.length
-      ? `The dropdown is now set to ${specialtyName}. Resume the paused run, or discard it and draw a fresh ${specialtyName} run.`
-      : `The dropdown is now set to ${specialtyName}, which has nothing left to draw. Resume the paused run, or discard it.`;
+    const pausedName = mixedSpecialtyName(sessSpecialty);
+    const specName = mixedSpecialtyName(specialty);
+    $("mxPausedTitle").textContent = `Paused: ${pausedName} · Q${Math.min(sess.i + 1, sess.q.length)}/${sess.q.length}`;
+    $("mxPausedText").textContent = `Current selection: ${specName}.`;
     const replace = $("btnMixedReplacePaused");
-    replace.textContent = items.length ? "Discard & draw fresh" : "Discard paused run";
+    replace.textContent = items.length ? `Start ${specName} run` : "Discard paused run";
     replace.disabled = false;
   }
-  const kindNote = kinds === "mcq" ? "MCQ / EMQ only. "
-    : kinds === "saq" ? "SAQ cases only. " : "";
-  const scopeNote = specialty === "all" ? "" : `From ${specialtyName} only. `;
-  let note;
-  if(!items.length && sess){
-    note = mismatch
-      ? `Your paused run is from ${mixedSpecialtyName(sessSpecialty)}; the dropdown is now set to ${specialtyName}. Use the choice below to resume it or discard it.`
-      : "Every question has been attempted by now, but your paused run can still be resumed.";
-  }else if(!items.length){
-    if(specialty !== "all"){
-      note = `No unseen ${specialtyName} questions left for this kind selection — choose another specialty or All seven specialties.`;
-    }else if(pool.mcq + pool.saq > 0){
-      note = (kinds === "mcq" ? "No unseen MCQ / EMQ questions left" : "No unseen SAQ cases left")
-        + " — switch the other kind of question on to draw from what remains.";
-    }else{
-      const rev = totalRevSet();
-      note = "Nothing left to draw — every question has been attempted at least once"
-        + (rev ? `. The specialty revision sets still hold ${rev} question${rev === 1 ? "" : "s"} to re-do.` : ".");
-    }
-  }else if(sess){
-    note = mismatch
-      ? `Your paused run is from ${mixedSpecialtyName(sessSpecialty)}; the dropdown is now set to ${specialtyName}. Use the choice below to resume it or discard it.`
-      : kindNote + `Paused mid-run on ${fmtDate(sess.u).slice(0, 10)} — resume it, or start a fresh draw (which discards the paused run).`;
-  }else{
-    note = kindNote + scopeNote + (specialty === "all"
-      ? "Free random: every unseen question has the same chance, so the large specialties fill most of a run."
-      : `Every unseen ${specialtyName} question has the same chance.`);
-  }
-  $("mxNote").textContent = note;
 }
 function mixedCardHtml(){
   const pool = mixedItems().length;
@@ -1748,7 +1692,6 @@ function clearMixedHistory(){
   pruneMixedRevisionSets(recs);
   renderMixed();
 }
-$("btnMixedBack").addEventListener("click", showCategories);
 $("btnMixedStart").addEventListener("click", () => {
   const sess = loadSession(MIXED_KEY);
   if(!sess){ startMixedRun(); return; }
@@ -1788,23 +1731,14 @@ $("mxSpecialty").addEventListener("change", () => {
   setMixedSpecialty($("mxSpecialty").value);
   renderMixed();
 });
-document.querySelectorAll("[data-mxkind]").forEach(chip => chip.addEventListener("click", () => {
-  setMixedKinds(chip.dataset.mxkind);
-  renderMixed();
-}));
-$("mxLenCustom").addEventListener("change", () => {
-  const raw = Math.round(Number($("mxLenCustom").value));
-  setMixedLength(Number.isFinite(raw) && raw >= 1 ? raw : mixedLength());
-  $("mxLenCustom").value = mixedLength();
+$("mxKinds").addEventListener("change", () => {
+  setMixedKinds($("mxKinds").value);
   renderMixed();
 });
-$("mxLenCustom").addEventListener("keydown", event => {
-  if(event.key === "Enter"){ event.preventDefault(); $("mxLenCustom").blur(); }
-});
-document.querySelectorAll("[data-mxlen]").forEach(b => b.addEventListener("click", () => {
-  setMixedLength(Number(b.dataset.mxlen));
+$("mxLength").addEventListener("change", () => {
+  setMixedLength(Number($("mxLength").value));
   renderMixed();
-}));
+});
 
 /* ================= home page: the halo band ================= */
 /* The order of the cards on the Specialties screen: two rows of four with
