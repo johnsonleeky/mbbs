@@ -42,26 +42,26 @@ APP_DATA_RE = re.compile(
 
 QUESTION_IMG_OLD = (
     '<div class="expl-fig"><img src="${src}" '
-    'alt="Figure from question ${q.n} in the source document"></div>'
+    'alt="Figure from question ${q.n}"></div>'
 )
 QUESTION_IMG_NEW = (
     '<div class="expl-fig"><img src="${src}" '
-    'alt="Figure from question ${q.n} in the source document" '
+    'alt="Figure from question ${q.n}" '
     'loading="lazy" decoding="async"></div>'
 )
 
 EXPL_IMG_OLD = (
-    '<img src="${u.t}" alt="Figure from the source document">'
+    '<img src="${u.t}" alt="Question figure">'
 )
 EXPL_IMG_NEW = (
-    '<img src="${u.t}" alt="Figure from the source document" '
+    '<img src="${u.t}" alt="Question figure" '
     'decoding="async">'
 )
 EXPL_IMG_LAZY_OLD = (
-    '<img src="${u.t}" alt="Figure from the source document" loading="lazy">'
+    '<img src="${u.t}" alt="Question figure" loading="lazy">'
 )
 EXPL_IMG_LAZY_NEW = (
-    '<img src="${u.t}" alt="Figure from the source document" '
+    '<img src="${u.t}" alt="Question figure" '
     'loading="lazy" decoding="async">'
 )
 
