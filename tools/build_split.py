@@ -51,9 +51,16 @@ QUESTION_IMG_NEW = (
 )
 
 EXPL_IMG_OLD = (
-    '<img src="${u.t}" alt="Figure from the source document" loading="lazy">'
+    '<img src="${u.t}" alt="Figure from the source document">'
 )
 EXPL_IMG_NEW = (
+    '<img src="${u.t}" alt="Figure from the source document" '
+    'decoding="async">'
+)
+EXPL_IMG_LAZY_OLD = (
+    '<img src="${u.t}" alt="Figure from the source document" loading="lazy">'
+)
+EXPL_IMG_LAZY_NEW = (
     '<img src="${u.t}" alt="Figure from the source document" '
     'loading="lazy" decoding="async">'
 )
@@ -179,9 +186,12 @@ def main() -> None:
         fail("question image template not found; app markup may have changed")
     split_html = split_html.replace(QUESTION_IMG_OLD, QUESTION_IMG_NEW, 1)
 
-    if EXPL_IMG_OLD not in split_html:
+    if EXPL_IMG_LAZY_OLD in split_html:
+        split_html = split_html.replace(EXPL_IMG_LAZY_OLD, EXPL_IMG_LAZY_NEW, 1)
+    elif EXPL_IMG_OLD in split_html:
+        split_html = split_html.replace(EXPL_IMG_OLD, EXPL_IMG_NEW, 1)
+    else:
         fail("explanation image template not found; app markup may have changed")
-    split_html = split_html.replace(EXPL_IMG_OLD, EXPL_IMG_NEW, 1)
 
     index_path = out / "index.html"
     index_path.write_bytes(split_html.encode("utf-8"))
