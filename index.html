@@ -414,6 +414,8 @@ header.top{
 .category-card .category-title,
 .category-card > .muted,
 .category-card .category-meta{max-width:70%;}
+.category-card .category-title.two-line,
+.category-card .category-title.one-line{max-width:100%; white-space:nowrap;}
 .category-enter{white-space:nowrap;}
 @media (max-width:970px){
   .category-card .category-title,
@@ -2591,7 +2593,7 @@ function showCategories(){
     const paused = area.parts.filter(p => loadSession(p.key)).length;
     return `<button class="category-card" data-category="${esc(area.key)}" style="--tone:${SPEC_TONE[area.key] || "#B12D63"}">
       ${cardArt(area)}
-      <span class="category-title">${esc(area.name)}</span>
+      <span class="category-title${area.key === "Orthopaedics" ? " two-line" : area.key === "FamilyMedicine" ? " one-line" : ""}">${area.key === "Orthopaedics" ? "Orthopedics &amp;<br>Traumatology" : esc(area.name)}</span>
       <span class="muted">${questions.length - written} MCQ / EMQ questions${written ? ` · ${written} SAQ questions` : ""}</span>
       <span class="category-meta">${area.parts.length} sections · ${attempts} attempts${paused ? ` · ${paused} paused` : ""}</span>
       <span class="category-enter">Enter specialty →</span>
