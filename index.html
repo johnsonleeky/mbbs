@@ -20,34 +20,82 @@
     color:var(--ink); min-height:100vh; line-height:1.55;
   }
   .wrap{max-width:1060px; margin:0 auto; padding:0 20px 80px;}
-  header.top{
-    position:sticky; top:0; z-index:40;
-    background:rgba(255,248,251,.9);
-    border-bottom:1px solid rgba(177,45,99,.12);
-    color:var(--ink); padding:10px 0; margin:0 0 22px;
-    box-shadow:0 18px 40px -34px rgba(70,20,42,.65);
-    backdrop-filter:blur(18px) saturate(150%);
-    -webkit-backdrop-filter:blur(18px) saturate(150%);
+  /* ================= banner-free masthead ================= */
+  .masthead{
+    position:sticky; top:0; z-index:40; pointer-events:none;
+    padding:16px 0; margin:0;
+    background:transparent; transition:background .18s ease;
   }
-  header.top::before{
-    content:""; position:absolute; inset:0 0 auto; height:3px;
-    background:linear-gradient(90deg,#B12D63,#FF9FC8,#FFD8E8);
+  .masthead.scrolled{
+    background:linear-gradient(180deg, rgba(255,246,250,.99) 0%, rgba(255,246,250,.95) 55%, rgba(255,246,250,0) 100%);
   }
-  header.top .wrap{padding-bottom:0;}
-  .header-inner{display:flex; align-items:center; gap:16px; min-height:48px;}
-  .header-brand{display:flex; align-items:center; gap:10px; min-width:0;}
-  .header-mark{
-    width:34px; height:34px; border-radius:50%; display:grid; place-items:center;
-    flex:0 0 auto; background:linear-gradient(135deg,#B12D63,#FF7FB6); color:#fff;
-    font-size:17px; font-weight:800; line-height:1;
-    box-shadow:0 8px 18px -10px rgba(177,45,99,.8);
+  .masthead-inner{
+    position:relative; pointer-events:auto;
+    max-width:1060px; margin:0 auto; padding:0 20px;
+    display:flex; align-items:center; gap:14px;
   }
-  .header-title{display:flex; flex-direction:column; line-height:1.1; min-width:0;}
-  .header-title strong{
-    font-size:14px; letter-spacing:.08em; text-transform:uppercase;
-    color:var(--navy); white-space:nowrap;
+  .menu-toggle{
+    width:44px; height:44px; border-radius:50%; flex:0 0 auto;
+    display:grid; place-items:center; cursor:pointer;
+    border:1px solid rgba(255,255,255,.55); color:#fff;
+    background:linear-gradient(135deg,#B12D63,#FF7FB6);
+    box-shadow:0 12px 24px -14px rgba(177,45,99,.9);
+    transition:transform .12s ease, filter .12s ease;
   }
-  .header-title span{font-size:11px; color:var(--muted); letter-spacing:.04em; white-space:nowrap;}
+  .menu-toggle:hover{filter:brightness(1.05); transform:translateY(-1px);}
+  .menu-toggle:focus-visible{outline:3px solid rgba(177,45,99,.3); outline-offset:3px;}
+  .menu-bars{display:flex; flex-direction:column; gap:4px;}
+  .menu-bars i{display:block; width:18px; height:2.2px; border-radius:2px; background:#fff;
+    transition:transform .16s ease, opacity .16s ease;}
+  .menu-toggle[aria-expanded="true"] .menu-bars i:nth-child(1){transform:translateY(6.2px) rotate(45deg);}
+  .menu-toggle[aria-expanded="true"] .menu-bars i:nth-child(2){opacity:0;}
+  .menu-toggle[aria-expanded="true"] .menu-bars i:nth-child(3){transform:translateY(-6.2px) rotate(-45deg);}
+  .masthead-brand{
+    min-width:0; display:flex; align-items:center; border:0; background:none; padding:2px 0;
+    font:inherit; color:var(--ink); text-align:left; cursor:pointer;
+  }
+  .masthead-brand:hover .brand-words strong{color:var(--accent-2);}
+  .masthead-brand:focus-visible{outline:3px solid rgba(177,45,99,.25); outline-offset:3px; border-radius:6px;}
+  .brand-words{display:flex; flex-direction:column; min-width:0; line-height:1.1;}
+  .brand-words strong{
+    font-size:16px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--navy); white-space:nowrap; transition:color .12s ease;
+  }
+  .brand-words span{font-size:11.5px; color:var(--muted); letter-spacing:.03em; white-space:nowrap;}
+  .masthead-home{
+    margin-left:auto; border-radius:999px; padding:9px 14px;
+    font-size:13px; font-weight:800; white-space:nowrap;
+  }
+  .header-menu{
+    position:absolute; top:calc(100% + 9px); left:20px; z-index:60;
+    width:248px; max-width:calc(100vw - 28px); padding:7px;
+    border-radius:17px; border:1px solid var(--glass-brd);
+    background:rgba(255,255,255,.985);
+    box-shadow:0 24px 50px -22px rgba(70,20,42,.58), inset 0 1px 0 #fff;
+    animation:menuIn .14s ease both;
+  }
+  @keyframes menuIn{from{opacity:0; transform:translateY(-5px) scale(.98);} to{opacity:1; transform:none;}}
+  .menu-item{
+    width:100%; display:flex; align-items:center; gap:11px; border:0; background:none;
+    font:inherit; font-size:14px; font-weight:700; color:var(--ink); text-align:left;
+    padding:11px 12px; border-radius:12px; cursor:pointer;
+  }
+  .menu-item + .menu-item{margin-top:2px;}
+  .menu-item:hover,.menu-item:focus-visible{background:var(--accent-soft); color:var(--accent-2); outline:none;}
+  .menu-item svg{width:19px; height:19px; color:var(--accent); flex:0 0 auto;}
+  @media (max-width:560px){
+    .masthead{padding:12px 0;}
+    .masthead-inner{padding:0 14px; gap:9px;}
+    .menu-toggle{width:40px; height:40px;}
+    .brand-words strong{font-size:13.5px; letter-spacing:.06em;}
+    .brand-words span{display:none;}
+    .masthead-home{padding:8px 11px; font-size:12px;}
+    .header-menu{left:14px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .header-menu{animation:none;}
+    .menu-toggle,.menu-bars i{transition:none;}
+  }
   .kicker{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-weight:600;}
   h1{font-size:24px; font-weight:800; margin:4px 0 6px; letter-spacing:-.01em;}
   .src{font-size:13px; color:var(--muted); opacity:.85;}
@@ -631,15 +679,31 @@ header.top{
 <div id="appShell" class="hidden" inert>
 
 
-<header class="top">
-  <div class="wrap header-inner">
-    <div class="header-brand">
-      <span class="header-mark" aria-hidden="true">✚</span>
-      <div class="header-title"><strong>HKU MBBS</strong><span>Question Bank</span></div>
+<div class="masthead" id="masthead">
+  <div class="masthead-inner">
+    <button class="menu-toggle" id="btnMenuToggle" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="headerMenu" aria-label="Open navigation menu">
+      <span class="menu-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+    </button>
+    <button class="masthead-brand" id="btnBrandHome" type="button" title="Back to Specialties">
+      <span class="brand-words"><strong>HKU MBBS</strong><span>Question Bank</span></span>
+    </button>
+    <button class="btn ghost small masthead-home" id="btnCategories" type="button">← Specialties</button>
+    <div class="header-menu hidden" id="headerMenu" role="menu" aria-label="Quiz navigation">
+      <button class="menu-item" id="btnMenuSpecialties" role="menuitem" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1.2"/><rect x="14" y="4" width="6" height="6" rx="1.2"/><rect x="4" y="14" width="6" height="6" rx="1.2"/><rect x="14" y="14" width="6" height="6" rx="1.2"/></svg>
+        <span>Specialties</span>
+      </button>
+      <button class="menu-item" id="btnLock" role="menuitem" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.4"/><path d="M8.2 10V7.4a3.8 3.8 0 0 1 7.6 0V10"/><circle cx="12" cy="15" r="1.3"/></svg>
+        <span>Lock Quiz</span>
+      </button>
+      <button class="menu-item" id="btnUserGuide" role="menuitem" type="button" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H19v15H7.5A2.5 2.5 0 0 0 5 20.5z"/><path d="M5 5.5v15"/><path d="M9 7.5h6M9 11h5"/></svg>
+        <span>User Guide</span>
+      </button>
     </div>
-    <nav class="header-nav" aria-label="Quiz navigation"><button class="btn ghost small" id="btnCategories">← Specialties</button><button class="btn ghost small" id="btnLock">Lock Quiz</button><button class="btn ghost small" id="btnUserGuide" type="button" aria-haspopup="dialog">User Guide</button></nav>
   </div>
-</header>
+</div>
 
 <div class="wrap">
   <div id="storageNotice" role="alert" class="banner bad hidden">Browser storage is unavailable or full. Progress may not be saved. Download session logs to keep a copy.</div>
@@ -899,6 +963,9 @@ header.top{
     </div>
     <div class="guide-body">
       <p class="guide-intro">A short guide to the tools available while you revise.</p>
+
+      <h4>Navigation</h4>
+      <p>The banner-free masthead at the top carries a three-line menu button and the HKU MBBS wordmark. On the Specialties home the menu offers <b>Lock Quiz</b> and <b>User Guide</b> only. On any other screen it also offers <b>Specialties</b>, and a separate <b>← Specialties</b> button sits at the top right. Clicking the wordmark also returns to the Specialties home. The masthead stays at the top as you scroll.</p>
 
       <h4>Specialties screen</h4>
       <p>The Specialties screen opens with the rose band, then the seven specialties and Mixed Review as cards in two rows
@@ -1892,6 +1959,9 @@ function hideAll(){
   closeFlags(false);
   dismissHighlightPopup();
   $("btnCategories").classList.remove("hidden");
+  $("btnMenuSpecialties").classList.remove("hidden");
+  $("btnBrandHome").title = "Back to Specialties";
+  closeHeaderMenu(false);
   ["screen-categories","screen-hub","screen-mixed","screen-quiz","screen-result","screen-logs","screen-review-summary"].forEach(id => $(id).classList.add("hidden"));
   $("incompleteModal").classList.add("hidden");
   window.scrollTo(0,0);
@@ -2392,14 +2462,55 @@ $("btnClearHist").addEventListener("click", ()=>{
     renderHub();
   }
 });
-function openGuide(){ $("guideModal").classList.remove("hidden"); $("btnCloseGuide").focus(); }
-function closeGuide(){ $("guideModal").classList.add("hidden"); $("btnUserGuide").focus(); }
+/* ================= banner-free masthead menu ================= */
+function headerMenuOpen(){ return !$("headerMenu").classList.contains("hidden"); }
+function openHeaderMenu(){
+  if(headerMenuOpen()) return;
+  $("headerMenu").classList.remove("hidden");
+  $("btnMenuToggle").setAttribute("aria-expanded", "true");
+  const first = $("headerMenu").querySelector(".menu-item:not(.hidden)");
+  if(first) first.focus();
+}
+function closeHeaderMenu(returnFocus){
+  if(!headerMenuOpen()) return;
+  $("headerMenu").classList.add("hidden");
+  $("btnMenuToggle").setAttribute("aria-expanded", "false");
+  if(returnFocus) $("btnMenuToggle").focus();
+}
+function toggleHeaderMenu(){ headerMenuOpen() ? closeHeaderMenu(true) : openHeaderMenu(); }
+$("btnMenuToggle").addEventListener("click", event => { event.stopPropagation(); toggleHeaderMenu(); });
+$("headerMenu").addEventListener("keydown", event => {
+  const items = [...$("headerMenu").querySelectorAll(".menu-item:not(.hidden)")];
+  if(!items.length) return;
+  const at = items.indexOf(document.activeElement);
+  if(event.key === "ArrowDown"){ event.preventDefault(); items[(at + 1 + items.length) % items.length].focus(); }
+  else if(event.key === "ArrowUp"){ event.preventDefault(); items[(at - 1 + items.length) % items.length].focus(); }
+  else if(event.key === "Home"){ event.preventDefault(); items[0].focus(); }
+  else if(event.key === "End"){ event.preventDefault(); items[items.length - 1].focus(); }
+});
+document.addEventListener("click", event => {
+  if(!headerMenuOpen()) return;
+  if(event.target.closest("#headerMenu") || event.target.closest("#btnMenuToggle")) return;
+  closeHeaderMenu(false);
+});
+document.addEventListener("keydown", event => {
+  if(event.key === "Escape" && headerMenuOpen()) closeHeaderMenu(true);
+});
+$("btnMenuSpecialties").addEventListener("click", () => { closeHeaderMenu(false); showCategories(); });
+$("btnBrandHome").addEventListener("click", () => { closeHeaderMenu(false); showCategories(); });
+function updateMastheadScroll(){ $("masthead").classList.toggle("scrolled", window.scrollY > 8); }
+window.addEventListener("scroll", updateMastheadScroll, { passive: true });
+updateMastheadScroll();
+
+function openGuide(){ closeHeaderMenu(false); $("guideModal").classList.remove("hidden"); $("btnCloseGuide").focus(); }
+function closeGuide(){ $("guideModal").classList.add("hidden"); $("btnMenuToggle").focus(); }
 $("btnUserGuide").addEventListener("click", openGuide);
 $("btnCloseGuide").addEventListener("click", closeGuide);
 $("guideModal").addEventListener("click", event => { if(event.target === $("guideModal")) closeGuide(); });
 document.addEventListener("keydown", event => { if(event.key === "Escape" && !$("guideModal").classList.contains("hidden")) closeGuide(); });
 document.addEventListener("keydown", e=>{
   if(e.target.closest("#scratchpadPanel")) return;
+  if(!$("headerMenu").classList.contains("hidden")) return;
   if(!unlocked || e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
   if(!$("flagPanel").classList.contains("hidden") || !$("highlightPopup").classList.contains("hidden")) return;
   if(window.getSelection() && !window.getSelection().isCollapsed) return;
@@ -2452,8 +2563,11 @@ function showCategories(){
   }
   hideAll();
   activeArea = null;
+  closeHeaderMenu(false);
   $("screen-categories").classList.remove("hidden");
   $("btnCategories").classList.add("hidden");
+  $("btnMenuSpecialties").classList.add("hidden");
+  $("btnBrandHome").title = "Specialties home";
   const cardOf = area => {
     const questions = area.parts.flatMap(p => p.questions);
     const written = area.parts.filter(p => p.kind === "written").reduce((sum, p) => sum + p.questions.length, 0);
@@ -2519,6 +2633,7 @@ function revealWritten(q){
 }
 
 function lockQuiz(){
+  closeHeaderMenu(false);
   closeScratchpad(false);
   closeFlags(false);
   dismissHighlightPopup();
@@ -2553,7 +2668,7 @@ $("passwordForm").addEventListener("submit", async event => {
     $("passwordGate").classList.add("hidden");
     $("appShell").classList.remove("hidden");
     $("appShell").inert = false;
-    ($("btnCategories").classList.contains("hidden") ? $("btnLock") : $("btnCategories")).focus();
+    $("btnMenuToggle").focus();
   }catch(error){
     console.error("HKU MBBS Question Bank password verification failed", error);
     $("passwordError").textContent = error.message + " Open this HTML in a current Chrome, Edge, Firefox or Safari browser.";
@@ -2562,7 +2677,7 @@ $("passwordForm").addEventListener("submit", async event => {
   }
 });
 $("btnLock").addEventListener("click", lockQuiz);
-$("btnCategories").addEventListener("click", showCategories);
+$("btnCategories").addEventListener("click", () => { closeHeaderMenu(false); showCategories(); });
 $("writtenResponse").addEventListener("input", () => {
   if(part && QS()[queue[idx]]) drafts[QS()[queue[idx]].n] = $("writtenResponse").value;
 });
