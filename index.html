@@ -405,8 +405,21 @@ header.top{
 .part-card{border-radius:20px; padding:16px 18px;}
 .part-card:hover{transform:translateY(-2px); box-shadow:0 26px 48px -30px rgba(70,20,42,.5), inset 0 1px 0 #fff;}
 .stat{border-radius:18px;}
-.category-card{border-radius:22px; padding:26px;}
+.category-card{border-radius:22px; padding:26px; position:relative; overflow:hidden; min-height:300px;}
 .category-card:hover{border-color:#ffffff;}
+.category-art{position:absolute; right:12px; bottom:58px; width:min(36%,160px); color:var(--tone,var(--accent));
+  opacity:.70; pointer-events:none;}
+.category-art svg{display:block; width:100%; height:auto; fill:none; stroke:currentColor;
+  stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round;}
+.category-card .category-title,
+.category-card > .muted,
+.category-card .category-meta{max-width:70%;}
+.category-enter{white-space:nowrap;}
+@media (max-width:970px){
+  .category-card .category-title,
+  .category-card > .muted,
+  .category-card .category-meta{max-width:60%;}
+}
 .flag-panel,.scratchpad-panel{
   background:rgba(255,255,255,.88); border:1px solid var(--glass-brd); box-shadow:var(--glass-shadow);
   backdrop-filter:blur(12px) saturate(140%); -webkit-backdrop-filter:blur(12px) saturate(140%);
@@ -551,7 +564,7 @@ header.top{
 .halo{display:grid; gap:16px; margin:0 0 22px;}
 .halo-row{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
 @media (min-width:971px){
-  .category-card{min-height:323px;}
+  .category-card{min-height:360px;}
 }
 .hub-band{display:flex; align-items:center; gap:22px; padding:20px 24px; border-radius:24px; min-width:0;
   border:1px solid var(--glass-brd); background:linear-gradient(150deg, rgba(255,255,255,.86), rgba(255,228,239,.72));
@@ -1719,8 +1732,8 @@ function mixedCardHtml(){
   const kinds = mixedKinds();
   const specialty = mixedSpecialty();
   const what = kinds === "mcq" ? "MCQ / EMQ " : kinds === "saq" ? "SAQ " : "";
-  return `<button class="category-card" data-category="${MIXED_KEY}">
-      <span class="category-icon">${specMark(MIXED_AREA)}</span>
+  return `<button class="category-card" data-category="${MIXED_KEY}" style="--tone:${SPEC_TONE[MIXED_KEY]}">
+      ${cardArt(MIXED_AREA)}
       <span class="category-title">Mixed Review</span>
       <span class="muted">${poolData.repeats ? "Repeat" : "Unseen"} ${what}questions from ${esc(mixedSpecialtyName(specialty))}</span>
       <span class="category-meta">${pool.toLocaleString()} in the pool · ${attempts} attempt${attempts === 1 ? "" : "s"}${paused ? " · 1 paused" : ""}</span>
@@ -2540,6 +2553,26 @@ function specMark(area){
    crossing arrows, the usual sign for a shuffle. */
 SPEC_GLYPH[MIXED_KEY] = '<path d="M6 26 26 6"/><path d="M19 6h7v7"/>'
   + '<path d="M6 6 26 26"/><path d="M26 19v7h-7"/>';
+/* Full-card anatomical corner art for the Specialties home cards. */
+const CARD_ART = {
+  "Med": '<path d="M100 55c-13-21-48-16-48 11 0 29 48 59 48 59s48-30 48-59c0-27-35-32-48-11z"/><path d="M25 116h30l10-24 14 48 12-24h34"/>',
+  "FamilyMedicine": '<circle cx="68" cy="55" r="14"/><path d="M42 108c0-20 12-36 26-36s26 16 26 36"/><circle cx="133" cy="67" r="12"/><path d="M110 118c0-18 10-32 23-32s23 14 23 32"/><path d="M84 158c0-25 15-43 36-43s36 18 36 43"/>',
+  "O&G": '<path d="M79 62c0 29 9 51 21 51s21-22 21-51"/><path d="M79 62c-8 0-17 8-23 20M121 62c8 0 17 8 23 20"/><circle cx="48" cy="87" r="10"/><circle cx="152" cy="87" r="10"/><path d="M100 113v39"/>',
+  "Paed": '<path d="M62 48h128"/><path d="M62 48 44 152M62 48 80 152"/><path d="M190 48 172 152M190 48 196 152"/><path d="M118 48v72M142 48v72"/><path d="M112 120h36"/><circle cx="130" cy="80" r="8"/><path d="M130 88v18M130 94l-12-8M130 94l12-8M130 106l-8 14M130 106l8 14"/><circle cx="172" cy="148" r="9"/><path d="M165 143c5 3 9 7 12 12M172 139v18"/><rect x="48" y="144" width="14" height="14" rx="3"/><path d="M48 151h14M55 144v14"/>',
+  "Psy": '<path d="M128 45c-36 0-61 25-61 58 0 18 8 31 18 40v24h33v-18c18-9 31-25 31-47 0-18-8-34-23-42"/><path d="M113 77a18 18 0 0 1 18 18 26 26 0 0 1-26 26 34 34 0 0 1-34-34 42 42 0 0 1 42-42"/><circle cx="119" cy="92" r="2.2"/>',
+  "Surg_O&T": '<path d="M30 176 96 110 112 126 46 192Z"/><path d="M96 110 186 30Q164 72 132 112L112 126Z"/><circle cx="104" cy="118" r="3.5"/><path d="M42 164 58 180M52 154 68 170"/>',
+  "Orthopaedics": '<g transform="rotate(-45 100 100)"><rect x="42" y="93" width="116" height="14" rx="7"/><rect x="28" y="76" width="14" height="48" rx="7"/><rect x="12" y="68" width="14" height="64" rx="7"/><rect x="158" y="76" width="14" height="48" rx="7"/><rect x="174" y="68" width="14" height="64" rx="7"/><path d="M58 100h8M72 100h8M88 100h8M104 100h8M120 100h8M136 100h8"/></g>',
+  [MIXED_KEY]: '<path d="M36 140C78 140 94 60 152 60"/><path d="M36 60C78 60 94 140 152 140"/><path d="M138 44l20 16-20 16"/><path d="M138 124l20 16-20 16"/>'
+};
+const SPEC_TONE = {
+  "Med": "#B12D63", "FamilyMedicine": "#C54B78", "O&G": "#C43D75", "Paed": "#D05A84",
+  "Psy": "#8A3A6B", "Surg_O&T": "#92204E", "Orthopaedics": "#7C2348", [MIXED_KEY]: "#B12D63"
+};
+function cardArt(area){
+  const art = CARD_ART[area.key];
+  if(!art) return "";
+  return `<span class="category-art" aria-hidden="true"><svg viewBox="0 0 200 200">${art}</svg></span>`;
+}
 function showCategories(){
   if(!$("screen-quiz").classList.contains("hidden") && part){
     if(!saveAndQuit()) return;
@@ -2556,8 +2589,8 @@ function showCategories(){
     const written = area.parts.filter(p => p.kind === "written").reduce((sum, p) => sum + p.questions.length, 0);
     const attempts = area.parts.reduce((sum, p) => sum + loadRecords(p.key).length, 0);
     const paused = area.parts.filter(p => loadSession(p.key)).length;
-    return `<button class="category-card" data-category="${esc(area.key)}">
-      <span class="category-icon">${specMark(area)}</span>
+    return `<button class="category-card" data-category="${esc(area.key)}" style="--tone:${SPEC_TONE[area.key] || "#B12D63"}">
+      ${cardArt(area)}
       <span class="category-title">${esc(area.name)}</span>
       <span class="muted">${questions.length - written} MCQ / EMQ questions${written ? ` · ${written} SAQ questions` : ""}</span>
       <span class="category-meta">${area.parts.length} sections · ${attempts} attempts${paused ? ` · ${paused} paused` : ""}</span>
