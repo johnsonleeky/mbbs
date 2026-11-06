@@ -1103,7 +1103,7 @@ function inlineMD(s){
   return t;
 }
 function renderExpl(expl){
-  if(!expl || !expl.length) return '';
+  if(!expl || !expl.length) return '<p class="note">No explanation provided.</p>';
   let out = [], subIndent = false, headIndent = false;
   const closeHead = () => { if(headIndent){ out.push("</div>"); headIndent = false; } };
   const closeAll = () => { if(headIndent){ out.push("</div>"); headIndent = false; } if(subIndent){ out.push("</div>"); subIndent = false; } };
@@ -2054,10 +2054,8 @@ function renderCheckedFeedback(q){
   });
   if(q.noAns){
     const key = q.sourceAnswer ? ` Answer key: ${esc(q.sourceAnswer)}.` : "";
-    const note = renderExpl(q.expl);
-    const noteBox = note ? `<div class="expl-box"><div class="expl-title">Note</div><div class="expl">${note}</div></div>` : "";
     $("feedbackZone").innerHTML = `<div class="banner info">⚠ No definitive answer key; this question is not scored.${key}</div>` +
-      noteBox + renderAiSug(q);
+      `<div class="expl-box"><div class="expl-title">Note</div><div class="expl">${renderExpl(q.expl)}</div></div>` + renderAiSug(q);
   }else{
     const label = [q.answer, ...(q.alt || [])].join("/");
     const banner = q.written
@@ -2065,9 +2063,9 @@ function renderCheckedFeedback(q){
       : isCorrect(q)
         ? `<div class="banner good">✓ Correct — the answer is ${label}. Your choice: ${chosen}.</div>`
         : `<div class="banner bad">✕ Incorrect — the correct answer is ${label} (your choice: ${chosen}).</div>`;
-    const expl = renderExpl(q.expl);
-    const explBox = expl ? `<div class="expl-box"><div class="expl-title">${q.written ? "Answer · self-assessment only" : "Explanation"}</div><div class="expl">${expl}</div></div>` : "";
-    $("feedbackZone").innerHTML = banner + explBox + renderAiSug(q) +
+    $("feedbackZone").innerHTML = banner +
+      `<div class="expl-box"><div class="expl-title">${q.written ? "Answer · self-assessment only" : "Explanation"}</div><div class="expl">${renderExpl(q.expl)}</div></div>` +
+      renderAiSug(q) +
       (q.sourceUncertain ? `<div class="inferred-note">This answer is marked tentative (${esc(q.sourceAnswer)}). The displayed key is reproduced, not independently verified.</div>` : "");
   }
   $("btnSubmit").classList.add("hidden");
@@ -2633,9 +2631,9 @@ function prepareWritten(q){
 }
 
 function revealWritten(q){
-  const expl = renderExpl(q.expl);
-  const explBox = expl ? `<div class="expl-box"><div class="expl-title">Answer · self-assessment only</div><div class="expl">${expl}</div></div>` : "";
-  $("feedbackZone").innerHTML = explBox + renderAiSug(q) +
+  $("feedbackZone").innerHTML =
+    `<div class="expl-box"><div class="expl-title">Answer · self-assessment only</div><div class="expl">${renderExpl(q.expl)}</div></div>` +
+    renderAiSug(q) +
     `<div class="inferred-note">Compare your response with the answer, then choose your self-assessment below. This is not automatic marking.</div>`;
   $("feedbackZone").after($("qOpts"));
   $("qOpts").classList.remove("hidden");
