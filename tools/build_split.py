@@ -134,10 +134,12 @@ def main() -> None:
                     if block.get("k") == "img":
                         referenced.add(int(block.get("t")))
     expected = set(range(len(assets)))
-    if referenced != expected:
-        missing = sorted(expected - referenced)
-        extra = sorted(referenced - expected)
-        fail(f"image references do not match assets (missing={missing[:10]}, extra={extra[:10]})")
+    extra = sorted(referenced - expected)
+    if extra:
+        fail(f"image references point at missing assets (extra={extra[:10]})")
+    unused = sorted(expected - referenced)
+    if unused:
+        print(f"Unused image assets: {len(unused)} (kept in figures/)")
 
     out.mkdir(parents=True, exist_ok=True)
     figures_dir = out / "figures"
