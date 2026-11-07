@@ -2091,7 +2091,7 @@ function renderQ(){
   $("feedbackZone").before($("qOpts"));
   $("qNum").textContent = `Question ${idx+1} / ${queue.length}` + (mode==="review" ? " · revision set" : "");
   $("qTopic").textContent = topicName(q.topic) + " · " + q.year;
-  $("qStem").textContent = `${q.sourceId} · ${q.year}\n\n${q.stem}`;
+  $("qStem").textContent = q.stem;
   $("qImages").innerHTML = (q.images || []).map(src => `<div class="expl-fig"><img src="${src}" alt="Figure from question ${q.n}" loading="lazy" decoding="async"></div>`).join("");
   $("qOpts").innerHTML = q.opts.map(o =>
     `<button class="opt${answers[q.n] === o.l ? " selected" : ""}" data-l="${o.l}"><span class="letter">${o.l}</span><span class="txt">${esc(o.t)}</span></button>`).join("");
