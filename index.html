@@ -148,11 +148,12 @@
   .rev-chip{display:inline-flex; align-items:center; gap:5px; background:var(--bad-soft); color:#b91c1c; font-size:11px; font-weight:700; padding:2px 9px; border-radius:999px;}
   .rev-chip.zero{background:#F3D9E4; color:#71545F;}
   .pause-chip{display:inline-flex; align-items:center; gap:5px; background:var(--warn-soft); color:#b45309; font-size:11px; font-weight:700; padding:2px 9px; border-radius:999px;}
-  .pc-runline{padding:17px 17px 16px; gap:0;}
-  .pc-runline .pc-top{align-items:flex-start;}
-  .pc-runline .pc-title{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.6em;}
-  .pc-runline .pc-sub{margin-top:2px;}
-  .pc-runline-row{display:flex; align-items:baseline; gap:7px; margin-top:14px; min-height:24px;}
+  .part-card.pc-runline{padding:18px; gap:0; border-radius:16px;}
+  .pc-run-head{display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:9px; align-items:start; min-height:48px;}
+  .pc-run-num{padding:3px 8px; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-size:8.5px; font-weight:800; letter-spacing:.1em; line-height:1.55;}
+  .pc-runline .pc-title{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.5em; font-size:15px; line-height:1.25; font-weight:800; color:var(--navy); letter-spacing:-.01em;}
+  .pc-run-count{font-size:9px; font-weight:700; color:var(--muted); white-space:nowrap; padding-top:2px;}
+  .pc-runline-row{display:flex; align-items:baseline; gap:7px; margin-top:16px; min-height:24px;}
   .pc-runline-row .grow{flex:1;}
   .pc-runfrac{display:inline-flex; align-items:baseline; gap:4px; white-space:nowrap;}
   .pc-runfrac b{font-size:16px; font-weight:800; line-height:1; color:var(--navy); font-variant-numeric:tabular-nums; letter-spacing:-.02em;}
@@ -171,7 +172,7 @@
   .pc-run-icons{display:flex; align-items:center; gap:5px;}
   .pc-run-start{display:inline-flex; align-items:center; justify-content:center; gap:5px; border:1px solid transparent; background:linear-gradient(135deg,var(--accent),#6F1F43); color:#fff; border-radius:8px; padding:8px 12px; font:inherit; font-size:10.5px; font-weight:800; line-height:1; cursor:pointer; box-shadow:0 9px 18px -15px rgba(177,45,99,.95); white-space:nowrap;}
   .pc-run-start:hover{filter:brightness(1.05);}
-  .pc-icon-btn{display:inline-flex; align-items:center; justify-content:center; gap:3px; border:1px solid var(--line); background:#fff; color:var(--muted); border-radius:8px; padding:7px; font:inherit; font-size:9.5px; font-weight:800; line-height:1; cursor:pointer; white-space:nowrap;}
+  .pc-icon-btn{display:inline-flex; align-items:center; justify-content:center; gap:3px; border:1px solid var(--line); background:#fff; color:var(--muted); border-radius:8px; padding:7px; font:inherit; font-size:10px; font-weight:800; line-height:1; cursor:pointer; white-space:nowrap;}
   .pc-icon-btn:hover{color:var(--accent); border-color:#F0BFD3; background:var(--accent-soft);}
   .pc-icon-btn:disabled{opacity:.38; cursor:default; background:#fff;}
   .pc-mini-ico{width:13px; height:13px; display:inline-block; flex:0 0 auto;}
@@ -1456,13 +1457,13 @@ function partCard(p){
     ? `<span class="pc-runfrac"><b>${runDone}</b><span>/ ${runTotal}</span><small>done</small></span>`
     : `<span class="pc-runfrac empty">No run yet</span>`;
   const startLabel = s.sess ? "Resume" : "Start";
+  const rawNum = String(p.displayKey || p.key.toUpperCase());
+  const numLabel = /^\d$/.test(rawNum) ? "0" + rawNum : rawNum;
   return `<div class="part-card pc-runline">
-      <div class="pc-top">
-        <div class="pc-key">${esc(p.displayKey || p.key.toUpperCase())}</div>
-        <div>
-          <div class="pc-title">${esc(p.title)}</div>
-          <div class="pc-sub">${p.questions.length} ${p.kind === "written" ? "self-assessed cases" : "questions"}</div>
-        </div>
+      <div class="pc-run-head">
+        <span class="pc-run-num">${esc(numLabel)}</span>
+        <div class="pc-title">${esc(p.title)}</div>
+        <span class="pc-run-count">${p.questions.length} ${p.kind === "written" ? "self-assessed cases" : "questions"}</span>
       </div>
       <div class="pc-runline-row">${runLabel}<span class="grow"></span><span class="pc-run-status ${runStatusCls}">${runStatus}</span></div>
       <div class="pc-bar"><i style="width:${runPct}%;"></i></div>
