@@ -693,6 +693,81 @@ header.top{
 @media (max-width:460px){
   #passwordGate .password-card{max-width:min(286px,75.7cqw);}
 }
+
+/* Quiet Paper question card */
+#screen-quiz.card{
+  background:#fffdfd; border:1px solid #efdbe5; border-radius:18px;
+  box-shadow:0 1px 2px rgba(70,20,42,.045); padding:28px 30px;
+}
+#screen-quiz .progress-track{height:4px; background:#f3e3eb;}
+#screen-quiz .progress-fill{background:linear-gradient(90deg,var(--accent),#e6a1bd);}
+#screen-quiz .quiz-meta{padding-bottom:12px; border-bottom:1px solid #f3e3eb; margin-bottom:18px;}
+#screen-quiz .qnum{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent);}
+#screen-quiz .topic-badge{background:transparent; border:1px solid #efdbe5; color:var(--muted);}
+#screen-quiz .stem{font-family:Georgia,"Times New Roman",serif; font-size:20px; line-height:1.62; color:#321722; margin:4px 0 22px;}
+#screen-quiz .opts{gap:9px;}
+#screen-quiz .opt{background:#fff; border:1px solid #ecd9e3; border-radius:10px; padding:13px 15px; font-size:15.5px; box-shadow:none;}
+#screen-quiz .opt:hover:not(:disabled){background:#fff8fb; border-color:#d9a9bd;}
+#screen-quiz .opt.selected{background:#fff; border-color:var(--accent); box-shadow:inset 3px 0 0 var(--accent);}
+#screen-quiz .opt .letter{width:28px; height:28px; flex-basis:28px; background:#fff; border:1px solid #e3c5d2; border-radius:50%; color:var(--accent); font-size:13px;}
+#screen-quiz .opt.correct .letter{background:var(--good); border-color:var(--good); color:#fff;}
+#screen-quiz .opt.wrong .letter{background:var(--bad); border-color:var(--bad); color:#fff;}
+#screen-quiz .quiz-actions{margin-top:22px; padding-top:18px; border-top:1px solid #f3e3eb;}
+#screen-quiz .expl-box{background:#fff; border:1px solid #f0dce6; border-left:2px solid var(--accent); border-radius:10px; box-shadow:none;}
+#screen-quiz .banner{border-radius:10px;}
+
+@media (max-width:560px){
+  #screen-quiz.card{padding:20px 18px;}
+  #screen-quiz .stem{font-size:18px;}
+}
+
+/* ===================================================================== */
+/* ============  QUIZ TOOLBAR + ACTION BUTTON SYSTEM  ================== */
+/* ===================================================================== */
+.quiz-toolbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; flex-wrap:wrap;}
+.quiz-toolbar-main{display:flex; align-items:center; gap:10px; min-width:0;}
+.quiz-toolbar-actions{display:flex; align-items:center; gap:6px; margin-left:auto;}
+.tool-btn{display:inline-flex; align-items:center; justify-content:center; gap:6px; border:1px solid var(--line); background:rgba(255,255,255,.7); color:var(--accent); font:inherit; font-size:12.5px; font-weight:700; padding:7px 11px; border-radius:9px; cursor:pointer; box-shadow:none; transition:background .12s ease, border-color .12s ease, color .12s ease;}
+.tool-btn:hover,.tool-btn:focus-visible{background:#fff; border-color:rgba(177,45,99,.36); color:var(--accent-2); outline:none;}
+.tool-btn[aria-pressed="true"]{background:var(--accent-soft); border-color:var(--accent); color:var(--accent-2);}
+.tool-btn.icon{width:34px; height:34px; padding:0; font-size:18px; line-height:1; color:var(--muted);}
+.tool-btn.icon:hover,.tool-btn.icon:focus-visible{color:var(--accent);}
+.quiz-more-wrap{position:relative;}
+.quiz-more{position:absolute; right:0; top:calc(100% + 8px); z-index:35; width:250px; max-width:calc(100vw - 40px); padding:7px; border:1px solid var(--glass-brd); border-radius:15px; background:rgba(255,255,255,.985); box-shadow:0 24px 48px -22px rgba(70,20,42,.6), inset 0 1px 0 #fff;}
+.quiz-menu-item{display:flex; align-items:center; gap:8px; width:100%; border:0; background:none; font:inherit; font-size:13.5px; font-weight:700; color:var(--ink); text-align:left; padding:10px 11px; border-radius:9px; cursor:pointer;}
+.quiz-menu-item:hover,.quiz-menu-item:focus-visible{background:var(--accent-soft); color:var(--accent-2); outline:none;}
+.quiz-menu-item.danger{color:var(--bad);}
+.quiz-menu-item.danger:hover,.quiz-menu-item.danger:focus-visible{background:var(--bad-soft); color:#991b1b;}
+.quiz-menu-item .flag-icon{width:15px; height:15px;}
+.quiz-more .jump-form{display:block; padding:6px 6px 10px; margin-bottom:4px; border-bottom:1px solid var(--line);}
+.quiz-more .jump-form label{display:block; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:800; margin-bottom:5px;}
+.quiz-more .jump-row{display:flex; align-items:center; gap:6px;}
+.quiz-more .jump-form input{width:56px; padding:7px 8px; border:1px solid var(--line); border-radius:7px; background:#fff; font:inherit; font-size:13px;}
+.quiz-more .jump-form input:focus{outline:2px solid var(--accent-soft); border-color:var(--accent);}
+.quiz-more .jump-form input[aria-invalid="true"]{border-color:var(--bad);}
+.quiz-more .jump-form .btn{padding:6px 9px; font-size:11.5px; border-radius:7px; box-shadow:none;}
+.quiz-more .navigation-error{font-size:11.5px; margin:5px 0 0; min-height:0;}
+.quiz-status{display:flex; align-items:center; justify-content:space-between; gap:10px; margin:8px 0 16px; font-size:12px; color:var(--muted); flex-wrap:wrap;}
+.quiz-status .score-so-far{font-size:12px; color:var(--muted); font-weight:600;}
+.quiz-status .autosave-status{margin:0; font-size:11.5px; color:var(--muted);}
+.quiz-actions{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:20px; padding-top:16px; border-top:1px solid rgba(177,45,99,.14);}
+.quiz-nav-actions{display:flex; align-items:center; gap:8px;}
+.quiz-primary-actions{display:flex; align-items:center; gap:8px; margin-left:auto;}
+#screen-quiz .btn{border-radius:10px; font-size:13px; padding:9px 15px; box-shadow:none;}
+#screen-quiz .btn.ghost{background:rgba(255,255,255,.55); border:1px solid var(--line); color:var(--accent); box-shadow:none;}
+#screen-quiz .btn.ghost:hover,#screen-quiz .btn.ghost:focus-visible{background:#fff; border-color:rgba(177,45,99,.36); outline:none;}
+#screen-quiz .btn.ghost:disabled{opacity:.38; cursor:default;}
+#screen-quiz .btn.quiz-primary{background:var(--accent-grad); color:#fff; border:0; box-shadow:0 10px 22px -14px rgba(177,45,99,.8); padding:10px 18px; font-weight:800;}
+#screen-quiz .btn.quiz-primary:hover,#screen-quiz .btn.quiz-primary:focus-visible{filter:brightness(1.04); outline:none;}
+#screen-quiz .btn.quiz-primary:disabled{opacity:.45; box-shadow:none;}
+@media (max-width:560px){
+  .quiz-toolbar{align-items:flex-start;}
+  .quiz-toolbar-actions{gap:5px; flex-wrap:wrap; justify-content:flex-end;}
+  .tool-btn{font-size:12px; padding:7px 9px;}
+  .tool-btn.icon{width:32px; height:32px;}
+  .quiz-actions{align-items:stretch;}
+  .quiz-primary-actions{width:100%; justify-content:flex-end; margin-left:0;}
+}
 </style>
 </head>
 <body>
@@ -816,24 +891,39 @@ header.top{
   <!-- ============ QUIZ ============ -->
   <section id="screen-quiz" class="card hidden">
     <div class="back-bar"><button class="btn ghost small" id="btnHubFromQuiz">← &nbsp;All parts</button><span class="muted" id="quizPartName"></span></div>
-    <div class="question-navigation">
-  
-  <form id="jumpForm" class="jump-form" novalidate>
-    <label for="jumpInput">Jump to question</label>
-    <input id="jumpInput" type="text" inputmode="numeric" autocomplete="off" aria-describedby="jumpRange jumpError">
-    <span id="jumpRange" class="muted"></span>
-    <button class="btn ghost small" type="submit">Go</button>
-  </form>
-  <button class="btn ghost small" id="btnFinishRun" type="button">Finish run</button>
-<button class="btn ghost small flags-toggle" id="btnOpenFlags" type="button" aria-haspopup="dialog">Flagged (0)</button>
-</div>
-<p id="jumpError" role="alert" class="navigation-error"></p>
+    <div class="quiz-toolbar">
+      <div class="quiz-toolbar-main">
+        <span class="qnum" id="qNum" tabindex="-1"></span>
+        <span class="topic-badge" id="qTopic"></span>
+      </div>
+      <div class="quiz-toolbar-actions">
+        <button class="tool-btn" id="btnFlagQuestion" type="button" aria-pressed="false">Flag</button>
+        <button class="tool-btn" id="btnScratchpad" type="button" aria-haspopup="dialog">Notes</button>
+        <div class="quiz-more-wrap">
+          <button class="tool-btn icon" id="btnQuizMore" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="quizMoreMenu" aria-label="More question actions">⋯</button>
+          <div class="quiz-more hidden" id="quizMoreMenu" role="menu" tabindex="-1">
+            <form id="jumpForm" class="jump-form" novalidate>
+              <label for="jumpInput">Jump to question</label>
+              <div class="jump-row">
+                <input id="jumpInput" type="text" inputmode="numeric" autocomplete="off" aria-describedby="jumpRange jumpError">
+                <span id="jumpRange" class="muted"></span>
+                <button class="btn ghost small" type="submit">Go</button>
+              </div>
+              <p id="jumpError" role="alert" class="navigation-error"></p>
+            </form>
+            <button class="quiz-menu-item" id="btnOpenFlags" type="button" aria-haspopup="dialog">Flagged (0)</button>
+            <button class="quiz-menu-item" id="btnFinishRun" type="button">Finish run</button>
+            <button class="quiz-menu-item" id="btnSaveQuit" type="button">Save &amp; Quit</button>
+            <button class="quiz-menu-item danger" id="btnQuit" type="button">Abandon</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
 <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-    <div class="quiz-meta">
-      <span class="qnum" id="qNum" tabindex="-1"></span><button class="btn ghost small flag-question" id="btnFlagQuestion" type="button" aria-pressed="false">Flag</button><button class="btn ghost small" id="btnScratchpad" type="button" aria-haspopup="dialog">Scratchpad</button>
-      <span class="topic-badge" id="qTopic"></span>
+    <div class="quiz-status">
       <span class="score-so-far" id="scoreSoFar"></span>
+      <span id="autosaveStatus" class="autosave-status">Autosave every 5 seconds</span>
     </div>
     <div id="flagPreviewNote" class="flag-preview-note hidden">This flagged question is outside your saved run. Previewing it does not change that run or its score. <button id="btnReturnFlagRun" class="btn ghost small">Return to saved run</button></div><p id="annotationStatus" role="status"></p>
 <div class="stem" id="qStem"></div>
@@ -842,17 +932,16 @@ header.top{
     <div class="opts" id="qOpts"></div>
     <div id="feedbackZone"></div>
     <div class="quiz-actions">
-      <div style="display:flex;gap:10px;">
-        <button class="btn ghost small" id="btnSaveQuit">⏸ &nbsp;Save &amp; Quit</button>
-        <button class="btn ghost small danger" id="btnQuit">✕ &nbsp;Abandon</button>
+      <div class="quiz-nav-actions">
+        <button class="btn ghost small" id="btnBack" type="button">← Back</button>
+        <button class="btn ghost small" id="btnSkip" type="button">Skip →</button>
       </div>
-      <div class="step-navigation"><button class="btn ghost" id="btnBack" type="button">← Back</button>
-<button class="btn ghost" id="btnSkip" type="button">Next →</button></div>
-<button class="btn" id="btnSubmit" disabled>Check answer</button>
-      <button class="btn hidden" id="btnNext">Next question →</button>
+      <div class="quiz-primary-actions">
+        <button class="btn quiz-primary" id="btnSubmit" disabled>Check answer</button>
+        <button class="btn quiz-primary hidden" id="btnNext">Next question →</button>
+      </div>
     </div>
     <div class="kbd-hint" id="kbdHint"></div>
-<div id="autosaveStatus" class="autosave-status">Autosave every 5 seconds</div>
   </section>
 
   <!-- ============ RESULT ============ -->
@@ -994,10 +1083,13 @@ header.top{
       <b>Mixed Review</b>). Mixed Review itself is entered from its own card.</p>
 
       <h4>Flagging questions</h4>
-      <p>Use the <b>Flag</b> button on any question to mark it for attention, then open <b>Flagged</b> to move between the flagged questions in that topic. Flags are independent of revision sets.</p>
+      <p>Use the <b>Flag</b> button on any question to mark it for attention. The <b>⋯</b> menu holds the flagged-question list, together with jump, finish, save and abandon actions.</p>
 
-      <h4>Scratchpad</h4>
-      <p>Open the <b>Scratchpad</b> beside the Flag button to write notes on the current question. Your notes are saved automatically as you type. Drag the header to move the window, and drag the bottom-right corner to resize it. Notes are stored in this browser only.</p>
+      <h4>Question card actions</h4>
+      <p>The compact toolbar keeps <b>Flag</b>, <b>Notes</b> and the <b>⋯</b> menu beside the question. The menu holds <b>Jump to question</b>, <b>Flagged</b>, <b>Finish run</b>, <b>Save &amp; Quit</b> and <b>Abandon</b>. At the foot of the card, <b>Back</b> and <b>Skip</b> sit on the left, while <b>Check answer</b> and <b>Next question</b> sit on the right.</p>
+
+      <h4>Notes</h4>
+      <p>Open <b>Notes</b> beside the Flag button to write notes on the current question. Your notes are saved automatically as you type. Drag the header to move the window, and drag the bottom-right corner to resize it. Notes are stored in this browser only.</p>
 
       <h4>Highlights</h4>
       <p>Select any text within a question, an answer option or a source explanation, then choose <b>Save highlight</b>. To remove a highlight, click it or select the same text again; removing a highlight also clears any saved highlights that overlap it. Flags and highlights are saved immediately in this browser — they survive a refresh and remain until you remove them. Clearing your attempt history does not remove them.</p>
@@ -1026,6 +1118,7 @@ header.top{
   </div>
 </div>
 </div>
+
 <div id="flagBackdrop" class="flag-backdrop hidden"></div>
 <aside id="flagPanel" class="flag-panel hidden" role="dialog" aria-modal="true" aria-labelledby="flagPanelTitle">
   <div class="flag-panel-header"><h2 id="flagPanelTitle">Flagged questions</h2><button id="btnCloseFlags" class="btn ghost small" aria-label="Close flagged questions">Close</button></div>
@@ -1040,16 +1133,16 @@ header.top{
 </div>
 
 <section id="scratchpadPanel" class="scratchpad-panel hidden" role="dialog" aria-labelledby="scratchpadTitle">
-  <div class="scratchpad-header" title="Drag to move the scratchpad">
+  <div class="scratchpad-header" title="Drag to move Notes">
     <span class="scratchpad-grip" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><circle cx="5" cy="4" r="1.3"/><circle cx="11" cy="4" r="1.3"/><circle cx="5" cy="8" r="1.3"/><circle cx="11" cy="8" r="1.3"/><circle cx="5" cy="12" r="1.3"/><circle cx="11" cy="12" r="1.3"/></svg></span>
-    <h2 id="scratchpadTitle">Scratchpad</h2>
-    <button id="btnCloseScratchpad" class="btn ghost small" type="button" aria-label="Close scratchpad">Close</button>
+    <h2 id="scratchpadTitle">Notes</h2>
+    <button id="btnCloseScratchpad" class="btn ghost small" type="button" aria-label="Close Notes">Close</button>
   </div>
   <p id="scratchpadQuestion" class="muted"></p>
   <textarea id="scratchpadText" aria-label="Notes for this question" placeholder="Your private revision notes..."></textarea>
   <div class="scratchpad-footer">
     <span id="scratchpadStatus" role="status"></span>
-    <button id="scratchpadResize" type="button" aria-label="Resize scratchpad; use arrow keys to adjust" title="Drag to resize">↘</button>
+    <button id="scratchpadResize" type="button" aria-label="Resize Notes; use arrow keys to adjust" title="Drag to resize">↘</button>
   </div>
 </section>
 
@@ -1088,6 +1181,7 @@ let answers = {};                  // selected letter, not necessarily checked
 let checked = {};
 let revealed = {};
 let runFinished = false;
+let annotationTimer = null;
 
 const $ = id => document.getElementById(id);
 const QS = () => part.questions;
@@ -1509,7 +1603,7 @@ function mixedItemsFromPairs(pairs){
   return items;
 }
 function startMixedItems(items, m, specialty, kinds){
-  /* Flags, highlights and scratchpad notes are stored by question number,
+  /* Flags, highlights and Notes are stored by question number,
      and a mixed run numbers its questions 1..N, so a new draw must start
      from a clean slate — otherwise a note left on Q5 of one run would
      reappear on Q5 of the next. Resuming does not come through here. */
@@ -1978,7 +2072,7 @@ function isCorrect(q){
 function updateNavigation(){
   const completed = queue.filter(i => checked[QS()[i].n]).length;
   $("progressFill").style.width = (completed / queue.length * 100) + "%";
-  $("scoreSoFar").textContent = `Checked: ${completed}/${queue.length} · ${queue.length - completed} unanswered`;
+  $("scoreSoFar").textContent = `${completed} of ${queue.length} checked · ${queue.length - completed} unanswered`;
   $("btnBack").disabled = idx === 0;
   $("jumpInput").value = String(idx + 1);
   $("jumpInput").setAttribute("aria-invalid", "false");
@@ -1986,11 +2080,13 @@ function updateNavigation(){
   $("jumpInput").setAttribute("aria-label", `Jump to question, from 1 to ${queue.length}`);
   $("jumpError").textContent = "";
   $("btnSkip").classList.toggle("hidden", !!checked[QS()[queue[idx]].n]);
-  $("btnSkip").textContent = idx === queue.length - 1 ? "Next & finish…" : "Next →";
+  $("btnSkip").textContent = idx === queue.length - 1 ? "Skip & finish…" : "Skip →";
 }
 
 function renderQ(){
   closeScratchpad(false);
+  closeQuizMore(false);
+  clearAnnotationMessage();
   const q = QS()[queue[idx]];
   $("feedbackZone").before($("qOpts"));
   $("qNum").textContent = `Question ${idx+1} / ${queue.length}` + (mode==="review" ? " · revision set" : "");
@@ -2459,6 +2555,7 @@ $("btnClearHist").addEventListener("click", ()=>{
 function headerMenuOpen(){ return !$("headerMenu").classList.contains("hidden"); }
 function openHeaderMenu(){
   if(headerMenuOpen()) return;
+  closeQuizMore(false);
   $("headerMenu").classList.remove("hidden");
   $("btnMenuToggle").setAttribute("aria-expanded", "true");
   const first = $("headerMenu").querySelector(".menu-item:not(.hidden)");
@@ -2501,13 +2598,43 @@ $("btnUserGuide").addEventListener("click", openGuide);
 $("btnCloseGuide").addEventListener("click", closeGuide);
 $("guideModal").addEventListener("click", event => { if(event.target === $("guideModal")) closeGuide(); });
 document.addEventListener("keydown", event => { if(event.key === "Escape" && !$("guideModal").classList.contains("hidden")) closeGuide(); });
+
+/* ---------- compact quiz overflow menu ---------- */
+function quizMoreOpen(){ return !$("quizMoreMenu").classList.contains("hidden"); }
+function openQuizMore(){
+  if(quizMoreOpen()) return;
+  $("quizMoreMenu").classList.remove("hidden");
+  $("btnQuizMore").setAttribute("aria-expanded", "true");
+  $("quizMoreMenu").focus();
+}
+function closeQuizMore(returnFocus=true){
+  if(!quizMoreOpen()) return;
+  $("quizMoreMenu").classList.add("hidden");
+  $("btnQuizMore").setAttribute("aria-expanded", "false");
+  if(returnFocus) $("btnQuizMore").focus();
+}
+function toggleQuizMore(){ quizMoreOpen() ? closeQuizMore(true) : openQuizMore(); }
+$("btnQuizMore").addEventListener("click", event => { event.stopPropagation(); toggleQuizMore(); });
+$("quizMoreMenu").addEventListener("click", event => {
+  if(event.target.closest(".quiz-menu-item") || event.target.closest("button[type='submit']")) closeQuizMore(false);
+});
+$("jumpForm").addEventListener("submit", () => closeQuizMore(false));
+document.addEventListener("click", event => {
+  if(!quizMoreOpen()) return;
+  if(event.target.closest(".quiz-more-wrap")) return;
+  closeQuizMore(false);
+});
+document.addEventListener("keydown", event => {
+  if(event.key === "Escape" && quizMoreOpen()) closeQuizMore(true);
+});
+
 document.addEventListener("keydown", e=>{
   if(e.target.closest("#scratchpadPanel")) return;
   if(!$("headerMenu").classList.contains("hidden")) return;
   if(!unlocked || e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
   if(!$("flagPanel").classList.contains("hidden") || !$("highlightPopup").classList.contains("hidden")) return;
   if(window.getSelection() && !window.getSelection().isCollapsed) return;
-  if(!$("incompleteModal").classList.contains("hidden") || !$("resumeModal").classList.contains("hidden") || !$("guideModal").classList.contains("hidden")) return;
+  if(!$("incompleteModal").classList.contains("hidden") || !$("resumeModal").classList.contains("hidden") || !$("guideModal").classList.contains("hidden") || !$("quizMoreMenu").classList.contains("hidden")) return;
   if(part && QS()[queue[idx]] && QS()[queue[idx]].written && $("qOpts").classList.contains("hidden")) return;
   if(!$("screen-quiz").classList.contains("hidden")){
     const q = QS()[queue[idx]];
@@ -2697,7 +2824,7 @@ $("btnFinishRun").addEventListener("click", () => finishRun());
 $("jumpForm").addEventListener("submit", jumpToQuestion);
 $("btnIncompleteCancel").addEventListener("click", () => {
   $("incompleteModal").classList.add("hidden");
-  $("btnFinishRun").focus();
+  $("btnQuizMore").focus();
 });
 $("btnReturnUnanswered").addEventListener("click", () => {
   const missing = uncheckedQids();
@@ -2744,7 +2871,7 @@ function readAnnotations(key, kind){
     for(const [number, annotation] of Object.entries(value)){
       if(!/^[1-9]\d*$/.test(number)) throw new Error("Invalid saved annotation question number");
       if(kind === "scratchpad"){
-        if(typeof annotation !== "string") throw new Error("Invalid saved scratchpad note");
+        if(typeof annotation !== "string") throw new Error("Invalid saved note");
       }else if(kind === "flags"){
         if(annotation !== true) throw new Error("Invalid saved question flag");
       }else{
@@ -2778,8 +2905,24 @@ function writeAnnotations(key, kind, value){
   }
 }
 function annotationMessage(message, error=false){
-  $("annotationStatus").textContent = message;
-  $("annotationStatus").classList.toggle("annotation-error", error);
+  const status = $("annotationStatus");
+  if(annotationTimer){ clearTimeout(annotationTimer); annotationTimer = null; }
+  status.textContent = message;
+  status.classList.toggle("annotation-error", error);
+  if(message){
+    annotationTimer = setTimeout(() => {
+      status.textContent = "";
+      status.classList.remove("annotation-error");
+      annotationTimer = null;
+    }, error ? 6000 : 3000);
+  }
+}
+function clearAnnotationMessage(){
+  if(annotationTimer){ clearTimeout(annotationTimer); annotationTimer = null; }
+  const status = $("annotationStatus");
+  if(!status) return;
+  status.textContent = "";
+  status.classList.remove("annotation-error");
 }
 function flaggedQuestions(key){
   const flags = readAnnotations(key, "flags");
@@ -3050,7 +3193,11 @@ $("btnFlagQuestion").addEventListener("click", () => {
   const flags = readAnnotations(part.key, "flags");
   if(flags) setQuestionFlag(part.key, q.n, !flags[q.n]);
 });
-$("btnOpenFlags").addEventListener("click", event => openFlags(part.key, event.currentTarget));
+$("btnOpenFlags").addEventListener("click", () => {
+  const trigger = $("btnQuizMore");
+  closeQuizMore(false);
+  openFlags(part.key, trigger);
+});
 $("btnCloseFlags").addEventListener("click", () => closeFlags());
 $("flagBackdrop").addEventListener("click", () => closeFlags());
 $("btnReturnFlagRun").addEventListener("click", returnFromFlagPreview);
