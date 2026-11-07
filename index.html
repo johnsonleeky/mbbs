@@ -556,6 +556,7 @@ header.top{
 .guide-body h4:first-of-type{margin-top:14px;}
 .guide-body p{font-size:13.5px; color:var(--ink);}
 .guide-body b{color:var(--navy);}
+.about-modal .guide-body p + p{margin-top:12px;}
 @media (max-width:560px){
   .guide-modal{max-height:92vh;}
   .guide-head{padding:16px 18px 12px;}
@@ -819,13 +820,17 @@ header.top{
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1.2"/><rect x="14" y="4" width="6" height="6" rx="1.2"/><rect x="4" y="14" width="6" height="6" rx="1.2"/><rect x="14" y="14" width="6" height="6" rx="1.2"/></svg>
         <span>Specialties</span>
       </button>
-      <button class="menu-item" id="btnLock" role="menuitem" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.4"/><path d="M8.2 10V7.4a3.8 3.8 0 0 1 7.6 0V10"/><circle cx="12" cy="15" r="1.3"/></svg>
-        <span>Lock Quiz</span>
+      <button class="menu-item" id="btnAbout" role="menuitem" type="button" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10.8v5.2"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg>
+        <span>About</span>
       </button>
       <button class="menu-item" id="btnUserGuide" role="menuitem" type="button" aria-haspopup="dialog">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H19v15H7.5A2.5 2.5 0 0 0 5 20.5z"/><path d="M5 5.5v15"/><path d="M9 7.5h6M9 11h5"/></svg>
         <span>User Guide</span>
+      </button>
+      <button class="menu-item" id="btnLock" role="menuitem" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.4"/><path d="M8.2 10V7.4a3.8 3.8 0 0 1 7.6 0V10"/><circle cx="12" cy="15" r="1.3"/></svg>
+        <span>Lock Quiz</span>
       </button>
     </div>
   </div>
@@ -1087,7 +1092,7 @@ header.top{
       <p class="guide-intro">A short guide to the tools available while you revise.</p>
 
       <h4>Navigation</h4>
-      <p>The banner-free masthead at the top carries a three-line menu button and the HKU MBBS wordmark. On the Specialties home the menu offers <b>Lock Quiz</b> and <b>User Guide</b> only. On any other screen it also offers <b>Specialties</b>, and a separate <b>← Specialties</b> button sits at the top right. Clicking the wordmark also returns to the Specialties home. The masthead stays at the top as you scroll.</p>
+      <p>The banner-free masthead at the top carries a three-line menu button and the HKU MBBS wordmark. On the Specialties home the menu offers <b>About</b>, <b>User Guide</b> and <b>Lock Quiz</b>. On any other screen it also offers <b>Specialties</b> at the top of the menu, and a separate <b>← Specialties</b> button sits at the top right. Clicking the wordmark also returns to the Specialties home. The masthead stays at the top as you scroll.</p>
 
       <h4>Specialties screen</h4>
       <p>The Specialties screen opens with the rose band, then the seven specialties and Mixed Review as cards in two rows
@@ -1133,6 +1138,20 @@ header.top{
     </div>
   </div>
 </div>
+</div>
+
+<div class="modal-back hidden" id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+  <div class="modal guide-modal about-modal">
+    <div class="guide-head">
+      <h3 id="aboutTitle">About</h3>
+      <button class="btn ghost small" id="btnCloseAbout" type="button">Close</button>
+    </div>
+    <div class="guide-body">
+      <p>This question bank was compiled using questions sourced from the MBBS Goddisk, covering final MB past papers from cohorts M10 through M26. The bank is updated regularly as new material becomes available.</p>
+      <p>Answers and explanations are drawn directly from the source, supplemented with AI-generated content where applicable. Note that AI-generated answers and explanations do not override those taken from the source. Where the two differ, the source material is taken as the correct one.</p>
+      <p>This question bank is intended solely for final MB examination preparation.</p>
+    </div>
+  </div>
 </div>
 
 <div id="flagBackdrop" class="flag-backdrop hidden"></div>
@@ -2610,8 +2629,14 @@ function updateMastheadScroll(){ $("masthead").classList.toggle("scrolled", wind
 window.addEventListener("scroll", updateMastheadScroll, { passive: true });
 updateMastheadScroll();
 
+function openAbout(){ closeHeaderMenu(false); $("aboutModal").classList.remove("hidden"); $("btnCloseAbout").focus(); }
+function closeAbout(){ $("aboutModal").classList.add("hidden"); $("btnMenuToggle").focus(); }
 function openGuide(){ closeHeaderMenu(false); $("guideModal").classList.remove("hidden"); $("btnCloseGuide").focus(); }
 function closeGuide(){ $("guideModal").classList.add("hidden"); $("btnMenuToggle").focus(); }
+$("btnAbout").addEventListener("click", openAbout);
+$("btnCloseAbout").addEventListener("click", closeAbout);
+$("aboutModal").addEventListener("click", event => { if(event.target === $("aboutModal")) closeAbout(); });
+document.addEventListener("keydown", event => { if(event.key === "Escape" && !$("aboutModal").classList.contains("hidden")) closeAbout(); });
 $("btnUserGuide").addEventListener("click", openGuide);
 $("btnCloseGuide").addEventListener("click", closeGuide);
 $("guideModal").addEventListener("click", event => { if(event.target === $("guideModal")) closeGuide(); });
@@ -2652,7 +2677,7 @@ document.addEventListener("keydown", e=>{
   if(!unlocked || e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
   if(!$("flagPanel").classList.contains("hidden") || !$("highlightPopup").classList.contains("hidden")) return;
   if(window.getSelection() && !window.getSelection().isCollapsed) return;
-  if(!$("incompleteModal").classList.contains("hidden") || !$("resumeModal").classList.contains("hidden") || !$("guideModal").classList.contains("hidden") || !$("quizMoreMenu").classList.contains("hidden")) return;
+  if(!$("incompleteModal").classList.contains("hidden") || !$("resumeModal").classList.contains("hidden") || !$("aboutModal").classList.contains("hidden") || !$("guideModal").classList.contains("hidden") || !$("quizMoreMenu").classList.contains("hidden")) return;
   if(part && QS()[queue[idx]] && QS()[queue[idx]].written && $("qOpts").classList.contains("hidden")) return;
   if(!$("screen-quiz").classList.contains("hidden")){
     const q = QS()[queue[idx]];
