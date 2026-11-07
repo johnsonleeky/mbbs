@@ -405,22 +405,38 @@ header.top{
 .part-card{border-radius:20px; padding:16px 18px;}
 .part-card:hover{transform:translateY(-2px); box-shadow:0 26px 48px -30px rgba(70,20,42,.5), inset 0 1px 0 #fff;}
 .stat{border-radius:18px;}
-.category-card{border-radius:22px; padding:26px; position:relative; overflow:hidden; min-height:300px;}
+.category-card{border-radius:22px; padding:22px 20px 20px; position:relative; overflow:hidden; min-height:300px; gap:0;}
 .category-card:hover{border-color:#ffffff;}
-.category-art{position:absolute; right:12px; bottom:58px; width:min(36%,160px); color:var(--tone,var(--accent));
-  opacity:.70; pointer-events:none;}
+.category-art{position:absolute; right:8px; bottom:50px; width:min(42%,150px); color:var(--tone,var(--accent));
+  opacity:.12; pointer-events:none; transition:opacity .18s ease;}
+.category-card:hover .category-art{opacity:.18;}
 .category-art svg{display:block; width:100%; height:auto; fill:none; stroke:currentColor;
   stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round;}
-.category-card .category-title,
-.category-card > .muted,
-.category-card .category-meta{max-width:70%;}
+.category-card .category-title{max-width:100%; position:relative; padding-left:12px;}
+.category-card .category-title::before{content:""; position:absolute; left:0; top:3px; bottom:3px; width:3px; border-radius:999px; background:var(--accent);}
 .category-card .category-title.two-line,
 .category-card .category-title.one-line{max-width:100%; white-space:nowrap;}
-.category-enter{white-space:nowrap;}
+.category-stats-line{display:block; margin-top:12px; font-size:10.5px; font-weight:600; color:var(--muted); line-height:1.65;}
+.category-stats-line + .category-stats-line{margin-top:2px;}
+.category-stats-line b{font-size:13px; font-weight:800; color:var(--navy); font-variant-numeric:tabular-nums; letter-spacing:-.01em; margin-right:3px;}
+.category-stats-line .category-paused,
+.category-stats-line .category-paused b{color:var(--warn);}
+.category-dot{color:#D9B7C6; margin:0 2px;}
+.category-hairline{height:1px; background:linear-gradient(90deg,var(--line),transparent); margin:18px 0 0;}
+.category-mixed-note{margin-top:10px; line-height:1.55;}
+.category-enter{white-space:nowrap; padding-top:20px;}
+@media (max-width:1100px){
+  .halo-row{grid-template-columns:repeat(3,1fr);}
+  .category-stats-line{font-size:11px;}
+  .category-stats-line b{font-size:14px;}
+  .category-dot{margin:0 4px;}
+}
 @media (max-width:970px){
-  .category-card .category-title,
-  .category-card > .muted,
-  .category-card .category-meta{max-width:60%;}
+  .halo-row{grid-template-columns:repeat(2,1fr);}
+  .category-card .category-title{max-width:100%;}
+}
+@media (max-width:620px){
+  .halo-row{grid-template-columns:1fr;}
 }
 .flag-panel,.scratchpad-panel{
   background:rgba(255,255,255,.88); border:1px solid var(--glass-brd); box-shadow:var(--glass-shadow);
@@ -1827,12 +1843,14 @@ function mixedCardHtml(){
   const paused = !!loadSession(MIXED_KEY);
   const kinds = mixedKinds();
   const specialty = mixedSpecialty();
-  const what = kinds === "mcq" ? "MCQ / EMQ " : kinds === "saq" ? "SAQ " : "";
+  const kindLabel = kinds === "mcq" ? "MCQ / EMQ questions" : kinds === "saq" ? "SAQ questions" : "questions";
+  const attemptWord = attempts === 1 ? "attempt" : "attempts";
   return `<button class="category-card" data-category="${MIXED_KEY}" style="--tone:${SPEC_TONE[MIXED_KEY]}">
       ${cardArt(MIXED_AREA)}
       <span class="category-title">Mixed Review</span>
-      <span class="muted">${poolData.repeats ? "Repeat" : "Unseen"} ${what}questions from ${esc(mixedSpecialtyName(specialty))}</span>
-      <span class="category-meta">${pool.toLocaleString()} in the pool · ${attempts} attempt${attempts === 1 ? "" : "s"}${paused ? " · 1 paused" : ""}</span>
+      <span class="category-stats-line"><b>${pool.toLocaleString()}</b> in the pool<span class="category-dot">·</span><b>${attempts}</b> ${attemptWord}${paused ? `<span class="category-dot">·</span><span class="category-paused"><b>1</b> paused</span>` : ""}</span>
+      <span class="category-hairline" aria-hidden="true"></span>
+      <span class="category-stats-line category-mixed-note">${poolData.repeats ? "Repeat" : "Unseen"} ${kindLabel} from ${esc(mixedSpecialtyName(specialty))}</span>
       <span class="category-enter">Enter mixed review →</span>
     </button>`;
 }
@@ -2718,11 +2736,15 @@ function showCategories(){
     const written = area.parts.filter(p => p.kind === "written").reduce((sum, p) => sum + p.questions.length, 0);
     const attempts = area.parts.reduce((sum, p) => sum + loadRecords(p.key).length, 0);
     const paused = area.parts.filter(p => loadSession(p.key)).length;
+    const mcq = questions.length - written;
+    const sectionWord = area.parts.length === 1 ? "section" : "sections";
+    const attemptWord = attempts === 1 ? "attempt" : "attempts";
     return `<button class="category-card" data-category="${esc(area.key)}" style="--tone:${SPEC_TONE[area.key] || "#B12D63"}">
       ${cardArt(area)}
       <span class="category-title${area.key === "Orthopaedics" ? " two-line" : area.key === "FamilyMedicine" ? " one-line" : ""}">${area.key === "Orthopaedics" ? "Orthopedics &amp;<br>Traumatology" : esc(area.name)}</span>
-      <span class="muted">${questions.length - written} MCQ / EMQ questions${written ? ` · ${written} SAQ questions` : ""}</span>
-      <span class="category-meta">${area.parts.length} sections · ${attempts} attempts${paused ? ` · ${paused} paused` : ""}</span>
+      <span class="category-stats-line"><b>${mcq.toLocaleString()}</b> MCQ / EMQ${written ? `<span class="category-dot">·</span><b>${written.toLocaleString()}</b> SAQ` : ""}</span>
+      <span class="category-stats-line"><b>${area.parts.length}</b> ${sectionWord}<span class="category-dot">·</span><b>${attempts}</b> ${attemptWord}${paused ? `<span class="category-dot">·</span><span class="category-paused"><b>${paused}</b> paused</span>` : ""}</span>
+      <span class="category-hairline" aria-hidden="true"></span>
       <span class="category-enter">Enter specialty →</span>
     </button>`;
   };
