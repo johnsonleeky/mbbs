@@ -231,6 +231,7 @@
   .kbd-hint{font-size:12px; color:var(--muted); margin-top:10px;}
 
   /* ---------- results ---------- */
+  #screen-result > .card:nth-child(n+3){content-visibility:auto; contain-intrinsic-size:420px;}
   .result-head{display:flex; gap:24px; align-items:center; flex-wrap:wrap; margin-bottom:8px;}
   .ring{position:relative; width:130px; height:130px; flex:0 0 130px;}
   .ring svg{transform:rotate(-90deg);}
@@ -254,7 +255,7 @@
   .advice-item .num.med{background:var(--warn-soft); color:var(--warn);}
   .advice-item b{display:block; font-size:14.5px;}
   .advice-item p{font-size:13.5px; color:#475569; margin-top:2px;}
-  .wrong-item{display:flex; gap:12px; padding:10px 0; border-bottom:1px dashed var(--line); font-size:14px;}
+  .wrong-item{display:flex; gap:12px; padding:10px 0; border-bottom:1px dashed var(--line); font-size:14px; content-visibility:auto; contain-intrinsic-size:76px;}
   .wrong-item:last-child{border-bottom:none;}
   .wrong-item .qn{flex:0 0 34px; height:28px; border-radius:8px; background:var(--bad-soft); color:var(--bad); font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center;}
   .wrong-item .qa{flex:1;}
@@ -263,11 +264,13 @@
   .wrong-item .ansline{color:#475569; font-size:13px;}
   .wrong-item .ansline .ok{color:var(--good); font-weight:700;}
   .wrong-item .ansline .no{color:var(--bad); font-weight:700;}
+  .wrong-more{display:flex; justify-content:center; margin-top:14px;}
+  .wrong-more.hidden{display:none;}
   .saved-note{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--good); font-weight:600; margin:14px 0 0;}
 
   /* ---------- session log ---------- */
   .log-box{margin-top:4px; background:#46142A; border-radius:12px; padding:14px 16px;}
-  .log-box pre{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12.5px; line-height:1.55; color:#dbeafe; white-space:pre-wrap; word-break:break-word; max-height:420px; overflow:auto;}
+  .log-box pre{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12.5px; line-height:1.55; color:#dbeafe; white-space:pre-wrap; word-break:break-word; max-height:420px; overflow:auto; content-visibility:auto; contain-intrinsic-size:420px;}
   .log-row{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:11px 6px; border-bottom:1px dashed var(--line);}
   .log-row:last-child{border-bottom:none;}
   .log-row .date{font-size:13px; color:var(--muted);}
@@ -1097,6 +1100,7 @@ header.top{
     <div class="card">
       <h2>Questions to revisit <span class="sub">— recorded for further revision</span></h2>
       <div id="wrongList"></div>
+      <div class="wrong-more hidden" id="wrongMoreWrap"><button class="btn ghost small" id="btnShowAllWrong" type="button">Show all remaining incorrect questions</button></div>
     </div>
 
     <div class="card">
@@ -1104,9 +1108,10 @@ header.top{
       <div class="btn-row" style="margin-bottom:12px;">
         <button class="btn small" id="btnCopyLog">📋 &nbsp;Copy session log</button>
         <button class="btn ghost small" id="btnDlLog">⬇ &nbsp;Download .txt</button>
+        <button class="btn ghost small" id="btnShowLog" type="button">Show session log</button>
         <span class="muted" id="copyNote" style="font-size:13px;"></span>
       </div>
-      <div class="log-box"><pre id="logPre"></pre></div>
+      <div class="log-box hidden" id="resultLogBox"><pre id="logPre"></pre></div>
     </div>
   </section>
 
@@ -1279,6 +1284,9 @@ const EXAM_YEARS = [...new Set(PARTS.flatMap(p => p.questions.flatMap(q => q.exa
 let part = null;                              // active part object
 let currentRecord = null;                      // record of the just-finished run (for log copy)
 let viewingLogRecord = null;
+let resultWrongRemaining = [];
+let resultLogOpen = false;
+let wrongPaging = false;
 
 /* ================= state ================= */
 let mode = "full";
@@ -2570,8 +2578,23 @@ function hideAll(){
   closeHeaderMenu(false);
   ["screen-categories","screen-hub","screen-mixed","screen-quiz","screen-result","screen-logs","screen-review-summary"].forEach(id => $(id).classList.add("hidden"));
   $("incompleteModal").classList.add("hidden");
+  clearResultHeavyDom();
   stopMockTimer();
   window.scrollTo(0,0);
+}
+function clearResultHeavyDom(){
+  ["wrongList","topicBars","adviceList"].forEach(id => { const el = $(id); if(el) el.innerHTML = ""; });
+  const log = $("logPre");
+  if(log) log.textContent = "";
+  resultLogOpen = false;
+  const logBox = $("resultLogBox");
+  if(logBox) logBox.classList.add("hidden");
+  const showLog = $("btnShowLog");
+  if(showLog) showLog.textContent = "Show session log";
+  resultWrongRemaining = [];
+  wrongPaging = false;
+  const more = $("wrongMoreWrap");
+  if(more) more.classList.add("hidden");
 }
 
 function showHub(){
@@ -3004,24 +3027,78 @@ function showResults(correct, total, pct, wrong, remaining){
       <div><b><span class="rank">${i+1}.</span>${t.name} — ${t.ok}/${t.tot} correct (${Math.round(t.ok/t.tot*100)}%)</b>
       <p>${inlineMD(TOPICS()[k].advice)}</p></div></div>`;
   }).join("") : `<div class="empty">No topics need revision — you mastered this part. 🎉</div>`;
-  $("wrongList").innerHTML = wrong.length ? wrong.map(n=>{
-    const q = QS().find(x => x.n === n);
-    return `<div class="wrong-item"><div class="qn">Q${q.n}</div><div class="qa">
-      <div class="topic">${topicName(q.topic)}</div>
-      <div class="stem2">${esc(q.stem)}</div>
-      <div class="ansline">Your answer: <span class="no">${answers[n] ? optText(q, answers[n]) : "Unanswered"}</span> &nbsp;·&nbsp; Correct: <span class="ok">${answerText(q)}</span></div>
-    </div></div>`;
-  }).join("") : `<div class="empty">No wrong questions this time — nothing recorded. 🎉</div>`;
+  resultWrongRemaining = wrong.slice();
+  $("wrongList").innerHTML = "";
+  $("wrongMoreWrap").classList.add("hidden");
+  if(wrong.length){
+    appendWrongChunk(5);
+  }else{
+    $("wrongList").innerHTML = `<div class="empty">No wrong questions this time — nothing recorded. 🎉</div>`;
+  }
   $("btnRestart").innerHTML = isMock ? "↻ &nbsp;Restart mock exam" : "↻ &nbsp;Restart (this part)";
   $("btnViewLogs").innerHTML = isMock ? "📋 &nbsp;Mock history" : "📋 &nbsp;Session log &amp; history";
   $("savedNote").textContent = isMock
     ? "✓ Mock exam recorded. Mistakes stay in mock history and are not added to section revision sets."
     : "✓ This attempt has been recorded. Wrong questions are saved to this part's revision set.";
 
-  // session log
-  if(currentRecord){
-    $("logPre").textContent = buildLogText(part, currentRecord, true);
+  // Session logs are built only when the reader asks for them. A full mock
+  // log is long enough that inserting it eagerly causes a layout spike.
+  resultLogOpen = false;
+  $("logPre").textContent = "";
+  $("resultLogBox").classList.add("hidden");
+  $("btnShowLog").textContent = "Show session log";
+  $("btnShowLog").disabled = !currentRecord;
+}
+function wrongItemHtml(n){
+  const q = QS().find(x => x.n === n);
+  return `<div class="wrong-item"><div class="qn">Q${q.n}</div><div class="qa">
+    <div class="topic">${topicName(q.topic)}</div>
+    <div class="stem2">${esc(q.stem)}</div>
+    <div class="ansline">Your answer: <span class="no">${answers[n] ? optText(q, answers[n]) : "Unanswered"}</span> &nbsp;·&nbsp; Correct: <span class="ok">${answerText(q)}</span></div>
+  </div></div>`;
+}
+function appendWrongChunk(count){
+  if(!resultWrongRemaining.length) return;
+  const chunk = resultWrongRemaining.splice(0, count);
+  $("wrongList").insertAdjacentHTML("beforeend", chunk.map(wrongItemHtml).join(""));
+  const more = $("wrongMoreWrap");
+  if(resultWrongRemaining.length){
+    more.classList.remove("hidden");
+    $("btnShowAllWrong").textContent = `Show all remaining incorrect questions (${resultWrongRemaining.length})`;
+    $("btnShowAllWrong").disabled = false;
+  }else{
+    more.classList.add("hidden");
   }
+}
+function showAllWrong(){
+  if(!resultWrongRemaining.length || wrongPaging) return;
+  wrongPaging = true;
+  const btn = $("btnShowAllWrong");
+  btn.disabled = true;
+  const step = () => {
+    appendWrongChunk(8);
+    if(resultWrongRemaining.length){
+      setTimeout(step, 0);
+    }else{
+      wrongPaging = false;
+    }
+  };
+  setTimeout(step, 0);
+}
+function toggleResultLog(){
+  if(!currentRecord) return;
+  const box = $("resultLogBox");
+  if(resultLogOpen){
+    resultLogOpen = false;
+    box.classList.add("hidden");
+    $("logPre").textContent = "";
+    $("btnShowLog").textContent = "Show session log";
+    return;
+  }
+  resultLogOpen = true;
+  box.classList.remove("hidden");
+  $("logPre").textContent = buildLogText(part, currentRecord, true);
+  $("btnShowLog").textContent = "Hide session log";
 }
 
 function showReviewSummary(correct, total, pct, remaining){
@@ -3183,6 +3260,8 @@ $("btnReviewWrongRes").addEventListener("click", ()=>{
   const qids = wrongSetQids(part.key);
   if(qids.length) startReviewFrom(part.key, qids, "review");
 });
+$("btnShowAllWrong").addEventListener("click", showAllWrong);
+$("btnShowLog").addEventListener("click", toggleResultLog);
 $("btnViewLogs").addEventListener("click", ()=>{ if(part) openLogs(part.key); });
 $("btnCopyLog").addEventListener("click", ()=>{ if(currentRecord) copyText(buildLogText(part, currentRecord, true)); });
 $("btnDlLog").addEventListener("click", ()=>{ if(currentRecord) downloadLog(currentRecord); });
