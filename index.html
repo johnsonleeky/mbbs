@@ -186,6 +186,7 @@
   .quiz-meta{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px; flex-wrap:wrap;}
   .qnum{font-weight:800; font-size:14px; color:var(--navy);}
   .topic-badge{background:var(--accent-soft); color:#842344; font-size:12px; font-weight:700; padding:4px 12px; border-radius:999px;}
+.mock-timer{display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:999px; background:#FEF3C7; color:#B45309; font-size:12px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:.01em;}
   .score-so-far{font-size:13px; color:var(--muted); font-weight:600;}
   .stem{white-space:pre-line; font-family:Georgia, "Times New Roman", serif; font-size:19px; line-height:1.5; margin:6px 0 18px; color:#46142A;}
   .opts{display:flex; flex-direction:column; gap:10px;}
@@ -453,6 +454,8 @@ header.top{
 .category-dot{color:#D9B7C6; margin:0 2px;}
 .category-hairline{height:1px; background:linear-gradient(90deg,var(--line),transparent); margin:18px 0 0;}
 .category-mixed-note{margin-top:10px; line-height:1.55;}
+.category-review-line{font-size:12.5px; font-weight:600; color:var(--muted); line-height:1.55;}
+.category-review-line + .category-review-line{margin-top:4px;}
 .category-enter{white-space:nowrap; padding-top:20px;}
 @media (max-width:1100px){
   .halo-row{grid-template-columns:repeat(3,1fr);}
@@ -646,7 +649,7 @@ header.top{
 }
 
 /* --- Mixed Review: compact settings --- */
-.mix-stats{display:flex; gap:30px; margin:16px 0 4px;}
+.mix-stats{display:flex; flex-wrap:wrap; gap:16px 30px; margin:16px 0 4px;}
 .mix-stat b{display:block; font-size:24px; line-height:1.1; color:var(--navy); font-variant-numeric:tabular-nums;}
 .mix-stat span{font-size:12px; color:var(--muted);}
 .mix-controls{display:grid; grid-template-columns:1.35fr 1fr 1fr; gap:12px; margin:18px 0 10px;}
@@ -678,11 +681,22 @@ header.top{
 }
 @media (max-width:720px){
   .mix-controls{grid-template-columns:1fr;}
-  .mix-stats{gap:22px;}
+  .mix-stats{gap:14px 22px;}
 }
 @media (max-width:560px){
   .mix-paused .btn-row{margin-left:0; width:100%;}
   .mix-paused .btn-row .btn{flex:1 1 auto; justify-content:center;}
+}
+
+/* --- Review: shuffle / by-year switch --- */
+.review-mode-switch{display:inline-flex; gap:4px; padding:4px; margin:2px 0 8px; background:#FFF8FB; border:1px solid var(--line); border-radius:999px;}
+.review-mode-btn{border:0; background:none; padding:9px 15px; border-radius:999px; color:var(--muted); font:inherit; font-size:12px; font-weight:800; cursor:pointer; white-space:nowrap;}
+.review-mode-btn[aria-selected="true"]{background:var(--accent-grad); color:#fff; box-shadow:0 10px 18px -14px rgba(177,45,99,.95);}
+.review-mode-btn:not([aria-selected="true"]):hover{color:var(--accent); background:var(--accent-soft);}
+.review-panel{margin-top:4px;}
+@media (max-width:560px){
+  .review-mode-switch{display:flex; width:100%; flex-direction:column;}
+  .review-mode-btn{width:100%;}
 }
 
 
@@ -896,44 +910,90 @@ header.top{
 
   </section>
 
-  <!-- ============ MIXED REVIEW ============ -->
+  <!-- ============ REVIEW: SHUFFLE / BY YEAR ============ -->
   <section id="screen-mixed" class="hidden">
     <div class="card">
-      <h2>Mixed Review</h2>
-      <div class="mix-stats">
-        <div class="mix-stat"><b id="mxPool">0</b><span id="mxPoolLabel">questions available</span></div>
-        <div class="mix-stat"><b id="mxRuns">0</b><span>runs completed</span></div>
+      <h2>Review</h2>
+      <div class="review-mode-switch" role="tablist" aria-label="Review mode">
+        <button class="review-mode-btn" id="tabReviewShuffle" type="button" role="tab" aria-selected="true" aria-controls="panelReviewShuffle">Review by shuffle</button>
+        <button class="review-mode-btn" id="tabReviewYear" type="button" role="tab" aria-selected="false" aria-controls="panelReviewYear">Review by year</button>
       </div>
-      <div class="mix-controls">
-        <label class="mix-field" for="mxSpecialty"><span>Specialty</span><select id="mxSpecialty"></select></label>
-        <label class="mix-field" for="mxKinds"><span>Question type</span>
-          <select id="mxKinds">
-            <option value="both">Both</option>
-            <option value="mcq">MCQ / EMQ</option>
-            <option value="saq">SAQ cases</option>
-          </select>
-        </label>
-        <label class="mix-field" for="mxLength"><span>Questions per run</span><select id="mxLength"></select></label>
-      </div>
-      <p class="mix-priority-note">Unseen questions come first. When none are left in the selected specialty (or across all seven), repeats are allowed.</p>
-      <div class="mix-start-row">
-        <button class="btn primary" id="btnMixedStart">▶ &nbsp;Start</button>
-        <button class="btn ghost small hidden" id="btnMixedFresh">↻ &nbsp;Start fresh</button>
-        <span class="mix-status" id="mxStatus" role="status"></span>
-      </div>
-      <div class="mix-paused hidden" id="mxPausedChoice">
-        <div class="mix-paused-copy">
-          <b id="mxPausedTitle"></b>
-          <span id="mxPausedText"></span>
+
+      <div class="review-panel" id="panelReviewShuffle">
+        <div class="mix-stats">
+          <div class="mix-stat"><b id="mxPool">0</b><span id="mxPoolLabel">questions available</span></div>
+          <div class="mix-stat"><b id="mxRuns">0</b><span>runs completed</span></div>
         </div>
-        <div class="btn-row">
-          <button class="btn ghost small" id="btnMixedResumePaused" type="button">Resume</button>
-          <button class="btn ghost small danger" id="btnMixedReplacePaused" type="button">Start new</button>
+        <div class="mix-controls">
+          <label class="mix-field" for="mxSpecialty"><span>Specialty</span><select id="mxSpecialty"></select></label>
+          <label class="mix-field" for="mxKinds"><span>Question type</span>
+            <select id="mxKinds">
+              <option value="both">Both</option>
+              <option value="mcq">MCQ / EMQ</option>
+              <option value="saq">SAQ cases</option>
+            </select>
+          </label>
+          <label class="mix-field" for="mxLength"><span>Questions per run</span><select id="mxLength"></select></label>
+        </div>
+        <p class="mix-priority-note">Unseen questions come first. When none are left in the selected specialty (or across all seven), repeats are allowed.</p>
+        <div class="mix-start-row">
+          <button class="btn primary" id="btnMixedStart">▶ &nbsp;Start</button>
+          <button class="btn ghost small hidden" id="btnMixedFresh">↻ &nbsp;Start fresh</button>
+          <span class="mix-status" id="mxStatus" role="status"></span>
+        </div>
+        <div class="mix-paused hidden" id="mxPausedChoice">
+          <div class="mix-paused-copy">
+            <b id="mxPausedTitle"></b>
+            <span id="mxPausedText"></span>
+          </div>
+          <div class="btn-row">
+            <button class="btn ghost small" id="btnMixedResumePaused" type="button">Resume</button>
+            <button class="btn ghost small danger" id="btnMixedReplacePaused" type="button">Start new</button>
+          </div>
+        </div>
+        <div class="mix-history-row">
+          <button class="btn ghost small" id="btnMixedLogs">Attempt history</button>
+          <button class="btn ghost small danger" id="btnMixedClear">Clear history</button>
         </div>
       </div>
-      <div class="mix-history-row">
-        <button class="btn ghost small" id="btnMixedLogs">Attempt history</button>
-        <button class="btn ghost small danger" id="btnMixedClear">Clear history</button>
+
+      <div class="review-panel hidden" id="panelReviewYear">
+        <div class="mix-stats">
+          <div class="mix-stat"><b id="myPool">0</b><span id="myPoolLabel">questions in this paper</span></div>
+          <div class="mix-stat"><b id="myBest">—</b><span>best mock</span></div>
+          <div class="mix-stat"><b id="myRuns">0</b><span>mocks completed</span></div>
+        </div>
+        <div class="mix-controls">
+          <label class="mix-field" for="myYear"><span>Exam year</span><select id="myYear"></select></label>
+          <label class="mix-field" for="mySpecialty"><span>Specialty</span><select id="mySpecialty"></select></label>
+          <label class="mix-field" for="myKinds"><span>Question type</span>
+            <select id="myKinds">
+              <option value="both">Both</option>
+              <option value="mcq">MCQ / EMQ</option>
+              <option value="saq">SAQ cases</option>
+            </select>
+          </label>
+        </div>
+        <p class="mix-priority-note" id="myNote">Answers are revealed only after you submit.</p>
+        <div class="mix-start-row">
+          <button class="btn primary" id="btnMockStart">▶ &nbsp;Start mock exam</button>
+          <button class="btn ghost small hidden" id="btnMockFresh">↻ &nbsp;Start fresh</button>
+          <span class="mix-status" id="myStatus" role="status"></span>
+        </div>
+        <div class="mix-paused hidden" id="myPausedChoice">
+          <div class="mix-paused-copy">
+            <b id="myPausedTitle"></b>
+            <span id="myPausedText"></span>
+          </div>
+          <div class="btn-row">
+            <button class="btn ghost small" id="btnMockResumePaused" type="button">Resume</button>
+            <button class="btn ghost small danger" id="btnMockReplacePaused" type="button">Start new</button>
+          </div>
+        </div>
+        <div class="mix-history-row">
+          <button class="btn ghost small" id="btnMockLogs">Mock history</button>
+          <button class="btn ghost small danger" id="btnMockClear">Clear mocks</button>
+        </div>
       </div>
     </div>
   </section>
@@ -945,6 +1005,7 @@ header.top{
       <div class="quiz-toolbar-main">
         <span class="qnum" id="qNum" tabindex="-1"></span>
         <span class="topic-badge" id="qTopic"></span>
+        <span class="mock-timer hidden" id="mockTimer" aria-label="Mock exam elapsed time">00:00:00</span>
       </div>
       <div class="quiz-toolbar-actions">
         <button class="tool-btn" id="btnFlagQuestion" type="button" aria-pressed="false">Flag</button>
@@ -1121,7 +1182,7 @@ header.top{
       <p class="guide-intro">The essentials for revising with the bank.</p>
 
       <h4>Getting around</h4>
-      <p>Use the menu for <b>Specialties</b> (when available), <b>About</b>, <b>User Guide</b> and <b>Lock Quiz</b>. On the Specialties home, choose a specialty card or <b>Mixed Review</b>. Use <b>Save &amp; Quit</b> to pause a run; <b>Resume last run</b> reopens the newest paused run.</p>
+      <p>Use the menu for <b>Specialties</b> (when available), <b>About</b>, <b>User Guide</b> and <b>Lock Quiz</b>. On the Specialties home, choose a specialty card or <b>Review</b>. Use <b>Save &amp; Quit</b> to pause a run; <b>Resume last run</b> reopens the newest paused run.</p>
 
       <h4>Answering questions</h4>
       <p>Select an answer and choose <b>Check answer</b>. Use <b>Back</b>, <b>Skip</b> or <b>Jump</b> to move around; checked answers stay locked. If you finish with unanswered questions, you can return to them or finish anyway. Unanswered scorable questions count as incorrect and join the revision set.</p>
@@ -1132,8 +1193,9 @@ header.top{
       <h4>Notes, flags and highlights</h4>
       <p><b>Notes</b> saves automatically as you type; drag its header to move it, or its bottom-right corner to resize. <b>Flag</b> marks a question for attention; the <b>⋯</b> menu holds the flagged list, jump, finish, save and abandon actions. Select question text and choose <b>Save highlight</b> to highlight it. Notes, flags and highlights stay in this browser until you remove them; clearing attempt history does not remove them.</p>
 
-      <h4>Mixed Review</h4>
-      <p>Mixed Review draws unseen questions first, then repeats when necessary. Choose the specialty, question type and run length. Wrong answers join the revision set of the specialty they came from.</p>
+      <h4>Review</h4>
+      <p><b>Review by shuffle</b> draws unseen questions first, then repeats when necessary. Choose the specialty, question type and run length. Wrong answers join the revision set of the specialty they came from.</p>
+      <p><b>Review by year</b> builds a full paper for the selected exam year and specialty. Answers stay hidden until you submit; mock scores are kept separately from section best scores.</p>
 
       <h4>Session logs</h4>
       <p>Completed sessions keep a per-question log with your answer, the correct answer and the topic. Copy or download the log if you want a permanent record.</p>
@@ -1153,7 +1215,7 @@ header.top{
       <button class="btn ghost small" id="btnCloseAbout" type="button">Close</button>
     </div>
     <div class="guide-body">
-      <p>This question bank was compiled using questions sourced from the MBBS Goddisk, covering final MB past papers from cohorts M10 through M26. The bank is updated regularly as new material becomes available.</p>
+      <p>This question bank was compiled using questions sourced from the MBBS Goddisk, covering final MB past papers from cohorts M01 through M26 (where available). The bank is updated regularly as new material becomes available.</p>
       <p>Answers and explanations are drawn directly from the source, supplemented with AI-generated content where applicable. Note that AI-generated answers and explanations do not override those taken from the source. Where the two differ, the source material is taken as the correct one.</p>
       <p>This question bank is intended solely for final MB examination preparation.</p>
     </div>
@@ -1205,11 +1267,15 @@ for(const area of DATA.areas){
       for(const paragraph of question.expl){
         if(paragraph.k === "img") paragraph.t = imageSource(paragraph.t);
       }
+      const examYears = [...new Set((String(question.year || "").match(/\b(?:19|20)\d{2}\b/g) || []).map(Number))].sort((a, b) => a - b);
+      question.examYears = examYears;
+      question.examYear = examYears[0] || null;
     }
   }
 }
 const AREAS = DATA.areas;
 const PARTS = AREAS.flatMap(a => a.parts);           // [{key, title, topics, questions}]
+const EXAM_YEARS = [...new Set(PARTS.flatMap(p => p.questions.flatMap(q => q.examYears || [])))].sort((a, b) => b - a);
 let part = null;                              // active part object
 let currentRecord = null;                      // record of the just-finished run (for log copy)
 let viewingLogRecord = null;
@@ -1289,8 +1355,15 @@ function renderAiSug(q){
 }
 function bloomSvg(size, cls){ return `<svg class="bloom ${cls||""}" aria-hidden="true" width="${size}" height="${size}" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><g transform="translate(32 32)"><ellipse rx="6.1" ry="11.4" cy="-12"/><ellipse rx="6.1" ry="11.4" cy="-12" transform="rotate(72)"/><ellipse rx="6.1" ry="11.4" cy="-12" transform="rotate(144)"/><ellipse rx="6.1" ry="11.4" cy="-12" transform="rotate(216)"/><ellipse rx="6.1" ry="11.4" cy="-12" transform="rotate(288)"/><circle r="3.1"/></g></svg>`; }
 function topicName(k){ const t = TOPICS()[k]; return t ? t.name : k; }
+function questionYearLabel(q){
+  if(q.yearLabel) return q.yearLabel;
+  if(q.examYears && q.examYears.length) return q.examYears.join(", ");
+  return q.year || "";
+}
 function findPart(key){
   if(key === MIXED_KEY) return mixedRun || MIXED_META;
+  if(key === MOCK_KEY) return (mockRun && mockRun.key === MOCK_KEY) ? mockRun : MOCK_META;
+  if(key === MOCK_REVIEW_KEY) return (mockRun && mockRun.key === MOCK_REVIEW_KEY) ? mockRun : MOCK_META;
   return PARTS.find(p => p.key === key);
 }
 
@@ -1341,7 +1414,53 @@ function answerText(q){
   return [q.answer, ...(q.alt || [])].map(letter => optText(q, letter)).join(" / ");
 }
 function scoreLabel(rec){ return rec.s === null ? "N/A" : rec.s + "%"; }
+function mockLogText(rec, withHeader){
+  const pairs = rec.mq || [];
+  const lines = [];
+  const written = pairs.filter(pair => {
+    const p = Array.isArray(pair) && findPart(pair[0]);
+    const q = p && p.questions.find(x => x.n === pair[1]);
+    return q && q.written;
+  }).length;
+  if(withHeader !== false){
+    const from = mockSpecialtyName(rec.ms);
+    const kind = rec.mk === "mcq" ? "MCQ / EMQ" : rec.mk === "saq" ? "SAQ cases" : "MCQ / EMQ + SAQ";
+    lines.push("==============================================");
+    lines.push("HKU MBBS QUESTION BANK — MOCK EXAM LOG");
+    lines.push("==============================================");
+    lines.push(`Paper     : ${rec.my} ${from} · ${kind}`);
+    lines.push("Date      : " + fmtDate(rec.d));
+    lines.push("Score     : " + scoreLabel(rec) + "  (" + (rec.t - (rec.w || []).length) + "/" + rec.t + " scorable)");
+    lines.push("Run       : " + pairs.length + " questions" + (written ? `, ${written} SAQ not scored` : ""));
+    lines.push("Time      : " + fmtDuration(rec.mt || 0));
+    lines.push("Unanswered scorable questions count as incorrect.");
+    lines.push("");
+  }
+  (rec.q || []).forEach((n, i) => {
+    const pair = pairs[i];
+    const src = Array.isArray(pair) ? findPart(pair[0]) : null;
+    const q = src && src.questions.find(x => x.n === pair[1]);
+    if(!q){ lines.push("[?] Q" + n + " · the source question is no longer in the bank."); lines.push(""); return; }
+    const chosen = rec.a[n];
+    const complete = !!rec.c[n];
+    const status = q.written ? (complete ? "[UNSCORED]" : "[UNANSWERED]")
+      : !complete ? "[UNANSWERED]"
+      : q.noAns ? "[UNSCORED]"
+      : (rec.w || []).includes(n) ? "[WRONG]" : "[CORRECT]";
+    lines.push(`${status} Q${n} · ${subjectForPart(src).name} · ${q.sourceId}. ${q.stem}`);
+    lines.push(`   Your answer : ${complete ? optText(q, chosen) : chosen ? optText(q, chosen) + " (selected)" : "(not answered)"}`);
+    lines.push(`   Correct     : ${q.noAns ? "No usable key in source; not scored" : answerText(q)}`);
+    if(q.written) lines.push(`   Written response : ${(rec.x || {})[n] || "(not entered)"}`);
+    lines.push(`   Answer key  : ${q.sourceAnswer}${q.sourceUncertain ? " (tentative)" : ""}`);
+    if(q.aiSug && q.aiSug.t) lines.push(`   AI suggested: ${q.aiSug.a ? q.aiSug.a + ". " : ""}${q.aiSug.t}`);
+    lines.push(`   Topic       : ${topicNameFor(src, q.topic)}`);
+    lines.push("");
+  });
+  return lines.join("\n").trim();
+}
+
 function buildLogText(partObj, rec, withHeader){
+  if(rec && rec.mock) return mockLogText(rec, withHeader);
   if(partObj && partObj.mixed) return mixedLogText(rec, withHeader);
   const qs = partObj.questions;
   const lines = [];
@@ -1491,9 +1610,9 @@ function bindCards(){
 
 /* ================= mixed review ================= */
 const MIXED_KEY = "MixedReview";
-const MIXED_AREA = { key: MIXED_KEY, name: "Mixed Review", parts: [] };
-const MIXED_META = { key: MIXED_KEY, mixed: true, kind: "choice", title: "Mixed Review",
-  fullTitle: "Mixed Review — random questions from the specialties you choose",
+const MIXED_AREA = { key: MIXED_KEY, name: "Review", parts: [] };
+const MIXED_META = { key: MIXED_KEY, mixed: true, kind: "choice", title: "Review by shuffle",
+  fullTitle: "Review by shuffle — random questions from the specialties you choose",
   topics: {}, questions: [] };
 let mixedRun = null;                     // the drawn run in progress (or just finished)
 
@@ -1559,6 +1678,7 @@ function attemptedSet(){
   const seen = new Set();
   PARTS.forEach(p => loadRecords(p.key).forEach(r => (r.q || []).forEach(n => seen.add(p.key + "#" + n))));
   loadRecords(MIXED_KEY).forEach(r => (r.mq || []).forEach(pair => { if(pair) seen.add(pair[0] + "#" + pair[1]); }));
+  loadRecords(MOCK_KEY).forEach(r => (r.mq || []).forEach(pair => { if(pair) seen.add(pair[0] + "#" + pair[1]); }));
   // checked questions of a paused part run
   PARTS.forEach(p => {
     const sess = loadSession(p.key);
@@ -1582,6 +1702,16 @@ function attemptedSet(){
       if(!pair) return;
       const done = msess.nv === 2 ? !!(msess.c || {})[local] : i < (msess.i || 0);
       if(done) seen.add(pair[0] + "#" + pair[1]);
+    });
+  }
+  // answers already chosen in a paused mock count as attempted
+  const mocksess = loadSession(MOCK_KEY);
+  if(mocksess){
+    (mocksess.mq || []).forEach((pair, i) => {
+      if(!pair) return;
+      if((mocksess.a && mocksess.a[i + 1] !== undefined) || (mocksess.x && String(mocksess.x[i + 1] || "").trim())) {
+        seen.add(pair[0] + "#" + pair[1]);
+      }
     });
   }
   return seen;
@@ -1639,9 +1769,9 @@ function mixedPartFrom(items, kinds, specialty){
     return Object.assign({}, it.q, { n: i + 1, __mp: it.p.key, __mq: it.q.n });
   });
   const what = k === "mcq" ? "MCQ / EMQ " : k === "saq" ? "SAQ " : "";
-  return { key: MIXED_KEY, mixed: true, kind: "choice", title: "Mixed Review", kinds: k,
+  return { key: MIXED_KEY, mixed: true, kind: "choice", title: "Review by shuffle", kinds: k,
     specialty: spec,
-    fullTitle: "Mixed Review — " + questions.length + " random " + what + "questions from " + from,
+    fullTitle: "Review by shuffle — " + questions.length + " random " + what + "questions from " + from,
     topics: topics, questions: questions };
 }
 function mixedItemsFromPairs(pairs){
@@ -1755,9 +1885,9 @@ function mixedLogText(rec, withHeader){
     lines.push("==============================================");
     lines.push("HKU MBBS QUESTION BANK — SESSION LOG");
     lines.push("==============================================");
-    lines.push("Part      : " + (rec.mk === "mcq" ? "Mixed Review — random MCQ / EMQ questions from " + from
-      : rec.mk === "saq" ? "Mixed Review — random SAQ cases from " + from
-      : "Mixed Review — random questions from " + from));
+    lines.push("Part      : " + (rec.mk === "mcq" ? "Review by shuffle — random MCQ / EMQ questions from " + from
+      : rec.mk === "saq" ? "Review by shuffle — random SAQ cases from " + from
+      : "Review by shuffle — random questions from " + from));
     lines.push("Date      : " + fmtDate(rec.d));
     lines.push("Score     : " + scoreLabel(rec) + "  (" + (rec.t - (rec.w || []).length) + "/" + rec.t + ")");
     lines.push("Run       : " + rec.q.length + " questions, " + rec.u.length + " unanswered (not checked)");
@@ -1785,16 +1915,38 @@ function mixedLogText(rec, withHeader){
   return lines.join("\n").trim();
 }
 function totalRevSet(){ return PARTS.reduce((sum, p) => sum + wrongSetQids(p.key).length, 0); }
-function enterMixed(){
+let reviewView = "shuffle";
+function storedReviewView(){
+  try{ return localStorage.getItem("hku_mbbs_review_view_v1") === "year" ? "year" : "shuffle"; }
+  catch(e){ return "shuffle"; }
+}
+function setReviewView(view, persist){
+  reviewView = view === "year" ? "year" : "shuffle";
+  if(persist){
+    try{ localStorage.setItem("hku_mbbs_review_view_v1", reviewView); }catch(e){ storageError(e); }
+  }
+  const sh = $("tabReviewShuffle"), yr = $("tabReviewYear");
+  if(sh && yr){
+    sh.setAttribute("aria-selected", String(reviewView === "shuffle"));
+    yr.setAttribute("aria-selected", String(reviewView === "year"));
+    $("panelReviewShuffle").classList.toggle("hidden", reviewView !== "shuffle");
+    $("panelReviewYear").classList.toggle("hidden", reviewView !== "year");
+  }
+  if(reviewView === "year") renderMock(); else renderMixed();
+}
+function enterMixed(view){
   part = MIXED_META;
   mixedRun = null;
+  mockRun = null;
   activeArea = null;
   hideAll();
-  renderMixed();
+  const next = view === "year" || view === "shuffle" ? view : storedReviewView();
+  setReviewView(next, false);
   $("screen-mixed").classList.remove("hidden");
 }
 function backToHub(){
-  if(part && part.mixed){ enterMixed(); return; }
+  if(part && (part.mock || part.mockReview)){ enterMixed("year"); return; }
+  if(part && part.mixed){ enterMixed(reviewView); return; }
   showHub();
 }
 function fillMixedSpecialtySelect(pool){
@@ -1873,21 +2025,13 @@ function renderMixed(){
   }
 }
 function mixedCardHtml(){
-  const poolData = mixedPool();
-  const pool = poolData.items.length;
-  const attempts = loadRecords(MIXED_KEY).length;
-  const paused = !!loadSession(MIXED_KEY);
-  const kinds = mixedKinds();
-  const specialty = mixedSpecialty();
-  const kindLabel = kinds === "mcq" ? "MCQ / EMQ questions" : kinds === "saq" ? "SAQ questions" : "questions";
-  const attemptWord = attempts === 1 ? "attempt" : "attempts";
   return `<button class="category-card" data-category="${MIXED_KEY}" style="--tone:${SPEC_TONE[MIXED_KEY]}">
       ${cardArt(MIXED_AREA)}
-      <span class="category-title">Mixed Review</span>
-      <span class="category-stats-line"><b>${pool.toLocaleString()}</b> in the pool<span class="category-dot">·</span><b>${attempts}</b> ${attemptWord}${paused ? `<span class="category-dot">·</span><span class="category-paused"><b>1</b> paused</span>` : ""}</span>
+      <span class="category-title">Review</span>
+      <span class="category-stats-line category-review-line">Questions by shuffle</span>
+      <span class="category-stats-line category-review-line">Questions by year</span>
       <span class="category-hairline" aria-hidden="true"></span>
-      <span class="category-stats-line category-mixed-note">${poolData.repeats ? "Repeat" : "Unseen"} ${kindLabel} from ${esc(mixedSpecialtyName(specialty))}</span>
-      <span class="category-enter">Enter mixed review →</span>
+      <span class="category-enter">Enter review →</span>
     </button>`;
 }
 function clearMixedHistory(){
@@ -1947,6 +2091,323 @@ $("mxLength").addEventListener("change", () => {
   renderMixed();
 });
 
+/* ================= review by year: mock exams ================= */
+const MOCK_KEY = "MockExam";
+const MOCK_REVIEW_KEY = "MockExamReview";
+const MOCK_META = { key: MOCK_KEY, mock: true, kind: "choice", title: "Mock exam",
+  fullTitle: "Review by year — mock exam", topics: {}, questions: [] };
+let mockRun = null;
+let mockClockBase = 0;
+let mockClockStart = 0;
+
+function fmtDuration(total){
+  const s = Math.max(0, Math.floor(Number(total) || 0));
+  const p = n => String(n).padStart(2, "0");
+  return `${p(Math.floor(s / 3600))}:${p(Math.floor((s % 3600) / 60))}:${p(s % 60)}`;
+}
+function mockElapsed(){
+  return mockClockBase + (mockClockStart ? Math.floor((Date.now() - mockClockStart) / 1000) : 0);
+}
+function updateMockTimer(){
+  const el = $("mockTimer");
+  if(!el) return;
+  const active = mode === "mock" && part && part.mock && !$("screen-quiz").classList.contains("hidden");
+  el.classList.toggle("hidden", !active);
+  if(active) el.textContent = fmtDuration(mockElapsed());
+}
+function startMockClock(base){
+  mockClockBase = Math.max(0, Number(base) || 0);
+  mockClockStart = Date.now();
+  updateMockTimer();
+}
+function stopMockTimer(){
+  if(mockClockStart){ mockClockBase = mockElapsed(); mockClockStart = 0; }
+  updateMockTimer();
+}
+setInterval(updateMockTimer, 1000);
+
+function mockYear(){
+  try{
+    const n = Number(localStorage.getItem("hku_mbbs_mock_year_v1"));
+    return EXAM_YEARS.includes(n) ? n : EXAM_YEARS[0];
+  }catch(e){ return EXAM_YEARS[0]; }
+}
+function setMockYear(value){
+  const n = Number(value);
+  const year = EXAM_YEARS.includes(n) ? n : EXAM_YEARS[0];
+  try{ localStorage.setItem("hku_mbbs_mock_year_v1", String(year)); }catch(e){ storageError(e); }
+  return year;
+}
+function mockSpecialtyKey(value){
+  return AREAS.some(area => area.key === value) ? value : AREAS[0].key;
+}
+function mockSpecialty(){
+  try{ return mockSpecialtyKey(localStorage.getItem("hku_mbbs_mock_specialty_v1")); }
+  catch(e){ return AREAS[0].key; }
+}
+function setMockSpecialty(value){
+  const key = mockSpecialtyKey(value);
+  try{ localStorage.setItem("hku_mbbs_mock_specialty_v1", key); }catch(e){ storageError(e); }
+  return key;
+}
+function mockSpecialtyName(value){
+  const area = AREAS.find(item => item.key === mockSpecialtyKey(value));
+  return area ? area.name : AREAS[0].name;
+}
+function mockKinds(){
+  try{
+    const k = localStorage.getItem("hku_mbbs_mock_kinds_v1");
+    return k === "mcq" || k === "saq" ? k : "both";
+  }catch(e){ return "both"; }
+}
+function setMockKinds(value){
+  const k = value === "mcq" || value === "saq" ? value : "both";
+  try{ localStorage.setItem("hku_mbbs_mock_kinds_v1", k); }catch(e){ storageError(e); }
+  return k;
+}
+function mockPoolFor(year, specialty, kinds){
+  const seen = attemptedSet();
+  const items = [];
+  let attempted = 0;
+  PARTS.forEach(p => {
+    const area = mixedAreaForPart(p);
+    if(!area || area.key !== specialty) return;
+    p.questions.forEach(q => {
+      if(!(q.examYears || []).includes(Number(year))) return;
+      if(kinds === "mcq" && q.written) return;
+      if(kinds === "saq" && !q.written) return;
+      items.push({ p: p, q: q });
+      if(seen.has(p.key + "#" + q.n)) attempted++;
+    });
+  });
+  return {
+    items: items, year: Number(year), specialty: specialty, kinds: kinds,
+    attempted: attempted, total: items.length,
+    mcq: items.filter(item => !item.q.written).length,
+    saq: items.filter(item => item.q.written).length
+  };
+}
+function mockPool(){ return mockPoolFor(mockYear(), mockSpecialty(), mockKinds()); }
+function mockPairs(partObj){ return partObj.questions.map(q => [q.__mp, q.__mq]); }
+function mockItemsFromPairs(pairs){
+  const items = [];
+  (pairs || []).forEach(pair => {
+    if(!Array.isArray(pair)) return;
+    const p = findPart(pair[0]);
+    const q = p && p.questions.find(x => x.n === pair[1]);
+    if(p && q) items.push({ p: p, q: q });
+  });
+  return items;
+}
+function mockPartFrom(items, year, specialty, kinds, review){
+  const k = kinds === "mcq" || kinds === "saq" ? kinds : "both";
+  const spec = mockSpecialtyKey(specialty);
+  const topics = {};
+  const questions = items.map((it, i) => {
+    const area = subjectForPart(it.p) || mixedAreaForPart(it.p);
+    const t = it.p.topics[it.q.topic] || { name: it.p.title, advice: "" };
+    topics[it.q.topic] = { name: (area ? area.name + " · " : "") + t.name, advice: t.advice };
+    return Object.assign({}, it.q, { n: i + 1, __mp: it.p.key, __mq: it.q.n, yearLabel: String(year) });
+  });
+  const title = review ? "Mock exam review" : `${year} ${mockSpecialtyName(spec)} mock exam`;
+  return {
+    key: review ? MOCK_REVIEW_KEY : MOCK_KEY,
+    mock: !review, mockReview: !!review, kind: "choice",
+    title: title,
+    fullTitle: review ? "Mock exam review — mistakes from a submitted mock" : `Review by year — ${year} ${mockSpecialtyName(spec)} mock exam`,
+    my: Number(year), ms: spec, mk: k, topics: topics, questions: questions
+  };
+}
+function mockRecordsFor(year, specialty){
+  return loadRecords(MOCK_KEY).filter(r => r && r.mock && Number(r.my) === Number(year) && r.ms === specialty);
+}
+function mockSessionMatches(sess){
+  return !!sess && Number(sess.my) === mockYear() && sess.ms === mockSpecialty() && (sess.mk || "both") === mockKinds();
+}
+function startMockItems(items, year, specialty, kinds, review){
+  const key = review ? MOCK_REVIEW_KEY : MOCK_KEY;
+  ["flags", "highlights", "scratchpad"].forEach(kind => writeAnnotations(key, kind, {}));
+  mockRun = mockPartFrom(items, year, specialty, kinds, review);
+  part = mockRun;
+  activeArea = MIXED_AREA;
+  specialtyTabs[MIXED_AREA.key] = "choice";
+  mode = review ? "review" : "mock";
+  answers = {};
+  drafts = {};
+  checked = {};
+  revealed = {};
+  runFinished = false;
+  currentRecord = null;
+  queue = part.questions.map((q, i) => i);
+  idx = 0;
+  hideAll();
+  if(!review) startMockClock(0);
+  $("quizPartName").textContent = part.title;
+  $("screen-quiz").classList.remove("hidden");
+  renderQ();
+}
+function startMockRun(){
+  const pool = mockPool();
+  if(!pool.items.length){ enterMixed("year"); return; }
+  startMockItems(pool.items, pool.year, pool.specialty, pool.kinds, false);
+}
+function resumeMockRun(sess){
+  const items = mockItemsFromPairs(sess.mq);
+  if(!items.length){ clearSession(MOCK_KEY); enterMixed("year"); return; }
+  mockClockBase = Math.max(0, Number(sess.el) || 0);
+  mockClockStart = 0;
+  mockRun = mockPartFrom(items, sess.my, sess.ms, sess.mk, false);
+  part = mockRun;
+  beginSession(MOCK_KEY, sess, sess.i);
+  mockClockStart = Date.now();
+  updateMockTimer();
+}
+function restartMock(){
+  const year = part && part.my ? part.my : mockYear();
+  const specialty = part && part.ms ? part.ms : mockSpecialty();
+  const kinds = part && part.mk ? part.mk : mockKinds();
+  const pool = mockPoolFor(year, specialty, kinds);
+  if(pool.items.length) startMockItems(pool.items, year, specialty, kinds, false);
+  else enterMixed("year");
+}
+function startMockMistakeReview(){
+  if(!currentRecord || !currentRecord.mock) return;
+  const items = [];
+  (currentRecord.w || []).forEach(n => {
+    const pair = (currentRecord.mq || [])[n - 1];
+    const p = pair && findPart(pair[0]);
+    const q = p && p.questions.find(x => x.n === pair[1]);
+    if(p && q) items.push({ p: p, q: q });
+  });
+  if(items.length) startMockItems(items, currentRecord.my, currentRecord.ms, currentRecord.mk, true);
+}
+function fillMockSelects(){
+  const ys = $("myYear");
+  if(!ys) return;
+  const ysig = EXAM_YEARS.join(",");
+  if(ys.dataset.signature !== ysig){
+    ys.innerHTML = EXAM_YEARS.map(y => `<option value="${y}">${y}</option>`).join("");
+    ys.dataset.signature = ysig;
+  }
+  ys.value = String(mockYear());
+  const ss = $("mySpecialty");
+  const ssig = AREAS.map(a => a.key).join(",");
+  if(ss.dataset.signature !== ssig){
+    ss.innerHTML = AREAS.map(a => `<option value="${esc(a.key)}">${esc(a.name)}</option>`).join("");
+    ss.dataset.signature = ssig;
+  }
+  ss.value = mockSpecialty();
+  $("myKinds").value = mockKinds();
+}
+function renderMock(){
+  if(!$("myPool")) return;
+  fillMockSelects();
+  const pool = mockPool();
+  const recs = mockRecordsFor(pool.year, pool.specialty);
+  const graded = recs.filter(r => r.s !== null && r.t > 0);
+  const best = graded.length ? Math.max(...graded.map(r => r.s)) : null;
+  const sess = loadSession(MOCK_KEY);
+  const mismatch = !!sess && !mockSessionMatches(sess);
+
+  $("myPool").textContent = pool.total.toLocaleString();
+  $("myPoolLabel").textContent = "questions in this paper";
+  $("myBest").textContent = best === null ? "—" : best + "%";
+  $("myRuns").textContent = recs.length;
+
+  const btn = $("btnMockStart");
+  if(mismatch){
+    btn.disabled = true;
+    btn.innerHTML = "▶ &nbsp;Choose a paused mock option";
+  }else{
+    btn.disabled = !pool.items.length && !sess;
+    if(sess){
+      btn.innerHTML = `▶ &nbsp;Resume mock · Q ${Math.min((sess.i || 0) + 1, sess.q.length)}/${sess.q.length}`;
+    }else if(pool.items.length){
+      btn.innerHTML = "▶ &nbsp;Start mock exam";
+    }else{
+      btn.innerHTML = "▶ &nbsp;Nothing available";
+    }
+  }
+  $("btnMockFresh").classList.toggle("hidden", !sess || !pool.items.length || mismatch);
+  $("myStatus").textContent = !pool.items.length
+    ? "No questions match these settings."
+    : `${pool.attempted.toLocaleString()} / ${pool.total.toLocaleString()} attempted · ${recs.length} mock${recs.length === 1 ? "" : "s"} taken`;
+  $("myNote").textContent = !pool.items.length
+    ? "No questions match this exam year and specialty."
+    : pool.mcq === 0
+      ? "SAQ cases are included for practice, but mock scores use MCQ / EMQ only."
+      : pool.saq > 0
+        ? "Answers are revealed after you submit. SAQ cases are not scored."
+        : "Answers are revealed only after you submit.";
+
+  const pausedChoice = $("myPausedChoice");
+  pausedChoice.classList.toggle("hidden", !mismatch);
+  if(mismatch){
+    $("myPausedTitle").textContent = `Paused: ${sess.my} ${mockSpecialtyName(sess.ms)} · Q${Math.min((sess.i || 0) + 1, sess.q.length)}/${sess.q.length}`;
+    $("myPausedText").textContent = `Current selection: ${pool.year} ${mockSpecialtyName(pool.specialty)}.`;
+    const replace = $("btnMockReplacePaused");
+    replace.textContent = pool.items.length ? "Start selected mock" : "Discard paused mock";
+    replace.disabled = false;
+  }
+}
+function clearMockHistory(){
+  const recs = loadRecords(MOCK_KEY);
+  if(!recs.length) return;
+  const paused = loadSession(MOCK_KEY) ? " Your paused mock is not affected." : "";
+  if(!confirm("Delete all " + recs.length + " submitted mock exam" + (recs.length === 1 ? "" : "s") + " and " + (recs.length === 1 ? "its" : "their") + " logs?\n\nThis cannot be undone. Mock records do not change section revision sets." + paused)) return;
+  saveRecords(MOCK_KEY, []);
+  renderMock();
+}
+$("tabReviewShuffle").addEventListener("click", () => setReviewView("shuffle", true));
+$("tabReviewYear").addEventListener("click", () => setReviewView("year", true));
+$("myYear").addEventListener("change", () => {
+  setMockYear($("myYear").value);
+  renderMock();
+});
+$("mySpecialty").addEventListener("change", () => {
+  setMockSpecialty($("mySpecialty").value);
+  renderMock();
+});
+$("myKinds").addEventListener("change", () => {
+  setMockKinds($("myKinds").value);
+  renderMock();
+});
+$("btnMockStart").addEventListener("click", () => {
+  const sess = loadSession(MOCK_KEY);
+  if(!sess){ startMockRun(); return; }
+  if(!mockSessionMatches(sess)){
+    const box = $("myPausedChoice");
+    box.classList.remove("hidden");
+    box.classList.add("attention");
+    box.scrollIntoView({ behavior: "smooth", block: "center" });
+    $("btnMockResumePaused").focus({ preventScroll: true });
+    setTimeout(() => box.classList.remove("attention"), 1600);
+    return;
+  }
+  resumeMockRun(sess);
+});
+$("btnMockResumePaused").addEventListener("click", () => {
+  const sess = loadSession(MOCK_KEY);
+  if(sess) resumeMockRun(sess); else renderMock();
+});
+$("btnMockReplacePaused").addEventListener("click", () => {
+  const sess = loadSession(MOCK_KEY);
+  const drawn = mockPool().items.length;
+  const message = drawn
+    ? `Discard the paused ${sess.my} ${mockSpecialtyName(sess.ms)} mock and start the selected paper?`
+    : `Discard the paused ${sess.my} ${mockSpecialtyName(sess.ms)} mock? Nothing is available for the current selection.`;
+  if(!confirm(message)) return;
+  clearSession(MOCK_KEY);
+  if(drawn) startMockRun(); else enterMixed("year");
+});
+$("btnMockFresh").addEventListener("click", () => {
+  if(!confirm("Discard the paused mock exam and start this paper again?")) return;
+  clearSession(MOCK_KEY);
+  startMockRun();
+});
+$("btnMockLogs").addEventListener("click", () => openLogs(MOCK_KEY));
+$("btnMockClear").addEventListener("click", clearMockHistory);
+
 /* ================= home page: the halo band ================= */
 /* The order of the cards on the Specialties screen: two rows of four with
    the band between them, Mixed Review always last. */
@@ -1971,7 +2432,7 @@ function hubBandHtml(){
   const pct = exact <= 0 ? "0%" : exact < 0.1 ? "&lt;0.1%"
     : exact >= 10 ? Math.round(exact) + "%" : (Math.round(exact * 10) / 10) + "%";
   const rev = totalRevSet();
-  const paused = PARTS.filter(p => loadSession(p.key)).length + (loadSession(MIXED_KEY) ? 1 : 0);
+  const paused = PARTS.filter(p => loadSession(p.key)).length + (loadSession(MIXED_KEY) ? 1 : 0) + (loadSession(MOCK_KEY) ? 1 : 0);
   const last = latestRun();
   const circ = 2 * Math.PI * 62;
   return `<div class="hub-band">
@@ -1992,7 +2453,7 @@ function hubBandHtml(){
       </div>
       ${last ? `<div class="hub-actions">
         <button class="btn primary" id="hubResume">▶ &nbsp;Resume last run</button>
-        <span class="hub-last">${esc(runLabel(last.key))}</span>
+        <span class="hub-last">${esc(runLabel(last.key, last.sess))}</span>
       </div>` : ""}
     </div>`;
 }
@@ -2001,11 +2462,14 @@ function latestRun(){
   const runs = PARTS.map(p => ({ key: p.key, sess: loadSession(p.key) })).filter(r => r.sess && r.sess.u);
   const mixed = loadSession(MIXED_KEY);
   if(mixed && mixed.u) runs.push({ key: MIXED_KEY, sess: mixed });
+  const mock = loadSession(MOCK_KEY);
+  if(mock && mock.u) runs.push({ key: MOCK_KEY, sess: mock });
   runs.sort((a, b) => new Date(b.sess.u) - new Date(a.sess.u));
   return runs[0] || null;
 }
-function runLabel(key){
-  if(key === MIXED_KEY) return "Mixed Review";
+function runLabel(key, sess){
+  if(key === MIXED_KEY) return "Review by shuffle";
+  if(key === MOCK_KEY) return `${sess && sess.my ? sess.my : ""} ${sess && sess.ms ? mockSpecialtyName(sess.ms) : "mock exam"}${sess && sess.my ? " mock exam" : ""}`.trim();
   const area = subjectForPart(findPart(key));
   return area ? area.name : key;
 }
@@ -2013,6 +2477,7 @@ function resumeLatestRun(){
   const run = latestRun();
   if(!run) return;
   if(run.key === MIXED_KEY){ resumeMixedRun(run.sess); return; }
+  if(run.key === MOCK_KEY){ resumeMockRun(run.sess); return; }
   beginSession(run.key, run.sess, run.sess.i);
 }
 function wireHubBand(){
@@ -2105,6 +2570,7 @@ function hideAll(){
   closeHeaderMenu(false);
   ["screen-categories","screen-hub","screen-mixed","screen-quiz","screen-result","screen-logs","screen-review-summary"].forEach(id => $(id).classList.add("hidden"));
   $("incompleteModal").classList.add("hidden");
+  stopMockTimer();
   window.scrollTo(0,0);
 }
 
@@ -2124,17 +2590,22 @@ function isCorrect(q){
 }
 
 function updateNavigation(){
-  const completed = queue.filter(i => checked[QS()[i].n]).length;
+  const mock = mode === "mock" && !!part.mock;
+  const completed = mock
+    ? queue.filter(i => { const q = QS()[i]; return q.written ? !!(drafts[q.n] || "").trim() : !!answers[q.n]; }).length
+    : queue.filter(i => checked[QS()[i].n]).length;
   $("progressFill").style.width = (completed / queue.length * 100) + "%";
-  $("scoreSoFar").textContent = `${completed} of ${queue.length} checked · ${queue.length - completed} unanswered`;
+  $("scoreSoFar").textContent = mock
+    ? `${completed} of ${queue.length} answered · answers hidden until submission`
+    : `${completed} of ${queue.length} checked · ${queue.length - completed} unanswered`;
   $("btnBack").disabled = idx === 0;
   $("jumpInput").value = String(idx + 1);
   $("jumpInput").setAttribute("aria-invalid", "false");
   $("jumpRange").textContent = `of ${queue.length}`;
   $("jumpInput").setAttribute("aria-label", `Jump to question, from 1 to ${queue.length}`);
   $("jumpError").textContent = "";
-  $("btnSkip").classList.toggle("hidden", !!checked[QS()[queue[idx]].n]);
-  $("btnSkip").textContent = idx === queue.length - 1 ? "Skip & finish…" : "Skip →";
+  $("btnSkip").classList.toggle("hidden", mock || !!checked[QS()[queue[idx]].n]);
+  if(!mock) $("btnSkip").textContent = idx === queue.length - 1 ? "Skip & finish…" : "Skip →";
 }
 
 function renderQ(){
@@ -2142,35 +2613,53 @@ function renderQ(){
   closeQuizMore(false);
   clearAnnotationMessage();
   const q = QS()[queue[idx]];
+  const isMock = mode === "mock" && !!part.mock;
   $("feedbackZone").before($("qOpts"));
-  $("qNum").textContent = `Question ${idx+1} / ${queue.length}` + (mode==="review" ? " · revision set" : "");
-  $("qTopic").textContent = topicName(q.topic) + " · " + q.year;
+  $("qNum").textContent = `Question ${idx+1} / ${queue.length}` + (isMock ? " · mock exam" : part.mockReview ? " · mock review" : mode==="review" ? " · revision set" : "");
+  $("qTopic").textContent = topicName(q.topic) + " · " + questionYearLabel(q);
   $("qStem").textContent = q.stem;
   $("qImages").innerHTML = (q.images || []).map(src => `<div class="expl-fig"><img src="${src}" alt="Figure from question ${q.n}" loading="lazy" decoding="async"></div>`).join("");
   $("qOpts").innerHTML = q.opts.map(o =>
     `<button class="opt${answers[q.n] === o.l ? " selected" : ""}" data-l="${o.l}"><span class="letter">${o.l}</span><span class="txt">${esc(o.t)}</span></button>`).join("");
   $("qOpts").querySelectorAll(".opt").forEach(b => b.addEventListener("click", ()=>select(b.dataset.l)));
   const lastLetter = q.opts[q.opts.length - 1].l;
-  $("kbdHint").textContent = q.opts.length > 5
-    ? `Keyboard: letters A–${lastLetter} to choose · Space to check / next`
-    : `Keyboard: press 1–${q.opts.length} (or A–${lastLetter}) to choose · Space to check / next`;
   $("feedbackZone").innerHTML = "";
-  $("btnSubmit").classList.remove("hidden");
-  $("btnNext").classList.add("hidden");
   $("btnSaveQuit").classList.remove("hidden");
   $("btnQuit").classList.remove("hidden");
   prepareWritten(q);
   $("autosaveStatus").textContent = "Autosave every 5 seconds";
   $("autosaveStatus").classList.remove("save-error");
-  $("writtenResponse").readOnly = !!checked[q.n];
-  if(checked[q.n]){
-    renderCheckedFeedback(q);
-  }else if(q.written && revealed[q.n]){
-    revealWritten(q);
-  }else if(!q.written){
-    $("btnSubmit").disabled = !answers[q.n];
+  $("writtenResponse").readOnly = isMock ? false : !!checked[q.n];
+  if(isMock){
+    $("btnSubmit").classList.add("hidden");
+    $("btnNext").classList.remove("hidden");
+    $("btnNext").textContent = idx === queue.length - 1 ? "Submit mock exam →" : "Next question →";
+    $("btnSkip").classList.add("hidden");
+    $("btnFinishRun").textContent = "Submit mock exam";
+    $("writtenInfo").textContent = "Write your response. Answers are revealed after you submit the mock exam.";
+    $("kbdHint").textContent = q.written
+      ? "Keyboard: write your response · Space for next question"
+      : q.opts.length > 5
+        ? `Keyboard: letters A–${lastLetter} to choose · Space for next question`
+        : `Keyboard: press 1–${q.opts.length} (or A–${lastLetter}) to choose · Space for next question`;
+  }else{
+    $("btnSubmit").classList.remove("hidden");
+    $("btnNext").classList.add("hidden");
+    $("btnFinishRun").textContent = "Finish run";
+    $("writtenInfo").textContent = "Write or think through your response, reveal the answer, then mark your own understanding.";
+    $("kbdHint").textContent = q.opts.length > 5
+      ? `Keyboard: letters A–${lastLetter} to choose · Space to check / next`
+      : `Keyboard: press 1–${q.opts.length} (or A–${lastLetter}) to choose · Space to check / next`;
+    if(checked[q.n]){
+      renderCheckedFeedback(q);
+    }else if(q.written && revealed[q.n]){
+      revealWritten(q);
+    }else if(!q.written){
+      $("btnSubmit").disabled = !answers[q.n];
+    }
   }
   updateNavigation();
+  updateMockTimer();
   refreshAnnotations();
 }
 
@@ -2183,6 +2672,7 @@ function select(letter){
   answers[q.n] = letter;
   $("qOpts").querySelectorAll(".opt").forEach(b => b.classList.toggle("selected", b.dataset.l === letter));
   $("btnSubmit").disabled = false;
+  if(mode === "mock" && part && part.mock) updateNavigation();
 }
 
 function renderCheckedFeedback(q){
@@ -2268,7 +2758,7 @@ function jumpToQuestion(event){
 }
 
 function saveQuizProgress(){
-  if(mode === "preview") return false;
+  if(mode === "preview" || (part && part.mockReview)) return false;
   if(!part || runFinished || !queue.length || $("screen-quiz").classList.contains("hidden")) return false;
   const sess = {
     nv: 2,
@@ -2282,6 +2772,7 @@ function saveQuizProgress(){
     u: new Date().toISOString()
   };
   if(part.mixed){ sess.mk = part.kinds; sess.ms = part.specialty || "all"; sess.mq = mixedPairs(part); }
+  if(part.mock){ sess.mock = true; sess.my = part.my; sess.ms = part.ms; sess.mk = part.mk; sess.mq = mockPairs(part); sess.el = mockElapsed(); }
   const saved = saveSession(part.key, sess);
   $("autosaveStatus").textContent = saved
     ? "Progress saved at " + new Date(sess.u).toLocaleTimeString()
@@ -2310,6 +2801,7 @@ document.addEventListener("visibilitychange", () => {
 function finishRun(force=false){
   if(mode === "preview"){ returnFromFlagPreview(); return; }
   if(runFinished) return;
+  if(mode === "mock" && part && part.mock){ finishMock(force); return; }
   const missing = uncheckedQids();
   if(missing.length && !force){
     const scorableMissing = missing.filter(n => !QS().find(q => q.n === n).noAns).length;
@@ -2317,6 +2809,8 @@ function finishRun(force=false){
     $("incompleteText").textContent = `${missing.length} question${missing.length === 1 ? " is" : "s are"} still unanswered (not checked), including choices selected but not validated. ` +
       `${scorableMissing} scorable unanswered question${scorableMissing === 1 ? "" : "s"} will count as incorrect if you finish now and will be added to the revision set.`;
     $("incompletePositions").textContent = "Question positions: " + positions.join(", ");
+    $("incompleteTitle").textContent = "Unanswered questions remain";
+    $("btnFinishIncomplete").textContent = "Finish anyway";
     $("incompleteModal").classList.remove("hidden");
     $("btnReturnUnanswered").focus();
     return;
@@ -2330,7 +2824,9 @@ function finishRun(force=false){
   const pct = total ? Math.round(correct / total * 100) : 0;
   const now = new Date().toISOString();
   let remaining;
-  if(part.mixed){
+  if(part.mockReview){
+    remaining = 0;
+  }else if(part.mixed){
     /* Each wrong answer joins the revision set of the specialty it came
        from, and a right answer clears it there, exactly as if that part had
        been sat. The mixed run itself keeps no revision set. */
@@ -2391,9 +2887,72 @@ function finishRun(force=false){
 }
 
 
+function mockMissingQids(){
+  return queue.map(i => QS()[i])
+    .filter(q => q.written ? !String(drafts[q.n] || "").trim() : !answers[q.n])
+    .map(q => q.n);
+}
+function finishMock(force=false){
+  if(runFinished) return;
+  const missing = mockMissingQids();
+  const scorable = queue.filter(i => !QS()[i].written && !QS()[i].noAns);
+  const scorableMissing = missing.filter(n => scorable.some(i => QS()[i].n === n)).length;
+  if(missing.length && !force){
+    const positions = missing.map(n => queue.findIndex(i => QS()[i].n === n) + 1);
+    $("incompleteTitle").textContent = "Submit mock exam?";
+    $("incompleteText").textContent = `${missing.length} question${missing.length === 1 ? " is" : "s are"} still unanswered. ` +
+      (scorableMissing
+        ? `${scorableMissing} scored question${scorableMissing === 1 ? "" : "s"} will count as incorrect if you submit now.`
+        : "This paper has no scored MCQ / EMQ questions.");
+    $("incompletePositions").textContent = "Question positions: " + positions.join(", ");
+    $("btnFinishIncomplete").textContent = "Submit anyway";
+    $("incompleteModal").classList.remove("hidden");
+    $("btnReturnUnanswered").focus();
+    return;
+  }
+  $("incompleteModal").classList.add("hidden");
+  runFinished = true;
+  const elapsed = mockElapsed();
+  stopMockTimer();
+  scorable.forEach(i => { checked[QS()[i].n] = true; });
+  const wrong = scorable.filter(i => !isCorrect(QS()[i])).map(i => QS()[i].n);
+  const total = scorable.length;
+  const correct = total - wrong.length;
+  const pct = total ? Math.round(correct / total * 100) : 0;
+  const now = new Date().toISOString();
+  const complete = {};
+  queue.forEach(i => {
+    const q = QS()[i];
+    if(q.written ? String(drafts[q.n] || "").trim() : answers[q.n]) complete[q.n] = true;
+  });
+  const record = {
+    nv: 2, d: now, s: total ? pct : null, t: total, w: wrong,
+    a: Object.assign({}, answers), c: complete, x: Object.assign({}, drafts),
+    q: queue.map(i => QS()[i].n), u: missing,
+    mock: true, my: part.my, ms: part.ms, mk: part.mk,
+    mq: mockPairs(part), mt: elapsed
+  };
+  const recs = loadRecords(MOCK_KEY);
+  recs.push(record);
+  saveRecords(MOCK_KEY, recs);
+  clearSession(MOCK_KEY);
+  currentRecord = record;
+  showResults(correct, total, pct, wrong, wrong.length);
+  const saqCount = queue.filter(i => QS()[i].written).length;
+  $("completionNote").textContent = (missing.length
+    ? `Mock submitted with ${missing.length} unanswered question${missing.length === 1 ? "" : "s"}. ` +
+      (scorableMissing ? `${scorableMissing} scored question${scorableMissing === 1 ? "" : "s"} counted as incorrect.` : "This paper has no scored MCQ / EMQ questions.")
+    : `Mock submitted. ${saqCount ? "All MCQ / EMQ questions were answered." : "All questions were answered."}`)
+    + (saqCount ? " SAQ cases are included but not scored." : "");
+  $("completionNote").classList.toggle("banner", !!missing.length);
+  $("btnReviewUnanswered").classList.add("hidden");
+}
+
 /* ================= results ================= */
 function showResults(correct, total, pct, wrong, remaining){
   hideAll();
+  const isMock = !!part.mock;
+  $("btnHubFromRes").innerHTML = isMock ? "← &nbsp;Review by year" : "← &nbsp;All parts";
   $("screen-result").classList.remove("hidden");
   $("resPartName").textContent = part.title;
   $("scorePct").textContent = total ? pct + "%" : "N/A";
@@ -2406,15 +2965,26 @@ function showResults(correct, total, pct, wrong, remaining){
           : pct>=70 ? ["Good — solid grasp of the essentials.","A few gaps remain; work through the revision suggestions below."]
           : pct>=50 ? ["Fair — the core ideas are there, but there are real gaps.","Focus on the topics flagged below — they are where marks are lost."]
           : ["This section needs significant review.","Go through the explanations again (they are shown with each question) and target the weakest topics below."];
-  $("verdict").textContent = total ? v[0] : "No scorable questions in this run.";
-  $("verdictSub").textContent = total ? (part.kind === "written" ? "Self-assessed result, not an automatically graded exam score." : v[1]) : "The source does not provide a usable answer key; this run is recorded for reference only.";
+  const writtenCount = queue.filter(i => QS()[i].written).length;
+  $("verdict").textContent = isMock
+    ? (total
+        ? (pct >= 85 ? "Excellent — strong mock performance." : pct >= 70 ? "Good — solid mock performance." : pct >= 50 ? "Fair — the core ideas are there, but there are real gaps." : "This paper needs significant review.")
+        : "No scorable MCQ / EMQ questions in this paper.")
+    : (total ? v[0] : "No scorable questions in this run.");
+  $("verdictSub").textContent = total
+    ? (isMock
+        ? "Mock exam score. Answers were hidden until submission." + (writtenCount ? " SAQ cases are not scored." : "")
+        : (part.kind === "written" ? "Self-assessed result, not an automatically graded exam score." : v[1]))
+    : (isMock ? "This paper contains no scorable MCQ / EMQ questions." : "The source does not provide a usable answer key; this run is recorded for reference only.");
   const btnRW = $("btnReviewWrongRes");
   btnRW.disabled = !remaining;
-  btnRW.innerHTML = remaining ? `↻ &nbsp;Review Incorrect Questions (${remaining})` : `↻ &nbsp;Review Incorrect Questions`;
+  btnRW.innerHTML = isMock
+    ? (remaining ? `↻ &nbsp;Review mock mistakes (${remaining})` : `↻ &nbsp;Review mock mistakes`)
+    : (remaining ? `↻ &nbsp;Review Incorrect Questions (${remaining})` : `↻ &nbsp;Review Incorrect Questions`);
 
   const byTopic = {};
   QS().forEach(q => {
-    if(q.noAns || !queue.some(i => QS()[i].n === q.n)) return;
+    if(q.noAns || (isMock && q.written) || !queue.some(i => QS()[i].n === q.n)) return;
     byTopic[q.topic] = byTopic[q.topic] || {name: topicName(q.topic), ok:0, tot:0};
     byTopic[q.topic].tot++;
     if(isCorrect(q)) byTopic[q.topic].ok++;
@@ -2439,9 +3009,14 @@ function showResults(correct, total, pct, wrong, remaining){
     return `<div class="wrong-item"><div class="qn">Q${q.n}</div><div class="qa">
       <div class="topic">${topicName(q.topic)}</div>
       <div class="stem2">${esc(q.stem)}</div>
-      <div class="ansline">Your answer: <span class="no">${checked[n] ? optText(q, answers[n]) : "Unanswered / not checked"}</span> &nbsp;·&nbsp; Correct: <span class="ok">${answerText(q)}</span></div>
+      <div class="ansline">Your answer: <span class="no">${answers[n] ? optText(q, answers[n]) : "Unanswered"}</span> &nbsp;·&nbsp; Correct: <span class="ok">${answerText(q)}</span></div>
     </div></div>`;
   }).join("") : `<div class="empty">No wrong questions this time — nothing recorded. 🎉</div>`;
+  $("btnRestart").innerHTML = isMock ? "↻ &nbsp;Restart mock exam" : "↻ &nbsp;Restart (this part)";
+  $("btnViewLogs").innerHTML = isMock ? "📋 &nbsp;Mock history" : "📋 &nbsp;Session log &amp; history";
+  $("savedNote").textContent = isMock
+    ? "✓ Mock exam recorded. Mistakes stay in mock history and are not added to section revision sets."
+    : "✓ This attempt has been recorded. Wrong questions are saved to this part's revision set.";
 
   // session log
   if(currentRecord){
@@ -2452,6 +3027,14 @@ function showResults(correct, total, pct, wrong, remaining){
 function showReviewSummary(correct, total, pct, remaining){
   hideAll();
   $("screen-review-summary").classList.remove("hidden");
+  $("btnHubFromRev").innerHTML = part.mockReview ? "← &nbsp;Review by year" : part.mixed ? "← &nbsp;Review by shuffle" : "← &nbsp;All parts";
+  if(part.mockReview){
+    $("revSumTitle").textContent = "Mock exam review complete";
+    $("revSumText").innerHTML = `You scored <b>${correct}/${total} (${total ? pct + "%" : "N/A"})</b> on the ${total} scorable question${total===1?"":"s"} reviewed. ` +
+      (uncheckedQids().length ? `${uncheckedQids().length} question(s) were not checked; scorable unanswered questions count as incorrect. ` : "") +
+      `This review does not change section revision sets or the submitted mock record.`;
+    return;
+  }
   $("revSumTitle").textContent = `Incorrect-set review complete — ${part.title}`;
   if(part.mixed){
     $("revSumText").innerHTML =
@@ -2477,7 +3060,8 @@ function openLogs(key){
   specialtyTabs[activeArea.key] = part.kind;
   hideAll();
   $("screen-logs").classList.remove("hidden");
-  $("logsPartName").textContent = part.title;
+  $("btnHubFromLogs").innerHTML = part.mock ? "← &nbsp;Review by year" : part.mixed ? "← &nbsp;Review by shuffle" : "← &nbsp;All parts";
+  $("logsPartName").textContent = part.mock ? "Mock exam history" : part.title;
   renderLogsScreen();
 }
 /* The list, the counters and the open log are all rebuilt from storage, so
@@ -2496,7 +3080,7 @@ function renderLogsScreen(){
         <button class="btn ghost small" data-viewlog="${idx}">View log</button>
         <button class="btn ghost small danger" data-delrec="${idx}">Delete</button>
       </div></div>`;
-  }).join("") : `<div class="empty">No finished sessions yet for this part.</div>`;
+  }).join("") : `<div class="empty">${part.mock ? "No mock exams submitted yet." : "No finished sessions yet for this part."}</div>`;
   $("logsList").querySelectorAll("[data-viewlog]").forEach(b=>b.addEventListener("click", ()=>{
     /* data-viewlog records the position in the stored array, so read it
        back in that same order - the list above is newest first. */
@@ -2531,25 +3115,29 @@ function deleteAttempt(index){
   const recs = loadRecords(part.key);
   if(!recs[index]){ renderLogsScreen(); return; }
   const r = recs[index];
-  const what = part.mixed ? "mixed run" : "attempt";
-  if(!confirm("Delete the " + what + " recorded on " + fmtDate(r.d) + " (" + scoreLabel(r) + ") and its session log?\n\nThis cannot be undone. Any question that no other recorded attempt got wrong is removed from the revision set too.")) return;
+  const what = part.mock ? "mock exam" : part.mixed ? "mixed run" : "attempt";
+  if(!confirm("Delete the " + what + " recorded on " + fmtDate(r.d) + " (" + scoreLabel(r) + ") and its session log?\n\nThis cannot be undone." + (part.mock ? " Section revision sets are not affected." : " Any question that no other recorded attempt got wrong is removed from the revision set too."))) return;
   const removed = recs.splice(index, 1);
   saveRecords(part.key, recs);
-  if(part.mixed) pruneMixedRevisionSets(removed); else pruneRevisionSet(part.key, removed);
+  if(part.mixed) pruneMixedRevisionSets(removed); else if(!part.mock) pruneRevisionSet(part.key, removed);
   renderLogsScreen();
-  if(part.mixed) renderMixed(); else renderHub();
+  if(part.mock) renderMock(); else if(part.mixed) renderMixed(); else renderHub();
 }
 function deleteAllAttempts(){
   const recs = loadRecords(part.key);
   if(!recs.length) return;
   const paused = loadSession(part.key) ? " Your paused run is not affected." : "";
-  if(!confirm(part.mixed
-    ? "Delete all " + recs.length + " recorded mixed run" + (recs.length === 1 ? "" : "s") + " and " + (recs.length === 1 ? "its" : "their") + " session logs?\n\nThis cannot be undone. Questions that no other recorded attempt got wrong are removed from the revision sets of the specialties they came from." + paused
-    : "Delete all " + recs.length + " recorded attempt" + (recs.length === 1 ? "" : "s") + " and " + (recs.length === 1 ? "its" : "their") + " session logs for \"" + part.title + "\"?\n\nThis cannot be undone. This also empties the revision set for this part." + paused)) return;
+  if(!confirm(part.mock
+    ? "Delete all " + recs.length + " submitted mock exam" + (recs.length === 1 ? "" : "s") + " and " + (recs.length === 1 ? "its" : "their") + " logs?\n\nThis cannot be undone. Section revision sets are not affected." + paused
+    : part.mixed
+      ? "Delete all " + recs.length + " recorded mixed run" + (recs.length === 1 ? "" : "s") + " and " + (recs.length === 1 ? "its" : "their") + " session logs?\n\nThis cannot be undone. Questions that no other recorded attempt got wrong are removed from the revision sets of the specialties they came from." + paused
+      : "Delete all " + recs.length + " recorded attempt" + (recs.length === 1 ? "" : "s") + " and " + (recs.length === 1 ? "its" : "their") + " session logs for \"" + part.title + "\"?\n\nThis cannot be undone. This also empties the revision set for this part." + paused)) return;
   saveRecords(part.key, []);
-  if(part.mixed) pruneMixedRevisionSets(recs); else saveWrongSet(part.key, {});
+  if(part.mock){ /* section revision sets are deliberately untouched */ }
+  else if(part.mixed) pruneMixedRevisionSets(recs);
+  else saveWrongSet(part.key, {});
   renderLogsScreen();
-  if(part.mixed) renderMixed(); else renderHub();
+  if(part.mock) renderMock(); else if(part.mixed) renderMixed(); else renderHub();
 }
 function showLogView(rec, index){
   viewingLogRecord = rec;
@@ -2587,9 +3175,10 @@ $("btnHubFromLogs").addEventListener("click", backToHub);
 $("btnHubFromRev").addEventListener("click", backToHub);
 $("btnSubmit").addEventListener("click", submit);
 $("btnNext").addEventListener("click", next);
-$("btnRestart").addEventListener("click", ()=>{ currentRecord = null; clearSession(part.key); if(part.mixed){ restartMixed(); return; } startReviewFrom(part.key, QS().map(q=>q.n), "full"); });
-$("btnRestart2").addEventListener("click", ()=>{ clearSession(part.key); if(part.mixed){ restartMixed(); return; } startReviewFrom(part.key, QS().map(q=>q.n), "full"); });
+$("btnRestart").addEventListener("click", ()=>{ currentRecord = null; clearSession(part.key); if(part.mock){ restartMock(); return; } if(part.mixed){ restartMixed(); return; } startReviewFrom(part.key, QS().map(q=>q.n), "full"); });
+$("btnRestart2").addEventListener("click", ()=>{ clearSession(part.key); if(part.mockReview){ enterMixed("year"); return; } if(part.mock){ restartMock(); return; } if(part.mixed){ restartMixed(); return; } startReviewFrom(part.key, QS().map(q=>q.n), "full"); });
 $("btnReviewWrongRes").addEventListener("click", ()=>{
+  if(part && part.mock){ startMockMistakeReview(); return; }
   if(part && part.mixed){ startMixedReviewWrong(); return; }
   const qids = wrongSetQids(part.key);
   if(qids.length) startReviewFrom(part.key, qids, "review");
@@ -2808,7 +3397,7 @@ function showCategories(){
 }
 
 function subjectForPart(partObj){
-  if(partObj && partObj.mixed) return MIXED_AREA;
+  if(partObj && (partObj.mixed || partObj.mock || partObj.mockReview)) return MIXED_AREA;
   return AREAS.find(area => area.parts.some(p => p.key === partObj.key));
 }
 
@@ -2881,6 +3470,7 @@ $("btnLock").addEventListener("click", lockQuiz);
 $("btnCategories").addEventListener("click", () => { closeHeaderMenu(false); showCategories(); });
 $("writtenResponse").addEventListener("input", () => {
   if(part && QS()[queue[idx]]) drafts[QS()[queue[idx]].n] = $("writtenResponse").value;
+  if(mode === "mock" && part && part.mock) updateNavigation();
 });
 $("btnBack").addEventListener("click", () => moveTo(idx - 1));
 $("btnSkip").addEventListener("click", next);
@@ -2891,7 +3481,7 @@ $("btnIncompleteCancel").addEventListener("click", () => {
   $("btnQuizMore").focus();
 });
 $("btnReturnUnanswered").addEventListener("click", () => {
-  const missing = uncheckedQids();
+  const missing = (mode === "mock" && part && part.mock) ? mockMissingQids() : uncheckedQids();
   $("incompleteModal").classList.add("hidden");
   if(missing.length) moveTo(queue.findIndex(i => QS()[i].n === missing[0]));
   $("qNum").focus();
