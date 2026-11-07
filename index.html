@@ -148,6 +148,34 @@
   .rev-chip{display:inline-flex; align-items:center; gap:5px; background:var(--bad-soft); color:#b91c1c; font-size:11px; font-weight:700; padding:2px 9px; border-radius:999px;}
   .rev-chip.zero{background:#F3D9E4; color:#71545F;}
   .pause-chip{display:inline-flex; align-items:center; gap:5px; background:var(--warn-soft); color:#b45309; font-size:11px; font-weight:700; padding:2px 9px; border-radius:999px;}
+  .pc-runline{padding:17px 17px 16px; gap:0;}
+  .pc-runline .pc-top{align-items:flex-start;}
+  .pc-runline .pc-title{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.6em;}
+  .pc-runline .pc-sub{margin-top:2px;}
+  .pc-runline-row{display:flex; align-items:baseline; gap:7px; margin-top:14px; min-height:24px;}
+  .pc-runline-row .grow{flex:1;}
+  .pc-runfrac{display:inline-flex; align-items:baseline; gap:4px; white-space:nowrap;}
+  .pc-runfrac b{font-size:16px; font-weight:800; line-height:1; color:var(--navy); font-variant-numeric:tabular-nums; letter-spacing:-.02em;}
+  .pc-runfrac span{font-size:10px; color:var(--muted); font-weight:600;}
+  .pc-runfrac small{font-size:8px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);}
+  .pc-runfrac.empty{font-size:9px; font-weight:700; color:var(--muted);}
+  .pc-run-status{display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:999px; font-size:8.5px; font-weight:800; white-space:nowrap;}
+  .pc-run-status.active{background:var(--accent-soft); color:var(--accent);}
+  .pc-run-status.paused{background:var(--warn-soft); color:#b45309;}
+  .pc-run-status.new{background:#F7E4EC; color:var(--muted);}
+  .pc-runline .pc-bar{height:5px; margin-top:9px;}
+  .pc-bestline{margin-top:7px; font-size:8.5px; font-weight:600; color:var(--muted);}
+  .pc-bestline b{font-weight:800; color:var(--navy);}
+  .pc-run-actions{display:flex; align-items:center; gap:6px; margin-top:auto; padding-top:13px; border-top:1px solid #F8E5EE;}
+  .pc-run-actions .grow{flex:1;}
+  .pc-run-icons{display:flex; align-items:center; gap:5px;}
+  .pc-run-start{display:inline-flex; align-items:center; justify-content:center; gap:5px; border:1px solid transparent; background:linear-gradient(135deg,var(--accent),#6F1F43); color:#fff; border-radius:8px; padding:8px 12px; font:inherit; font-size:10.5px; font-weight:800; line-height:1; cursor:pointer; box-shadow:0 9px 18px -15px rgba(177,45,99,.95); white-space:nowrap;}
+  .pc-run-start:hover{filter:brightness(1.05);}
+  .pc-icon-btn{display:inline-flex; align-items:center; justify-content:center; gap:3px; border:1px solid var(--line); background:#fff; color:var(--muted); border-radius:8px; padding:7px; font:inherit; font-size:9.5px; font-weight:800; line-height:1; cursor:pointer; white-space:nowrap;}
+  .pc-icon-btn:hover{color:var(--accent); border-color:#F0BFD3; background:var(--accent-soft);}
+  .pc-icon-btn:disabled{opacity:.38; cursor:default; background:#fff;}
+  .pc-mini-ico{width:13px; height:13px; display:inline-block; flex:0 0 auto;}
+  .pc-icon-btn .flag-icon{width:13px; height:13px;}
   .empty{color:var(--muted); font-size:14px; padding:10px 0;}
   .danger-zone{margin-top:14px; padding-top:14px; border-top:1px dashed var(--line);}
 
@@ -1411,14 +1439,24 @@ function renderHub(){
 }
 function partCard(p){
   const s = partStats(p.key);
-  const bestCls = s.best === null ? "na" : s.best >= 80 ? "good" : s.best >= 50 ? "mid" : "low";
-  const barPct = s.best === null ? 0 : s.best;
-  const sub = s.best === null ? "Not attempted yet"
-    : `${s.recs.length} attempt${s.recs.length===1?"":"s"} · last ${fmtDate(s.recs[s.recs.length-1].d).slice(0,10)}`;
-  const revChip = s.rev ? `<span class="rev-chip">⚠ ${s.rev}</span>` : `<span class="rev-chip zero">✓ clear</span>`;
-  const pauseChip = s.sess ? `<span class="pause-chip">⏸ Paused · Q ${Math.min(s.sess.i+1, s.sess.q.length)}/${s.sess.q.length}</span>` : "";
-  const startLabel = s.sess ? "▶ &nbsp;Resume" : "▶ &nbsp;Start";
-  return `<div class="part-card">
+  const best = s.best === null ? "—" : s.best + "%";
+  const attemptWord = s.recs.length === 1 ? "attempt" : "attempts";
+  const flagged = flaggedQuestions(p.key).length;
+  const lastRec = s.recs.length ? s.recs[s.recs.length-1] : null;
+  const runTotal = s.sess
+    ? (Array.isArray(s.sess.q) ? s.sess.q.length : 0)
+    : (lastRec ? (Array.isArray(lastRec.q) ? lastRec.q.length : (Number(lastRec.t) || 0)) : 0);
+  const runDone = s.sess
+    ? Math.min((s.sess.i || 0) + 1, runTotal)
+    : (lastRec ? Math.max(0, runTotal - (Array.isArray(lastRec.u) ? lastRec.u.length : 0)) : 0);
+  const runPct = runTotal ? Math.round(runDone / runTotal * 100) : 0;
+  const runStatus = s.sess ? "Paused" : (lastRec ? "Last run" : "Not started");
+  const runStatusCls = s.sess ? "paused" : (lastRec ? "active" : "new");
+  const runLabel = runTotal
+    ? `<span class="pc-runfrac"><b>${runDone}</b><span>/ ${runTotal}</span><small>done</small></span>`
+    : `<span class="pc-runfrac empty">No run yet</span>`;
+  const startLabel = s.sess ? "Resume" : "Start";
+  return `<div class="part-card pc-runline">
       <div class="pc-top">
         <div class="pc-key">${esc(p.displayKey || p.key.toUpperCase())}</div>
         <div>
@@ -1426,16 +1464,17 @@ function partCard(p){
           <div class="pc-sub">${p.questions.length} ${p.kind === "written" ? "self-assessed cases" : "questions"}</div>
         </div>
       </div>
-      <div class="pc-stats">
-        <span class="pc-best ${bestCls}">${s.best === null ? "—" : s.best + "%"}</span>
-        <span>${sub}</span>${revChip}${pauseChip}
-      </div>
-      <div class="pc-bar"><i style="width:${barPct}%;"></i></div>
-      <div class="pc-btns">
-        <button class="btn primary" data-start="${p.key}">${startLabel}</button>
-        <button class="btn ghost" data-review="${p.key}" ${s.rev ? "" : "disabled"}>↻ ${s.rev}</button>
-        <button class="btn ghost" data-flags="${p.key}" aria-label="${flaggedQuestions(p.key).length} flagged questions in ${esc(p.title)}" title="View flagged questions" aria-haspopup="dialog">${FLAG_ICON} (${flaggedQuestions(p.key).length})</button>
-        <button class="btn ghost" data-logs="${p.key}">📋 ${s.recs.length ? s.recs.length : ""}</button>
+      <div class="pc-runline-row">${runLabel}<span class="grow"></span><span class="pc-run-status ${runStatusCls}">${runStatus}</span></div>
+      <div class="pc-bar"><i style="width:${runPct}%;"></i></div>
+      <div class="pc-bestline">Best <b>${best}</b> · ${s.recs.length} ${attemptWord}</div>
+      <div class="pc-run-actions">
+        <button class="pc-run-start" data-start="${p.key}">${PLAY_ICON}${startLabel}</button>
+        <span class="grow"></span>
+        <div class="pc-run-icons">
+          <button class="pc-icon-btn" data-review="${p.key}" ${s.rev ? "" : "disabled"} title="Review incorrect" aria-label="Review ${s.rev} incorrect question${s.rev === 1 ? "" : "s"}">${REVIEW_ICON}${s.rev}</button>
+          <button class="pc-icon-btn" data-flags="${p.key}" aria-label="${flagged} flagged questions in ${esc(p.title)}" title="View flagged questions" aria-haspopup="dialog">${FLAG_ICON}${flagged}</button>
+          <button class="pc-icon-btn" data-logs="${p.key}" title="Session logs" aria-label="Session logs for ${esc(p.title)}">${LOGS_ICON}</button>
+        </div>
       </div>
     </div>`;
 }
@@ -2880,6 +2919,9 @@ document.addEventListener("keydown", event => {
 });
 
 const FLAG_ICON = '<svg class="flag-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2h2v2h12l-3 5 3 5H7v8H5V2zm2 4v6h8.5l-1.8-3 1.8-3H7z"/></svg>';
+const PLAY_ICON = '<svg class="pc-mini-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+const REVIEW_ICON = '<svg class="pc-mini-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>';
+const LOGS_ICON = '<svg class="pc-mini-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>';
 let flagPanelPart = null;
 let flagReturnFocus = null;
 let highlightTarget = null;
