@@ -603,10 +603,10 @@ header.top{
 .guide-head h3{font-size:18px; margin:0; color:var(--navy);}
 .guide-body{overflow-y:auto; overscroll-behavior:contain; padding:16px 24px 24px;}
 .guide-body .guide-intro{color:var(--muted); margin:0 0 2px;}
-.guide-body h4{font-size:13.5px; font-weight:800; color:var(--accent); margin:18px 0 3px;}
+.guide-body h4{font-size:13.5px; font-weight:800; color:var(--theme-gold,#A57B32); margin:18px 0 3px;}
 .guide-body h4:first-of-type{margin-top:14px;}
 .guide-body p{font-size:13.5px; color:var(--ink);}
-.guide-body b{color:var(--navy);}
+.guide-body b{color:var(--accent);}
 .guide-body .about-highlight{color:var(--accent); font-weight:800;}
 .about-modal .guide-body p + p{margin-top:12px;}
 @media (max-width:560px){
@@ -874,13 +874,13 @@ html[data-theme="teal"]{
   --navy:#062F26; --good:#2F7A58; --good-soft:#E7F4EE; --bad:#B24A3A; --bad-soft:#FBEAE7;
   --warn:#A86A1F; --warn-soft:#FCF3E2; --chip:#EAF4EF;
   --glass:rgba(255,253,248,.72); --glass-brd:#CFE0D8;
-  --glass-sheen:linear-gradient(150deg,rgba(255,253,248,.96),rgba(255,253,248,.8));
+  --glass-sheen:linear-gradient(150deg,rgba(255,253,248,.72),rgba(255,253,248,.44));
   --glass-shadow:0 18px 40px -26px rgba(6,47,38,.32), inset 0 1px 0 rgba(255,255,255,.9);
   --glass-filter:blur(12px) saturate(120%);
   --accent-grad:linear-gradient(135deg,#034638,#0A5D49);
   --shadow:0 1px 3px rgba(6,47,38,.06),0 8px 24px -12px rgba(6,47,38,.16);
   --theme-bg-1:#EEF3EA; --theme-bg-2:#F7F5ED; --theme-glow-1:rgba(127,192,170,.22); --theme-glow-2:rgba(196,155,79,.09);
-  --theme-mast-1:#034638; --theme-mast-2:#0A5D49; --theme-mast-ink:#FFFDF8; --theme-mast-sub:#C4DAD1; --theme-mast-line:rgba(255,255,255,.24);
+  --theme-mast-1:#034638; --theme-mast-2:#0A5D49; --theme-mast-ink:#FFFDF8; --theme-mast-sub:#C4DAD1; --theme-mast-line:rgba(255,255,255,.24); --theme-mast-fade:238,243,234;
   --theme-menu-bg:#E8D3A1; --theme-menu-ink:#132019;
   --theme-hero-1:#034638; --theme-hero-2:#0A5D49; --theme-hero-ink:#FFFDF8; --theme-hero-sub:#C4DAD1;
   --theme-hero-chip-bg:rgba(255,255,255,.10); --theme-hero-chip-ink:#D7E8E1; --theme-hero-chip-line:rgba(255,255,255,.20);
@@ -896,13 +896,13 @@ html[data-theme="forest"]{
   --navy:#1E2A1A; --good:#3E7A4E; --good-soft:#E8F2E9; --bad:#A94C3C; --bad-soft:#F8E7E3;
   --warn:#A66A2E; --warn-soft:#FBF0DF; --chip:#EEF1E4;
   --glass:rgba(255,252,244,.78); --glass-brd:#D8D3C2;
-  --glass-sheen:linear-gradient(150deg,rgba(255,252,244,.96),rgba(255,252,244,.82));
+  --glass-sheen:linear-gradient(150deg,rgba(255,252,244,.72),rgba(255,252,244,.46));
   --glass-shadow:0 18px 40px -26px rgba(45,74,54,.32), inset 0 1px 0 rgba(255,255,255,.9);
   --glass-filter:blur(12px) saturate(120%);
   --accent-grad:linear-gradient(135deg,#2D4A36,#3B5A3F);
   --shadow:0 1px 3px rgba(45,74,54,.06),0 8px 24px -12px rgba(45,74,54,.16);
   --theme-bg-1:#F2EADA; --theme-bg-2:#F8F3E7; --theme-glow-1:rgba(79,107,69,.18); --theme-glow-2:rgba(196,155,79,.08);
-  --theme-mast-1:#2D4A36; --theme-mast-2:#3B5A3F; --theme-mast-ink:#F8F1E2; --theme-mast-sub:#C9CDB8; --theme-mast-line:rgba(255,255,255,.24);
+  --theme-mast-1:#2D4A36; --theme-mast-2:#3B5A3F; --theme-mast-ink:#F8F1E2; --theme-mast-sub:#C9CDB8; --theme-mast-line:rgba(255,255,255,.24); --theme-mast-fade:242,234,218;
   --theme-menu-bg:#C49B4F; --theme-menu-ink:#1E2A1A;
   --theme-hero-1:#2D4A36; --theme-hero-2:#4F6B45; --theme-hero-ink:#FFF9EC; --theme-hero-sub:#D5D9C5;
   --theme-hero-chip-bg:rgba(255,255,255,.09); --theme-hero-chip-ink:#D9DEC9; --theme-hero-chip-line:rgba(255,255,255,.19);
@@ -918,13 +918,13 @@ html[data-theme="ocean"]{
   --navy:#16323D; --good:#3F7F6C; --good-soft:#E5F2EE; --bad:#B24A3A; --bad-soft:#FBEAE7;
   --warn:#B67A37; --warn-soft:#FBF0DF; --chip:#EAF3F1;
   --glass:rgba(255,254,250,.78); --glass-brd:#D3E0DC;
-  --glass-sheen:linear-gradient(150deg,rgba(255,254,250,.96),rgba(255,254,250,.82));
+  --glass-sheen:linear-gradient(150deg,rgba(255,254,250,.72),rgba(255,254,250,.46));
   --glass-shadow:0 18px 40px -26px rgba(30,78,107,.3), inset 0 1px 0 rgba(255,255,255,.9);
   --glass-filter:blur(12px) saturate(120%);
   --accent-grad:linear-gradient(135deg,#1E4E6B,#2F7280);
   --shadow:0 1px 3px rgba(30,78,107,.06),0 8px 24px -12px rgba(30,78,107,.16);
   --theme-bg-1:#EDF3F2; --theme-bg-2:#F7F9F7; --theme-glow-1:rgba(47,114,128,.18); --theme-glow-2:rgba(231,215,184,.12);
-  --theme-mast-1:#1E4E6B; --theme-mast-2:#2F7280; --theme-mast-ink:#F4FAF8; --theme-mast-sub:#C4DCE3; --theme-mast-line:rgba(255,255,255,.24);
+  --theme-mast-1:#1E4E6B; --theme-mast-2:#2F7280; --theme-mast-ink:#F4FAF8; --theme-mast-sub:#C4DCE3; --theme-mast-line:rgba(255,255,255,.24); --theme-mast-fade:237,243,242;
   --theme-menu-bg:#E7D7B8; --theme-menu-ink:#1B3038;
   --theme-hero-1:#1E4E6B; --theme-hero-2:#2F7280; --theme-hero-ink:#F4FAF8; --theme-hero-sub:#C8E0E2;
   --theme-hero-chip-bg:rgba(255,255,255,.10); --theme-hero-chip-ink:#D0E5E6; --theme-hero-chip-line:rgba(255,255,255,.20);
@@ -940,13 +940,13 @@ html[data-theme="vintage"]{
   --navy:#1D2A44; --good:#4F7A58; --good-soft:#E8F2E9; --bad:#B24A3A; --bad-soft:#F8E7E3;
   --warn:#A86A1F; --warn-soft:#FCF3E2; --chip:#F3E9DE;
   --glass:rgba(255,251,245,.8); --glass-brd:#E0D6C8;
-  --glass-sheen:linear-gradient(150deg,rgba(255,251,245,.97),rgba(255,251,245,.84));
+  --glass-sheen:linear-gradient(150deg,rgba(255,251,245,.74),rgba(255,251,245,.48));
   --glass-shadow:0 18px 40px -26px rgba(29,42,68,.3), inset 0 1px 0 rgba(255,255,255,.9);
   --glass-filter:blur(12px) saturate(120%);
   --accent-grad:linear-gradient(135deg,#A9553B,#7E3A2A);
   --shadow:0 1px 3px rgba(29,42,68,.06),0 8px 24px -12px rgba(29,42,68,.16);
   --theme-bg-1:#F2E8DC; --theme-bg-2:#F8F2E9; --theme-glow-1:rgba(169,85,59,.12); --theme-glow-2:rgba(60,79,107,.10);
-  --theme-mast-1:#1D2A44; --theme-mast-2:#3C4F6B; --theme-mast-ink:#F8F2E8; --theme-mast-sub:#C9D2DE; --theme-mast-line:rgba(255,255,255,.22);
+  --theme-mast-1:#1D2A44; --theme-mast-2:#3C4F6B; --theme-mast-ink:#F8F2E8; --theme-mast-sub:#C9D2DE; --theme-mast-line:rgba(255,255,255,.22); --theme-mast-fade:242,232,220;
   --theme-menu-bg:#C49B4F; --theme-menu-ink:#1D2A44;
   --theme-hero-1:#1D2A44; --theme-hero-2:#3C4F6B; --theme-hero-ink:#FFF8ED; --theme-hero-sub:#D6DEE8;
   --theme-hero-chip-bg:rgba(255,255,255,.09); --theme-hero-chip-ink:#E7DAC9; --theme-hero-chip-line:rgba(255,255,255,.19);
@@ -962,13 +962,13 @@ html[data-theme="cosmic"]{
   --navy:#F4F7FB; --good:#8FC7A8; --good-soft:#1C3A2C; --bad:#DE8776; --bad-soft:#332015;
   --warn:#D8A15A; --warn-soft:#332615; --chip:#253247;
   --glass:rgba(27,34,48,.82); --glass-brd:#303A4A;
-  --glass-sheen:linear-gradient(150deg,rgba(27,34,48,.97),rgba(27,34,48,.9));
+  --glass-sheen:linear-gradient(150deg,rgba(27,34,48,.84),rgba(27,34,48,.66));
   --glass-shadow:0 18px 40px -26px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
   --glass-filter:blur(12px) saturate(120%);
   --accent-grad:linear-gradient(135deg,#9FB7D8,#7FA8D8);
   --shadow:0 1px 3px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.5);
   --theme-bg-1:#0A0E16; --theme-bg-2:#111827; --theme-glow-1:rgba(31,42,68,.7); --theme-glow-2:rgba(201,178,124,.08);
-  --theme-mast-1:#0A0E16; --theme-mast-2:#1B2A44; --theme-mast-ink:#F4F7FB; --theme-mast-sub:#C3CEDC; --theme-mast-line:rgba(255,255,255,.18);
+  --theme-mast-1:#0A0E16; --theme-mast-2:#1B2A44; --theme-mast-ink:#F4F7FB; --theme-mast-sub:#C3CEDC; --theme-mast-line:rgba(255,255,255,.18); --theme-mast-fade:10,14,22;
   --theme-menu-bg:#9FB7D8; --theme-menu-ink:#0A0E16;
   --theme-hero-1:#101827; --theme-hero-2:#1B2A44; --theme-hero-ink:#F4F7FB; --theme-hero-sub:#C3CEDC;
   --theme-hero-chip-bg:rgba(255,255,255,.08); --theme-hero-chip-ink:#D4DFEC; --theme-hero-chip-line:rgba(255,255,255,.14);
@@ -987,15 +987,15 @@ html[data-theme] body::before{
     radial-gradient(50vw 44vh at 100% 6%, var(--theme-glow-2), transparent 62%),
     linear-gradient(180deg,var(--theme-bg-1) 0%,var(--theme-bg-2) 45%,var(--theme-bg-1) 100%);
 }
-html[data-theme] .masthead{background:linear-gradient(135deg,var(--theme-mast-1),var(--theme-mast-2));box-shadow:0 14px 34px -30px rgba(0,0,0,.6);}
-html[data-theme] .masthead.scrolled{background:linear-gradient(135deg,var(--theme-mast-1),var(--theme-mast-2));}
-html[data-theme] .brand-words strong{color:var(--theme-mast-ink);}
-html[data-theme] .brand-words span{color:var(--theme-mast-sub);}
-html[data-theme] .masthead-brand:hover .brand-words strong{color:var(--theme-ring-1);}
+html[data-theme] .masthead{background:transparent;box-shadow:none;}
+html[data-theme] .masthead.scrolled{background:linear-gradient(180deg, rgba(var(--theme-mast-fade),.99) 0%, rgba(var(--theme-mast-fade),.95) 55%, rgba(var(--theme-mast-fade),0) 100%);}
+html[data-theme] .brand-words strong{color:var(--navy);}
+html[data-theme] .brand-words span{color:var(--muted);}
+html[data-theme] .masthead-brand:hover .brand-words strong{color:var(--accent-2);}
 html[data-theme] .menu-toggle{background:var(--theme-menu-bg);border-color:rgba(255,255,255,.22);color:var(--theme-menu-ink);box-shadow:0 10px 18px -15px rgba(0,0,0,.6);}
 html[data-theme] .menu-bars i{background:var(--theme-menu-ink);}
-html[data-theme] .masthead .btn.ghost{background:transparent;color:var(--theme-mast-ink);border-color:var(--theme-mast-line);}
-html[data-theme] .masthead .btn.ghost:hover{background:rgba(255,255,255,.08);color:var(--theme-mast-ink);}
+html[data-theme] .masthead .btn.ghost{background:transparent;color:var(--navy);border-color:var(--line);}
+html[data-theme] .masthead .btn.ghost:hover{background:var(--accent-soft);color:var(--accent-2);}
 html[data-theme] .header-menu{background:var(--card);border-color:var(--line);box-shadow:0 24px 50px -22px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.5);}
 html[data-theme] .menu-item{color:var(--ink);}
 html[data-theme] .menu-item svg{color:var(--theme-gold);}
@@ -1026,7 +1026,7 @@ html[data-theme] .btn.ghost:hover{background:var(--accent-soft);}
 html[data-theme] .btn.ghost.danger{color:var(--bad);border-color:rgba(178,74,58,.3);}
 html[data-theme] .pc-btns .btn.primary{background:var(--accent);color:var(--theme-btn-ink);}
 
-html[data-theme] .card,html[data-theme] .part-card,html[data-theme] .stat,html[data-theme] .category-card{background:var(--card);border-color:var(--line);box-shadow:var(--glass-shadow);}
+html[data-theme] .card,html[data-theme] .part-card,html[data-theme] .stat,html[data-theme] .category-card{background:var(--glass-sheen);border-color:var(--glass-brd);box-shadow:var(--glass-shadow);}
 html[data-theme] .category-card:hover{border-color:var(--accent);}
 html[data-theme] .category-title{color:var(--navy);}
 html[data-theme] .category-stats-line{color:var(--muted);}
@@ -1037,7 +1037,7 @@ html[data-theme] .category-enter{color:var(--accent);}
 html[data-theme] .disclaimer{background:var(--accent-soft);border-color:var(--line);color:var(--muted);}
 html[data-theme] .disclaimer b{color:var(--navy);}
 
-html[data-theme] .stat{background:var(--card);}
+html[data-theme] .stat{background:var(--glass-sheen);}
 html[data-theme] .stat b,html[data-theme] .area-name,html[data-theme] .pc-title{color:var(--navy);}
 html[data-theme] .pc-key{background:var(--accent-grad);color:var(--theme-btn-ink);}
 html[data-theme] .pc-bar{background:var(--line);}
@@ -1098,8 +1098,8 @@ html[data-theme] .modal-back{background:rgba(0,0,0,.58);}
 html[data-theme] .guide-head{border-bottom-color:var(--line);}
 html[data-theme] .guide-head h3{color:var(--navy);}
 html[data-theme] .guide-body h4{color:var(--theme-gold);}
-html[data-theme] .guide-body b{color:var(--navy);}
-html[data-theme] .about-highlight{color:var(--theme-gold);}
+html[data-theme] .guide-body b{color:var(--accent);}
+html[data-theme] .about-highlight{color:var(--accent);}
 html[data-theme] .theme-choice{background:var(--card);border-color:var(--line);}
 html[data-theme] .theme-choice.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
 html[data-theme] .theme-check{background:var(--accent);color:var(--bg);}
@@ -1183,6 +1183,16 @@ html[data-theme] .quiz-more .jump-form input:focus,
 html[data-theme] #scratchpadText:focus,
 html[data-theme] .password-card input:focus{outline:3px solid var(--accent);border-color:var(--accent);color:var(--ink);}
 html[data-theme] .pc-run-actions{border-top-color:var(--line);}
+
+/* --- quiz overflow menu, readable in every theme --- */
+html[data-theme] .quiz-more{background:var(--card);border-color:var(--line);box-shadow:0 24px 48px -22px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06);}
+html[data-theme] .quiz-more .jump-form{border-bottom-color:var(--line);}
+html[data-theme] .quiz-more .jump-form input{background:var(--card);border-color:var(--line);color:var(--ink);}
+html[data-theme] .quiz-more .jump-form input:focus{outline:3px solid var(--accent);border-color:var(--accent);}
+html[data-theme] .quiz-menu-item{color:var(--ink);}
+html[data-theme] .quiz-menu-item:hover,html[data-theme] .quiz-menu-item:focus-visible{background:var(--accent-soft);color:var(--accent);}
+html[data-theme] .quiz-menu-item.danger{color:var(--bad);}
+html[data-theme] .quiz-menu-item.danger:hover,html[data-theme] .quiz-menu-item.danger:focus-visible{background:var(--bad-soft);color:var(--bad);}
 </style>
 </head>
 <body>
@@ -1214,10 +1224,6 @@ html[data-theme] .pc-run-actions{border-top-color:var(--line);}
     </button>
     <button class="btn ghost small masthead-home" id="btnCategories" type="button">← Specialties</button>
     <div class="header-menu hidden" id="headerMenu" role="menu" aria-label="Quiz navigation">
-      <button class="menu-item" id="btnMenuSpecialties" role="menuitem" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1.2"/><rect x="14" y="4" width="6" height="6" rx="1.2"/><rect x="4" y="14" width="6" height="6" rx="1.2"/><rect x="14" y="14" width="6" height="6" rx="1.2"/></svg>
-        <span>Specialties</span>
-      </button>
       <button class="menu-item" id="btnAbout" role="menuitem" type="button" aria-haspopup="dialog">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10.8v5.2"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg>
         <span>About</span>
@@ -1228,7 +1234,7 @@ html[data-theme] .pc-run-actions{border-top-color:var(--line);}
       </button>
       <button class="menu-item" id="btnThemes" role="menuitem" type="button" aria-haspopup="dialog">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8.2" cy="8.2" r="2.6"/><circle cx="15.8" cy="8.2" r="2.6"/><circle cx="8.2" cy="15.8" r="2.6"/><circle cx="15.8" cy="15.8" r="2.6"/></svg>
-        <span>Themes</span>
+        <span>Select Theme</span>
       </button>
       <button class="menu-item" id="btnLock" role="menuitem" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.4"/><path d="M8.2 10V7.4a3.8 3.8 0 0 1 7.6 0V10"/><circle cx="12" cy="15" r="1.3"/></svg>
@@ -1543,7 +1549,7 @@ html[data-theme] .pc-run-actions{border-top-color:var(--line);}
       <p class="guide-intro">The essentials for revising with the bank.</p>
 
       <h4>Getting around</h4>
-      <p>Use the menu for <b>Specialties</b> (when available), <b>About</b>, <b>User Guide</b> and <b>Lock Quiz</b>. On the Specialties home, choose a specialty card or <b>Review</b>. Use <b>Save &amp; Quit</b> to pause a run; <b>Resume last run</b> reopens the newest paused run.</p>
+      <p>Use the menu for <b>About</b>, <b>User Guide</b>, <b>Select Theme</b> and <b>Lock Quiz</b>. On the Specialties home, choose a specialty card or <b>Review</b>. Use <b>Save &amp; Quit</b> to pause a run; <b>Resume last run</b> reopens the newest paused run.</p>
 
       <h4>Answering questions</h4>
       <p>Select an answer and choose <b>Check answer</b>. Use <b>Back</b>, <b>Skip</b> or <b>Jump</b> to move around; checked answers stay locked. If you finish with unanswered questions, you can return to them or finish anyway. Unanswered scorable questions count as incorrect and join the revision set.</p>
@@ -2941,7 +2947,6 @@ function hideAll(){
   closeFlags(false);
   dismissHighlightPopup();
   $("btnCategories").classList.remove("hidden");
-  $("btnMenuSpecialties").classList.remove("hidden");
   $("btnBrandHome").title = "Back to Specialties";
   closeHeaderMenu(false);
   ["screen-categories","screen-hub","screen-mixed","screen-quiz","screen-result","screen-logs","screen-review-summary"].forEach(id => $(id).classList.add("hidden"));
@@ -3676,7 +3681,6 @@ document.addEventListener("click", event => {
 document.addEventListener("keydown", event => {
   if(event.key === "Escape" && headerMenuOpen()) closeHeaderMenu(true);
 });
-$("btnMenuSpecialties").addEventListener("click", () => { closeHeaderMenu(false); showCategories(); });
 $("btnBrandHome").addEventListener("click", () => { closeHeaderMenu(false); showCategories(); });
 function updateMastheadScroll(){ $("masthead").classList.toggle("scrolled", window.scrollY > 8); }
 window.addEventListener("scroll", updateMastheadScroll, { passive: true });
@@ -3856,7 +3860,6 @@ function showCategories(){
   closeHeaderMenu(false);
   $("screen-categories").classList.remove("hidden");
   $("btnCategories").classList.add("hidden");
-  $("btnMenuSpecialties").classList.add("hidden");
   $("btnBrandHome").title = "Specialties home";
   const cardOf = area => {
     const questions = area.parts.flatMap(p => p.questions);
