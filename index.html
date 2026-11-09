@@ -698,6 +698,7 @@ header.top{
 .mix-stat b{display:block; font-size:24px; line-height:1.1; color:var(--navy); font-variant-numeric:tabular-nums;}
 .mix-stat span{font-size:12px; color:var(--muted);}
 .mix-controls{display:grid; grid-template-columns:1.35fr 1fr 1fr; gap:12px; margin:18px 0 10px;}
+.mix-controls.single{grid-template-columns:minmax(0,360px);}
 .mix-field{display:flex; flex-direction:column; gap:6px; min-width:0;}
 .mix-field > span{font-size:10.5px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:var(--muted);}
 .mix-field select{
@@ -726,6 +727,7 @@ header.top{
 }
 @media (max-width:720px){
   .mix-controls{grid-template-columns:1fr;}
+  .mix-controls.single{grid-template-columns:1fr;}
   .mix-stats{gap:14px 22px;}
 }
 @media (max-width:560px){
@@ -1307,6 +1309,7 @@ html[data-theme] .quiz-menu-item.danger:hover,html[data-theme] .quiz-menu-item.d
       <h2>Review</h2>
       <div class="review-mode-switch" role="tablist" aria-label="Review mode">
         <button class="review-mode-btn" id="tabReviewShuffle" type="button" role="tab" aria-selected="true" aria-controls="panelReviewShuffle">Review by shuffle</button>
+        <button class="review-mode-btn" id="tabReviewFlagged" type="button" role="tab" aria-selected="false" aria-controls="panelReviewFlagged">Review by flagged</button>
         <button class="review-mode-btn" id="tabReviewYear" type="button" role="tab" aria-selected="false" aria-controls="panelReviewYear">Review by year</button>
       </div>
 
@@ -1345,6 +1348,30 @@ html[data-theme] .quiz-menu-item.danger:hover,html[data-theme] .quiz-menu-item.d
         <div class="mix-history-row">
           <button class="btn ghost small" id="btnMixedLogs">Attempt history</button>
           <button class="btn ghost small danger" id="btnMixedClear">Clear history</button>
+        </div>
+      </div>
+
+      <div class="review-panel hidden" id="panelReviewFlagged">
+        <div class="mix-stats">
+          <div class="mix-stat"><b id="mfPool">0</b><span id="mfPoolLabel">flagged questions</span></div>
+        </div>
+        <div class="mix-controls single">
+          <label class="mix-field" for="mfSpecialty"><span>Specialty</span><select id="mfSpecialty"></select></label>
+        </div>
+        <p class="mix-priority-note">Reviewing a flagged question does not remove its flag. Flags stay until you remove them with the Flag button.</p>
+        <div class="mix-start-row">
+          <button class="btn primary" id="btnFlaggedStart">▶ &nbsp;Start</button>
+          <span class="mix-status" id="mfStatus" role="status"></span>
+        </div>
+        <div class="mix-paused hidden" id="mfPausedChoice">
+          <div class="mix-paused-copy">
+            <b id="mfPausedTitle"></b>
+            <span id="mfPausedText"></span>
+          </div>
+          <div class="btn-row">
+            <button class="btn ghost small" id="btnFlaggedResumePaused" type="button">Resume</button>
+            <button class="btn ghost small danger" id="btnFlaggedReplacePaused" type="button">Start new</button>
+          </div>
         </div>
       </div>
 
@@ -1586,6 +1613,7 @@ html[data-theme] .quiz-menu-item.danger:hover,html[data-theme] .quiz-menu-item.d
 
       <h4>Review</h4>
       <p><b>Review by shuffle</b> draws unseen questions first, then repeats when necessary. Choose the specialty, question type and run length. Wrong answers join the revision set of the specialty they came from.</p>
+      <p><b>Review by flagged</b> collects every flagged question from the specialty you choose. Reviewing a flagged question does not remove its flag; flags stay until you unflag them.</p>
       <p><b>Review by year</b> builds a full paper for the selected exam year and specialty. Answers stay hidden until you submit; mock scores are kept separately from section best scores.</p>
 
       <h4>Session logs</h4>
@@ -1768,6 +1796,7 @@ function questionYearLabel(q){
 }
 function findPart(key){
   if(key === MIXED_KEY) return mixedRun || MIXED_META;
+  if(key === FLAGGED_KEY) return flaggedRun || FLAGGED_META;
   if(key === MOCK_KEY) return (mockRun && mockRun.key === MOCK_KEY) ? mockRun : MOCK_META;
   if(key === MOCK_REVIEW_KEY) return (mockRun && mockRun.key === MOCK_REVIEW_KEY) ? mockRun : MOCK_META;
   return PARTS.find(p => p.key === key);
@@ -2021,6 +2050,11 @@ const MIXED_META = { key: MIXED_KEY, mixed: true, kind: "choice", title: "Review
   fullTitle: "Review by shuffle — random questions from the specialties you choose",
   topics: {}, questions: [] };
 let mixedRun = null;                     // the drawn run in progress (or just finished)
+const FLAGGED_KEY = "FlaggedReview";
+const FLAGGED_META = { key: FLAGGED_KEY, mixed: true, flagged: true, kind: "choice", title: "Review by flagged",
+  fullTitle: "Review by flagged — questions you have flagged for another look",
+  topics: {}, questions: [] };
+let flaggedRun = null;                   // the flagged review in progress (or just finished)
 
 /* Run length: the three presets on the mixed screen, or any number typed
    into its box (1..500; a run stops at whatever the pool still holds). */
@@ -2074,6 +2108,129 @@ function mixedAreaForPart(partObj){
 function mixedSessionSpecialty(sess){
   return mixedSpecialtyKey(sess && sess.ms);
 }
+/* ---- review by flagged: a persistent list of every question flagged in
+   its own specialty run, gathered into one review. ---- */
+function flaggedSpecialty(){
+  try{ return mixedSpecialtyKey(localStorage.getItem("hku_mbbs_flagged_specialty_v1")); }
+  catch(e){ return "all"; }
+}
+function setFlaggedSpecialty(value){
+  const v = mixedSpecialtyKey(value);
+  try{ localStorage.setItem("hku_mbbs_flagged_specialty_v1", v); }catch(e){ storageError(e); }
+  return v;
+}
+function flaggedSpecialtyName(value){
+  const key = mixedSpecialtyKey(value);
+  if(key === "all") return "all specialties";
+  const area = AREAS.find(item => item.key === key);
+  return area ? area.name : "all specialties";
+}
+function flaggedPool(){
+  const specialty = flaggedSpecialty();
+  const byArea = {}, totalByArea = {};
+  AREAS.forEach(area => { byArea[area.key] = 0; totalByArea[area.key] = 0; });
+  const items = [];
+  PARTS.forEach(p => {
+    const area = mixedAreaForPart(p);
+    if(!area) return;
+    const flags = readAnnotations(p.key, "flags");
+    if(!flags) return;
+    Object.keys(flags).map(Number).sort((a, b) => a - b).forEach(n => {
+      const q = p.questions.find(item => item.n === n);
+      if(!q) return;
+      totalByArea[area.key] = (totalByArea[area.key] || 0) + 1;
+      byArea[area.key] = (byArea[area.key] || 0) + 1;
+      if(specialty === "all" || specialty === area.key) items.push({ p: p, q: q });
+    });
+  });
+  return { items: items, byArea: byArea, totalByArea: totalByArea, specialty: specialty };
+}
+function fillFlaggedSpecialtySelect(pool){
+  const sel = $("mfSpecialty");
+  if(!sel) return;
+  const signature = AREAS.map(area => pool.totalByArea[area.key] || 0).join(",");
+  if(sel.dataset.signature !== signature){
+    const total = AREAS.reduce((sum, area) => sum + (pool.totalByArea[area.key] || 0), 0);
+    sel.innerHTML = `<option value="all">All specialties (${total})</option>` +
+      AREAS.map(area => `<option value="${area.key}">${area.name} (${pool.totalByArea[area.key] || 0})</option>`).join("");
+    sel.dataset.signature = signature;
+  }
+  sel.value = pool.specialty;
+}
+function flaggedPartFrom(items, specialty){
+  const spec = mixedSpecialtyKey(specialty);
+  const from = flaggedSpecialtyName(spec);
+  const topics = {};
+  const questions = items.map((it, i) => {
+    const area = subjectForPart(it.p);
+    const t = it.p.topics[it.q.topic] || { name: it.p.title, advice: "" };
+    topics[it.q.topic] = { name: area.name + " · " + t.name, advice: t.advice };
+    return Object.assign({}, it.q, { n: i + 1, __mp: it.p.key, __mq: it.q.n });
+  });
+  return { key: FLAGGED_KEY, mixed: true, flagged: true, kind: "choice",
+    title: "Review by flagged", kinds: "both", specialty: spec,
+    fullTitle: "Review by flagged — " + questions.length + " flagged question" + (questions.length === 1 ? "" : "s") + " from " + from,
+    topics: topics, questions: questions };
+}
+function startFlaggedItems(items, specialty){
+  ["flags", "highlights", "scratchpad"].forEach(kind => writeAnnotations(FLAGGED_KEY, kind, {}));
+  flaggedRun = flaggedPartFrom(items, specialty);
+  part = flaggedRun;
+  activeArea = MIXED_AREA;
+  specialtyTabs[MIXED_AREA.key] = "choice";
+  mode = "full";
+  answers = {};
+  drafts = {};
+  checked = {};
+  revealed = {};
+  runFinished = false;
+  currentRecord = null;
+  queue = flaggedRun.questions.map((q, i) => i);
+  idx = 0;
+  reviewView = "flagged";
+  hideAll();
+  $("quizPartName").textContent = flaggedRun.title;
+  $("screen-quiz").classList.remove("hidden");
+  renderQ();
+}
+function startFlaggedRun(){
+  const pool = flaggedPool();
+  if(!pool.items.length){ renderFlagged(); return; }
+  startFlaggedItems(pool.items, pool.specialty);
+}
+function resumeFlaggedRun(sess){
+  const items = mixedItemsFromPairs(sess.mq);
+  if(!items.length){ clearSession(FLAGGED_KEY); enterMixed("flagged"); return; }
+  flaggedRun = flaggedPartFrom(items, sess.ms);
+  part = flaggedRun;
+  reviewView = "flagged";
+  beginSession(FLAGGED_KEY, sess, sess.i);
+}
+function renderFlagged(){
+  const pool = flaggedPool();
+  fillFlaggedSpecialtySelect(pool);
+  $("mfPool").textContent = pool.items.length.toLocaleString();
+  $("mfPoolLabel").textContent = pool.specialty === "all" ? "flagged across all specialties" : "flagged in " + flaggedSpecialtyName(pool.specialty);
+  const sess = loadSession(FLAGGED_KEY);
+  const btn = $("btnFlaggedStart");
+  if(sess){
+    btn.disabled = false;
+    btn.innerHTML = `▶ &nbsp;Resume run · Q ${Math.min(sess.i + 1, sess.q.length)}/${sess.q.length}`;
+  }else if(pool.items.length){
+    btn.disabled = false;
+    btn.innerHTML = `▶ &nbsp;Start ${pool.items.length} flagged question${pool.items.length === 1 ? "" : "s"}`;
+  }else{
+    btn.disabled = true;
+    btn.innerHTML = "▶ &nbsp;No flagged questions";
+  }
+  $("mfStatus").textContent = !pool.items.length && !sess ? "Flag questions during a run to build this list." : "";
+  const paused = $("mfPausedChoice");
+  paused.classList.toggle("hidden", !sess);
+  if(sess){
+    $("mfPausedTitle").textContent = `Paused: ${sess.q.length} flagged question${sess.q.length === 1 ? "" : "s"} · Q${Math.min(sess.i + 1, sess.q.length)}/${sess.q.length}`;
+    $("mfPausedText").textContent = `From ${flaggedSpecialtyName(sess.ms)}. Reviewing does not unflag.`;
+  }
+}
 /* "Attempted" means the question was done and validated: it was in the
    queue of a finished run of its own part, was drawn in a finished mixed
    run, or was answered and checked in a run that is merely paused. A
@@ -2084,6 +2241,7 @@ function attemptedSet(){
   const seen = new Set();
   PARTS.forEach(p => loadRecords(p.key).forEach(r => (r.q || []).forEach(n => seen.add(p.key + "#" + n))));
   loadRecords(MIXED_KEY).forEach(r => (r.mq || []).forEach(pair => { if(pair) seen.add(pair[0] + "#" + pair[1]); }));
+  loadRecords(FLAGGED_KEY).forEach(r => (r.mq || []).forEach(pair => { if(pair) seen.add(pair[0] + "#" + pair[1]); }));
   loadRecords(MOCK_KEY).forEach(r => (r.mq || []).forEach(pair => { if(pair) seen.add(pair[0] + "#" + pair[1]); }));
   // checked questions of a paused part run
   PARTS.forEach(p => {
@@ -2107,6 +2265,17 @@ function attemptedSet(){
       const pair = (msess.mq || [])[local - 1];
       if(!pair) return;
       const done = msess.nv === 2 ? !!(msess.c || {})[local] : i < (msess.i || 0);
+      if(done) seen.add(pair[0] + "#" + pair[1]);
+    });
+  }
+  // checked questions of a paused flagged review
+  const fsess = loadSession(FLAGGED_KEY);
+  if(fsess){
+    (fsess.q || []).forEach((n, i) => {
+      const local = Number(n);
+      const pair = (fsess.mq || [])[local - 1];
+      if(!pair) return;
+      const done = fsess.nv === 2 ? !!(fsess.c || {})[local] : i < (fsess.i || 0);
       if(done) seen.add(pair[0] + "#" + pair[1]);
     });
   }
@@ -2239,7 +2408,10 @@ function restartMixed(){                          // the same draw again
     const orig = p && p.questions.find(x => x.n === q.__mq);
     if(p && orig) items.push({ p: p, q: orig });
   });
-  if(items.length) startMixedItems(items, "full", specialty, kinds);
+  if(items.length){
+    if(part && part.flagged) startFlaggedItems(items, part.specialty || "all");
+    else startMixedItems(items, "full", specialty, kinds);
+  }
 }
 function startMixedReviewWrong(){                 // just the ones this run got wrong
   if(!currentRecord || !currentRecord.mq) return;
@@ -2257,7 +2429,9 @@ function startMixedReviewWrong(){                 // just the ones this run got 
 function stillWrongInSomeRecord(key, qid){
   if(loadRecords(key).some(r => !r.mq && (r.w || []).includes(qid))) return true;
   return loadRecords(MIXED_KEY).some(r => (r.mq || []).some((pair, i) =>
-    pair && pair[0] === key && pair[1] === qid && (r.w || []).includes(i + 1)));
+    pair && pair[0] === key && pair[1] === qid && (r.w || []).includes(i + 1)))
+    || loadRecords(FLAGGED_KEY).some(r => (r.mq || []).some((pair, i) =>
+      pair && pair[0] === key && pair[1] === qid && (r.w || []).includes(i + 1)));
 }
 function pruneMixedRevisionSets(removed){
   const candidates = {};
@@ -2291,7 +2465,9 @@ function mixedLogText(rec, withHeader){
     lines.push("==============================================");
     lines.push("HKU MBBS QUESTION BANK — SESSION LOG");
     lines.push("==============================================");
-    lines.push("Part      : " + (rec.mk === "mcq" ? "Review by shuffle — random MCQ / EMQ questions from " + from
+    lines.push("Part      : " + (rec.flagged
+      ? "Review by flagged — " + rec.q.length + " flagged question" + (rec.q.length === 1 ? "" : "s") + " from " + from
+      : rec.mk === "mcq" ? "Review by shuffle — random MCQ / EMQ questions from " + from
       : rec.mk === "saq" ? "Review by shuffle — random SAQ cases from " + from
       : "Review by shuffle — random questions from " + from));
     lines.push("Date      : " + fmtDate(rec.d));
@@ -2323,35 +2499,43 @@ function mixedLogText(rec, withHeader){
 function totalRevSet(){ return PARTS.reduce((sum, p) => sum + wrongSetQids(p.key).length, 0); }
 let reviewView = "shuffle";
 function storedReviewView(){
-  try{ return localStorage.getItem("hku_mbbs_review_view_v1") === "year" ? "year" : "shuffle"; }
-  catch(e){ return "shuffle"; }
+  try{
+    const v = localStorage.getItem("hku_mbbs_review_view_v1");
+    return v === "year" || v === "flagged" ? v : "shuffle";
+  }catch(e){ return "shuffle"; }
 }
 function setReviewView(view, persist){
-  reviewView = view === "year" ? "year" : "shuffle";
+  reviewView = view === "year" || view === "flagged" ? view : "shuffle";
   if(persist){
     try{ localStorage.setItem("hku_mbbs_review_view_v1", reviewView); }catch(e){ storageError(e); }
   }
-  const sh = $("tabReviewShuffle"), yr = $("tabReviewYear");
-  if(sh && yr){
+  const sh = $("tabReviewShuffle"), fl = $("tabReviewFlagged"), yr = $("tabReviewYear");
+  if(sh && fl && yr){
     sh.setAttribute("aria-selected", String(reviewView === "shuffle"));
+    fl.setAttribute("aria-selected", String(reviewView === "flagged"));
     yr.setAttribute("aria-selected", String(reviewView === "year"));
     $("panelReviewShuffle").classList.toggle("hidden", reviewView !== "shuffle");
+    $("panelReviewFlagged").classList.toggle("hidden", reviewView !== "flagged");
     $("panelReviewYear").classList.toggle("hidden", reviewView !== "year");
   }
-  if(reviewView === "year") renderMock(); else renderMixed();
+  if(reviewView === "year") renderMock();
+  else if(reviewView === "flagged") renderFlagged();
+  else renderMixed();
 }
 function enterMixed(view){
-  part = MIXED_META;
   mixedRun = null;
+  flaggedRun = null;
   mockRun = null;
   activeArea = null;
   hideAll();
-  const next = view === "year" || view === "shuffle" ? view : storedReviewView();
+  const next = view === "year" || view === "shuffle" || view === "flagged" ? view : storedReviewView();
+  part = next === "flagged" ? FLAGGED_META : MIXED_META;
   setReviewView(next, false);
   $("screen-mixed").classList.remove("hidden");
 }
 function backToHub(){
   if(part && (part.mock || part.mockReview)){ enterMixed("year"); return; }
+  if(part && part.flagged){ enterMixed("flagged"); return; }
   if(part && part.mixed){ enterMixed(reviewView); return; }
   showHub();
 }
@@ -2435,6 +2619,7 @@ function mixedCardHtml(){
       ${cardArt(MIXED_AREA)}
       <span class="category-title">Review</span>
       <span class="category-stats-line category-review-line">Questions by shuffle</span>
+      <span class="category-stats-line category-review-line">Questions by flagged</span>
       <span class="category-stats-line category-review-line">Questions by year</span>
       <span class="category-hairline" aria-hidden="true"></span>
       <span class="category-enter">Enter review →</span>
@@ -2765,7 +2950,31 @@ function clearMockHistory(){
   renderMock();
 }
 $("tabReviewShuffle").addEventListener("click", () => setReviewView("shuffle", true));
+$("tabReviewFlagged").addEventListener("click", () => setReviewView("flagged", true));
 $("tabReviewYear").addEventListener("click", () => setReviewView("year", true));
+$("mfSpecialty").addEventListener("change", () => {
+  setFlaggedSpecialty($("mfSpecialty").value);
+  renderFlagged();
+});
+$("btnFlaggedStart").addEventListener("click", () => {
+  const sess = loadSession(FLAGGED_KEY);
+  if(sess){ resumeFlaggedRun(sess); return; }
+  startFlaggedRun();
+});
+$("btnFlaggedResumePaused").addEventListener("click", () => {
+  const sess = loadSession(FLAGGED_KEY);
+  if(sess) resumeFlaggedRun(sess); else renderFlagged();
+});
+$("btnFlaggedReplacePaused").addEventListener("click", () => {
+  const pool = flaggedPool();
+  const count = pool.items.length;
+  const message = count
+    ? `Discard the paused flagged run and start a fresh review of ${count} flagged question${count === 1 ? "" : "s"} from ${flaggedSpecialtyName(pool.specialty)}?`
+    : `Discard the paused flagged run? There are no flagged questions in ${flaggedSpecialtyName(pool.specialty)} right now.`;
+  if(!confirm(message)) return;
+  clearSession(FLAGGED_KEY);
+  if(count) startFlaggedItems(pool.items, pool.specialty); else renderFlagged();
+});
 $("myYear").addEventListener("change", () => {
   setMockYear($("myYear").value);
   renderMock();
@@ -2838,7 +3047,7 @@ function hubBandHtml(){
   const pct = exact <= 0 ? "0%" : exact < 0.1 ? "&lt;0.1%"
     : exact >= 10 ? Math.round(exact) + "%" : (Math.round(exact * 10) / 10) + "%";
   const rev = totalRevSet();
-  const paused = PARTS.filter(p => loadSession(p.key)).length + (loadSession(MIXED_KEY) ? 1 : 0) + (loadSession(MOCK_KEY) ? 1 : 0);
+  const paused = PARTS.filter(p => loadSession(p.key)).length + (loadSession(MIXED_KEY) ? 1 : 0) + (loadSession(FLAGGED_KEY) ? 1 : 0) + (loadSession(MOCK_KEY) ? 1 : 0);
   const last = latestRun();
   return `<div class="hub-band">
       <div class="hub-medal" style="--hub-ring-target:${(100 - exact).toFixed(2)}">
@@ -2868,6 +3077,8 @@ function latestRun(){
   const runs = PARTS.map(p => ({ key: p.key, sess: loadSession(p.key) })).filter(r => r.sess && r.sess.u);
   const mixed = loadSession(MIXED_KEY);
   if(mixed && mixed.u) runs.push({ key: MIXED_KEY, sess: mixed });
+  const flagged = loadSession(FLAGGED_KEY);
+  if(flagged && flagged.u) runs.push({ key: FLAGGED_KEY, sess: flagged });
   const mock = loadSession(MOCK_KEY);
   if(mock && mock.u) runs.push({ key: MOCK_KEY, sess: mock });
   runs.sort((a, b) => new Date(b.sess.u) - new Date(a.sess.u));
@@ -2875,6 +3086,7 @@ function latestRun(){
 }
 function runLabel(key, sess){
   if(key === MIXED_KEY) return "Review by shuffle";
+  if(key === FLAGGED_KEY) return "Review by flagged";
   if(key === MOCK_KEY) return `${sess && sess.my ? sess.my : ""} ${sess && sess.ms ? mockSpecialtyName(sess.ms) : "mock exam"}${sess && sess.my ? " mock exam" : ""}`.trim();
   const area = subjectForPart(findPart(key));
   return area ? area.name : key;
@@ -2883,6 +3095,7 @@ function resumeLatestRun(){
   const run = latestRun();
   if(!run) return;
   if(run.key === MIXED_KEY){ resumeMixedRun(run.sess); return; }
+  if(run.key === FLAGGED_KEY){ resumeFlaggedRun(run.sess); return; }
   if(run.key === MOCK_KEY){ resumeMockRun(run.sess); return; }
   beginSession(run.key, run.sess, run.sess.i);
 }
@@ -3289,6 +3502,7 @@ function finishRun(force=false){
     u: missing
   };
   if(part.mixed){ record.mk = part.kinds; record.ms = part.specialty || "all"; record.mq = mixedPairs(part); }
+  if(part.flagged) record.flagged = true;
   currentRecord = record;
   if(mode === "review"){
     showReviewSummary(correct, total, pct, remaining);
@@ -3372,7 +3586,7 @@ function finishMock(force=false){
 function showResults(correct, total, pct, wrong, remaining){
   hideAll();
   const isMock = !!part.mock;
-  $("btnHubFromRes").innerHTML = isMock ? "← &nbsp;Review by year" : "← &nbsp;All parts";
+  $("btnHubFromRes").innerHTML = isMock ? "← &nbsp;Review by year" : part.flagged ? "← &nbsp;Review by flagged" : part.mixed ? "← &nbsp;Review by shuffle" : "← &nbsp;All parts";
   $("screen-result").classList.remove("hidden");
   $("resPartName").textContent = part.title;
   $("scorePct").textContent = total ? pct + "%" : "N/A";
@@ -3501,7 +3715,7 @@ function toggleResultLog(){
 function showReviewSummary(correct, total, pct, remaining){
   hideAll();
   $("screen-review-summary").classList.remove("hidden");
-  $("btnHubFromRev").innerHTML = part.mockReview ? "← &nbsp;Review by year" : part.mixed ? "← &nbsp;Review by shuffle" : "← &nbsp;All parts";
+  $("btnHubFromRev").innerHTML = part.mockReview ? "← &nbsp;Review by year" : part.flagged ? "← &nbsp;Review by flagged" : part.mixed ? "← &nbsp;Review by shuffle" : "← &nbsp;All parts";
   if(part.mockReview){
     $("revSumTitle").textContent = "Mock exam review complete";
     $("revSumText").innerHTML = `You scored <b>${correct}/${total} (${total ? pct + "%" : "N/A"})</b> on the ${total} scorable question${total===1?"":"s"} reviewed. ` +
@@ -4126,12 +4340,14 @@ function setQuestionFlag(key, number, flag){
 }
 function refreshQuestionFlag(){
   const q = QS()[queue[idx]];
-  const flags = readAnnotations(part.key, "flags");
-  const flagged = !!(flags && flags[q.n]);
+  const target = part.flagged && q.__mp ? { key: q.__mp, n: q.__mq } : { key: part.key, n: q.n };
+  const flags = readAnnotations(target.key, "flags");
+  const flagged = !!(flags && flags[target.n]);
   $("btnFlagQuestion").innerHTML = FLAG_ICON + (flagged ? " Unflag" : " Flag");
   $("btnFlagQuestion").setAttribute("aria-pressed", String(flagged));
-  $("btnFlagQuestion").setAttribute("aria-label", (flagged ? "Unflag" : "Flag") + " question " + q.n);
+  $("btnFlagQuestion").setAttribute("aria-label", (flagged ? "Unflag" : "Flag") + " question " + target.n);
   $("btnOpenFlags").innerHTML = FLAG_ICON + " Flagged (" + flaggedQuestions(part.key).length + ")";
+  $("btnOpenFlags").classList.toggle("hidden", !!part.flagged);
 }
 function renderFlagList(){
   const category = subjectForPart(flagPanelPart);
@@ -4370,8 +4586,12 @@ function saveSelectedHighlight(remove=false){
 
 $("btnFlagQuestion").addEventListener("click", () => {
   const q = QS()[queue[idx]];
-  const flags = readAnnotations(part.key, "flags");
-  if(flags) setQuestionFlag(part.key, q.n, !flags[q.n]);
+  const target = part.flagged && q.__mp ? { key: q.__mp, n: q.__mq } : { key: part.key, n: q.n };
+  const flags = readAnnotations(target.key, "flags");
+  if(flags){
+    setQuestionFlag(target.key, target.n, !flags[target.n]);
+    if(part.flagged) refreshQuestionFlag();
+  }
 });
 $("btnOpenFlags").addEventListener("click", () => {
   const trigger = $("btnQuizMore");
