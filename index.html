@@ -469,6 +469,7 @@ header.top{
 .category-hairline{height:1px; background:linear-gradient(90deg,var(--line),transparent); margin:18px 0 0;}
 .category-mixed-note{margin-top:10px; line-height:1.55;}
 .category-review-line{font-size:12.5px; font-weight:600; color:var(--muted); line-height:1.55;}
+.category-review-line b{font-weight:800; color:var(--navy);}
 .category-review-line + .category-review-line{margin-top:4px;}
 .category-enter{white-space:nowrap; padding-top:20px;}
 @media (max-width:1100px){
@@ -2618,9 +2619,9 @@ function mixedCardHtml(){
   return `<button class="category-card" data-category="${MIXED_KEY}" style="--tone:${SPEC_TONE[MIXED_KEY]}">
       ${cardArt(MIXED_AREA)}
       <span class="category-title">Review</span>
-      <span class="category-stats-line category-review-line">Questions by shuffle</span>
-      <span class="category-stats-line category-review-line">Questions by flagged</span>
-      <span class="category-stats-line category-review-line">Questions by year</span>
+      <span class="category-stats-line category-review-line">Questions by <b>shuffle</b></span>
+      <span class="category-stats-line category-review-line">Questions by <b>flagged</b></span>
+      <span class="category-stats-line category-review-line">Questions by <b>year</b></span>
       <span class="category-hairline" aria-hidden="true"></span>
       <span class="category-enter">Enter review →</span>
     </button>`;
