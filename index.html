@@ -661,6 +661,14 @@ header.top{
   animation:hubRibbonDraw .76s cubic-bezier(.22,.61,.36,1) .055s both;}
 .hub-flower{width:58px; height:58px; display:block; transform-origin:center;
   animation:hubFlowerIn .76s cubic-bezier(.22,.61,.36,1) .08s both;}
+.hub-flower-button{
+  appearance:none; -webkit-appearance:none; border:0; background:none; margin:0; padding:0;
+  width:58px; height:58px; display:grid; place-items:center; border-radius:50%;
+  color:inherit; cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.hub-flower-button:active{cursor:grabbing;}
+.hub-flower-button:focus-visible{outline:3px solid var(--accent-soft); outline-offset:3px;}
 @keyframes hubRingDraw{from{stroke-dashoffset:100;} to{stroke-dashoffset:var(--hub-ring-target,28);}}
 @keyframes hubRibbonDraw{from{stroke-dashoffset:100;} to{stroke-dashoffset:var(--hub-ring-target,28);}}
 @keyframes hubFlowerIn{
@@ -3059,7 +3067,7 @@ function hubBandHtml(){
           <circle class="fill" cx="70" cy="70" r="62" pathLength="100"/>
           <circle class="fill ribbon" cx="70" cy="70" r="55" pathLength="100"/>
         </svg>
-        ${HUB_FLOWER}
+        <button class="hub-flower-button" id="hubFlowerSpin" type="button" aria-label="Spin the flower" title="Click to spin">${HUB_FLOWER}</button>
       </div>
       <div class="hub-figures"><b>${done.toLocaleString()}</b><span>of ${total.toLocaleString()} questions attempted</span></div>
       <div class="hub-chips">
@@ -3100,9 +3108,97 @@ function resumeLatestRun(){
   if(run.key === MOCK_KEY){ resumeMockRun(run.sess); return; }
   beginSession(run.key, run.sess, run.sess.i);
 }
+let hubFlowerSpinFrame = null;
+let hubFlowerSpinAbort = null;
+function wireHubFlowerSpin(){
+  if(hubFlowerSpinFrame !== null){ cancelAnimationFrame(hubFlowerSpinFrame); hubFlowerSpinFrame = null; }
+  if(hubFlowerSpinAbort){ hubFlowerSpinAbort.abort(); hubFlowerSpinAbort = null; }
+  const button = $("hubFlowerSpin");
+  if(!button) return;
+  const flower = button.querySelector(".hub-flower");
+  if(!flower) return;
+  const MAX_SPEED = 2000, IMPULSE = 240, ACCEL = 320, DRAG = .7;
+  let angle = 0, speed = 0, held = false, last = 0, settleToken = 0;
+  flower.style.rotate = "0deg";
+  flower.style.willChange = "";
+  const frame = now => {
+    hubFlowerSpinFrame = null;
+    if(!last) last = now;
+    const dt = Math.min(.05, Math.max(0, (now - last) / 1000));
+    last = now;
+    if($("screen-categories").classList.contains("hidden") && !held){ speed = 0; flower.style.willChange = ""; return; }
+    if(held){
+      speed = Math.min(MAX_SPEED, speed + ACCEL * dt);
+    }else{
+      speed *= Math.exp(-DRAG * dt);
+      if(Math.abs(speed) < 100){ startSettle(); return; }
+    }
+    angle = ((angle + speed * dt) % 360 + 360) % 360;
+    flower.style.rotate = angle.toFixed(1) + "deg";
+    hubFlowerSpinFrame = requestAnimationFrame(frame);
+  };
+  const startSettle = () => {
+    let delta = angle % 360;
+    if(delta > 180) delta -= 360;
+    if(Math.abs(delta) < 2){
+      flower.style.transition = "none";
+      flower.style.rotate = "0deg";
+      flower.style.willChange = "";
+      angle = 0; speed = 0;
+      return;
+    }
+    const target = angle > 180 ? 360 : 0;
+    const travel = Math.abs(target - angle);
+    const duration = Math.round(700 + (travel / 180) * 800);
+    const token = ++settleToken;
+    flower.style.transition = `rotate ${duration}ms cubic-bezier(.22,.61,.36,1)`;
+    flower.style.rotate = target + "deg";
+    flower.style.willChange = "transform";
+    speed = 0;
+    setTimeout(() => {
+      if(token !== settleToken) return;
+      flower.style.transition = "none";
+      flower.style.rotate = "0deg";
+      flower.style.willChange = "";
+      angle = 0;
+    }, duration + 30);
+  };
+  const kick = amount => {
+    settleToken++;
+    const current = parseFloat(getComputedStyle(flower).rotate);
+    if(Number.isFinite(current)) angle = ((current % 360) + 360) % 360;
+    flower.style.transition = "none";
+    speed = Math.min(MAX_SPEED, speed + amount);
+    flower.style.willChange = "transform";
+    if(hubFlowerSpinFrame === null){ last = 0; hubFlowerSpinFrame = requestAnimationFrame(frame); }
+  };
+  const release = () => {
+    if(!held) return;
+    held = false;
+    last = 0;
+    if(hubFlowerSpinFrame === null) hubFlowerSpinFrame = requestAnimationFrame(frame);
+  };
+  const controller = new AbortController();
+  hubFlowerSpinAbort = controller;
+  const signal = controller.signal;
+  button.addEventListener("pointerdown", event => {
+    if(event.pointerType === "mouse" && event.button !== 0) return;
+    held = true;
+    last = 0;
+    button.focus({ preventScroll: true });
+    kick(IMPULSE);
+  }, { signal });
+  window.addEventListener("pointerup", release, { signal });
+  window.addEventListener("pointercancel", release, { signal });
+  window.addEventListener("blur", release, { signal });
+  button.addEventListener("click", event => {
+    if(event.detail === 0) kick(IMPULSE);
+  }, { signal });
+}
 function wireHubBand(){
   const resume = $("hubResume");
   if(resume) resume.addEventListener("click", resumeLatestRun);
+  wireHubFlowerSpin();
 }
 
 /* ================= quiz flow ================= */
