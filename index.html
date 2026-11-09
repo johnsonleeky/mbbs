@@ -643,8 +643,23 @@ header.top{
 .hub-medal{position:relative; width:104px; height:104px; display:grid; place-items:center; flex:0 0 auto; color:var(--accent);}
 .hub-ring{position:absolute; inset:0; width:100%; height:100%; transform:rotate(-90deg);}
 .hub-ring .track{fill:none; stroke:rgba(177,45,99,.15); stroke-width:7;}
-.hub-ring .fill{fill:none; stroke:url(#hubRingGrad); stroke-width:7; stroke-linecap:round;}
-.hub-flower{width:58px; height:58px; display:block;}
+.hub-ring .fill{fill:none; stroke:url(#hubRingGrad); stroke-width:7; stroke-linecap:round;
+  stroke-dasharray:100; stroke-dashoffset:100;
+  animation:hubRingDraw .76s cubic-bezier(.22,.61,.36,1) both;}
+.hub-ring .ribbon{stroke-width:2.6; opacity:.55;
+  animation:hubRibbonDraw .76s cubic-bezier(.22,.61,.36,1) .055s both;}
+.hub-flower{width:58px; height:58px; display:block; transform-origin:center;
+  animation:hubFlowerIn .76s cubic-bezier(.22,.61,.36,1) .08s both;}
+@keyframes hubRingDraw{from{stroke-dashoffset:100;} to{stroke-dashoffset:var(--hub-ring-target,28);}}
+@keyframes hubRibbonDraw{from{stroke-dashoffset:100;} to{stroke-dashoffset:var(--hub-ring-target,28);}}
+@keyframes hubFlowerIn{
+  0%{opacity:0; transform:rotate(-150deg) scale(.7);}
+  100%{opacity:1; transform:rotate(0deg) scale(1);}
+}
+@media (prefers-reduced-motion: reduce){
+  .hub-ring .fill,.hub-ring .ribbon{animation:none; stroke-dashoffset:var(--hub-ring-target,28);}
+  .hub-flower{animation:none; opacity:1; transform:none;}
+}
 .hub-figures{display:flex; flex-direction:column; gap:1px; min-width:0;}
 .hub-figures b{font-size:33px; font-weight:800; color:var(--navy); line-height:1.05; letter-spacing:-.02em;}
 .hub-figures span{font-size:12.5px; color:var(--muted);}
@@ -2816,14 +2831,14 @@ function hubBandHtml(){
   const rev = totalRevSet();
   const paused = PARTS.filter(p => loadSession(p.key)).length + (loadSession(MIXED_KEY) ? 1 : 0) + (loadSession(MOCK_KEY) ? 1 : 0);
   const last = latestRun();
-  const circ = 2 * Math.PI * 62;
   return `<div class="hub-band">
-      <div class="hub-medal">
+      <div class="hub-medal" style="--hub-ring-target:${(100 - exact).toFixed(2)}">
         <svg class="hub-ring" viewBox="0 0 140 140" aria-hidden="true">
           <defs><linearGradient id="hubRingGrad" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stop-color="#B12D63"/><stop offset="1" stop-color="#FF7FB6"/></linearGradient></defs>
           <circle class="track" cx="70" cy="70" r="62"/>
-          <circle class="fill" cx="70" cy="70" r="62" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${(circ * (1 - exact / 100)).toFixed(1)}"/>
+          <circle class="fill" cx="70" cy="70" r="62" pathLength="100"/>
+          <circle class="fill ribbon" cx="70" cy="70" r="55" pathLength="100"/>
         </svg>
         ${HUB_FLOWER}
       </div>
