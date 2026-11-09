@@ -608,6 +608,17 @@ header.top{
 .guide-body p{font-size:13.5px; color:var(--ink);}
 .guide-body b{color:var(--accent);}
 .guide-body .about-highlight{color:var(--accent); font-weight:800;}
+.guide-body .guide-warning{
+  position:relative; margin-top:18px; padding:13px 14px 13px 42px;
+  border:1px solid var(--warn); border-left:3px solid var(--warn); border-radius:11px;
+  background:var(--warn-soft); color:var(--ink); font-size:13px; line-height:1.55;
+}
+.guide-body .guide-warning b{color:var(--warn); font-weight:800;}
+.guide-body .guide-warning::before{
+  content:"!"; position:absolute; left:14px; top:13px;
+  width:17px; height:17px; border-radius:50%; display:grid; place-items:center;
+  background:var(--warn); color:var(--warn-soft); font-size:11px; font-weight:900; line-height:1;
+}
 .about-modal .guide-body p + p{margin-top:12px;}
 @media (max-width:560px){
   .guide-modal{max-height:92vh;}
@@ -1114,6 +1125,7 @@ html[data-theme] .guide-head{border-bottom-color:var(--line);}
 html[data-theme] .guide-head h3{color:var(--navy);}
 html[data-theme] .guide-body h4{color:var(--theme-gold);}
 html[data-theme] .guide-body b{color:var(--accent);}
+html[data-theme] .guide-body .guide-warning b{color:var(--warn);}
 html[data-theme] .about-highlight{color:var(--accent);}
 html[data-theme] .theme-choice{background:var(--card);border-color:var(--line);}
 html[data-theme] .theme-choice.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
@@ -1561,7 +1573,7 @@ html[data-theme] .quiz-menu-item.danger:hover,html[data-theme] .quiz-menu-item.d
       <button class="btn ghost small" id="btnCloseGuide" type="button">Close</button>
     </div>
     <div class="guide-body">
-      <p class="guide-intro">The essentials for revising with the bank.</p>
+      <p class="guide-intro">A guide to the features available</p>
 
       <h4>Getting around</h4>
       <p>Use the menu for <b>About</b>, <b>User Guide</b>, <b>Select Theme</b> and <b>Lock Quiz</b>. On the Specialties home, choose a specialty card or <b>Review</b>. Use <b>Save &amp; Quit</b> to pause a run; <b>Resume last run</b> reopens the newest paused run.</p>
@@ -1584,7 +1596,7 @@ html[data-theme] .quiz-menu-item.danger:hover,html[data-theme] .quiz-menu-item.d
 
       <h4>Progress and storage</h4>
       <p>Progress, saved runs, notes, flags, highlights and revision sets are stored in <b>this browser's local storage only</b>. They are not synced between devices or different browsers, and there is no account or cloud backup. Autosave runs every five seconds and when the page is hidden or closed. <b>Lock Quiz</b> does not delete anything.</p>
-      <p><b>Caution:</b> clearing browser or site data, using private/incognito browsing, changing browser or device, or resetting storage will lose your progress. Copy or download session logs before clearing anything you want to keep.</p>
+      <p class="guide-warning"><b>Caution:</b> clearing browser or site data, using private/incognito browsing, changing browser or device, or resetting storage will lose your progress. Copy or download session logs before clearing anything you want to keep.</p>
     </div>
   </div>
 </div>
