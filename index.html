@@ -1230,6 +1230,60 @@ html[data-theme] .quiz-menu-item{color:var(--ink);}
 html[data-theme] .quiz-menu-item:hover,html[data-theme] .quiz-menu-item:focus-visible{background:var(--accent-soft);color:var(--accent);}
 html[data-theme] .quiz-menu-item.danger{color:var(--bad);}
 html[data-theme] .quiz-menu-item.danger:hover,html[data-theme] .quiz-menu-item.danger:focus-visible{background:var(--bad-soft);color:var(--bad);}
+
+/* --- per-specialty exam-year filter --- */
+.category-card{display:block; padding:0; cursor:default; min-height:0; overflow:visible; contain:none; position:relative;}
+.category-card-main{
+  display:flex; flex-direction:column; gap:0; width:100%; min-height:300px;
+  padding:22px 20px 20px; border:0; background:transparent; font:inherit; text-align:left;
+  color:var(--ink); cursor:pointer; border-radius:inherit; position:relative;
+  overflow:hidden; contain:layout paint;
+}
+.category-card-main:focus-visible{outline:3px solid var(--accent); outline-offset:-3px;}
+.category-card.has-year-filter .category-title{padding-right:64px;}
+.category-filter-line{display:block; margin-top:10px; font-size:10.5px; line-height:1.45; color:var(--muted); min-height:15px; max-width:100%;}
+.category-filter-line.on{color:var(--accent); font-weight:700;}
+.year-filter{position:absolute; top:12px; right:12px; z-index:8;}
+.year-filter summary{
+  list-style:none; appearance:none; cursor:pointer; display:inline-flex; align-items:center; gap:4px;
+  padding:4px 7px; border-radius:999px; border:1px solid var(--line);
+  background:rgba(255,255,255,.82); color:var(--muted);
+  font:inherit; font-size:9px; font-weight:800; letter-spacing:.04em; user-select:none;
+}
+.year-filter summary::-webkit-details-marker{display:none;}
+.year-filter summary::after{content:"⌄"; font-size:9px; line-height:1; color:var(--muted);}
+.year-filter[open] summary,.year-filter.has-selection summary{background:var(--accent-soft); border-color:var(--accent); color:var(--accent);}
+.year-filter summary:focus-visible{outline:3px solid var(--accent-soft); outline-offset:2px;}
+.year-filter-badge{display:none; min-width:14px; height:14px; padding:0 4px; border-radius:999px; background:var(--accent); color:#fff; font-size:8px; line-height:14px; text-align:center;}
+.year-filter.has-selection .year-filter-badge{display:inline-block;}
+.year-filter-menu{position:absolute; top:calc(100% + 7px); right:0; z-index:40; width:232px; padding:9px; border:1px solid var(--line); border-radius:14px; background:var(--card); box-shadow:0 22px 44px -24px rgba(0,0,0,.38);}
+.year-filter-head{display:flex; justify-content:space-between; align-items:center; gap:8px; padding:1px 3px 7px;}
+.year-filter-head b{font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);}
+.year-filter-head span{font-size:8px; color:var(--muted);}
+.year-filter-list{max-height:212px; overflow:auto; padding:1px; scrollbar-width:thin;}
+.year-filter-option{display:flex; align-items:center; gap:7px; padding:6px 5px; border-radius:8px; cursor:pointer; font-size:11px; color:var(--ink);}
+.year-filter-option:hover{background:var(--accent-soft);}
+.year-filter-option input{accent-color:var(--accent); width:13px; height:13px; margin:0; flex:0 0 auto;}
+.year-filter-option span{font-weight:700;}
+.year-filter-option small{font-size:8px; font-weight:600; color:var(--muted); margin-left:2px;}
+.year-filter-option em{margin-left:auto; font-style:normal; font-size:9px; color:var(--muted);}
+.year-filter-option:has(input:checked){background:var(--accent-soft);}
+.year-filter-option:has(input:checked) span{color:var(--accent);}
+.year-filter-option.empty{opacity:.4; cursor:default;}
+.year-filter-option.empty:hover{background:none;}
+.year-filter-actions{display:flex; align-items:center; gap:8px; padding:8px 3px 1px; border-top:1px solid var(--line); margin-top:4px;}
+.year-filter-actions button{appearance:none; border:0; background:none; font:inherit; font-size:9.5px; font-weight:800; cursor:pointer; padding:2px 0;}
+.year-filter-actions [data-year-clear]{color:var(--muted);}
+.year-filter-actions [data-year-done]{color:var(--accent); margin-left:auto;}
+.category-card.filter-open{z-index:30;}
+html[data-theme] .year-filter summary{background:var(--card); border-color:var(--line); color:var(--muted);}
+html[data-theme] .year-filter[open] summary,html[data-theme] .year-filter.has-selection summary{background:var(--accent-soft); border-color:var(--accent); color:var(--accent);}
+html[data-theme] .year-filter-menu{background:var(--card); border-color:var(--line);}
+@media (max-width:620px){
+  .year-filter-menu{width:min(232px,calc(100vw - 52px));}
+}
+.hub-year-filter{margin:0 0 14px; padding:9px 12px; border:1px solid var(--line); border-radius:11px; background:var(--accent-soft); color:var(--muted); font-size:11.5px; line-height:1.4;}
+.hub-year-filter b{color:var(--accent);}
 </style>
 </head>
 <body>
@@ -1303,6 +1357,8 @@ html[data-theme] .quiz-menu-item.danger:hover,html[data-theme] .quiz-menu-item.d
         <button class="btn ghost small" id="btnClearHist">Clear this specialty's history &amp; revision sets</button>
       </div>
     </div>
+
+    <p class="hub-year-filter hidden" id="hubYearFilter"></p>
 
     <div class="specialty-tabs" role="tablist" aria-label="Question type">
       <button id="tabChoice" class="btn ghost" role="tab" aria-selected="true" aria-controls="areaBlocks">MCQ / EMQ</button>
@@ -1610,6 +1666,9 @@ html[data-theme] .quiz-menu-item.danger:hover,html[data-theme] .quiz-menu-item.d
     <div class="guide-body">
       <h4>Getting around</h4>
       <p>Use the menu for <b>About</b>, <b>User Guide</b>, <b>Select Theme</b> and <b>Lock Quiz</b>. On the Specialties home, choose a specialty card or <b>Review</b>. Use <b>Save &amp; Quit</b> to pause a run; <b>Resume last run</b> reopens the newest paused run.</p>
+
+      <h4>Year filter</h4>
+      <p>Each specialty card has a <b>Filter</b> menu. Tick exam years to leave them out of that specialty's questions: 2026 down to 2020, or <b>Older</b> for 2019 and earlier. The choice applies only to that specialty and is remembered in this browser. Mixed review respects each specialty's filter; <b>Review by year</b> keeps its own year picker.</p>
 
       <h4>Answering questions</h4>
       <p>Select an answer and choose <b>Check answer</b>. Use <b>Back</b>, <b>Skip</b> or <b>Jump</b> to move around; checked answers stay locked. If you finish with unanswered questions, you can return to them or finish anyway. Unanswered scorable questions count as incorrect and join the revision set.</p>
@@ -1986,7 +2045,15 @@ function renderHub(){
   const visibleParts = (activeArea ? activeArea.parts : PARTS).filter(p => p.kind === tabKind);
   if(activeArea) updateSpecialtyTabs();
   $("statParts").textContent = visibleParts.length;
-  $("statCount").textContent = visibleParts.reduce((a,p)=>a+p.questions.length,0);
+  $("statCount").textContent = visibleParts.reduce((a,p)=>a+filteredQuestionsForPart(p).length,0);
+  const yearNote = $("hubYearFilter");
+  if(yearNote){
+    const activeYears = activeArea ? yearFilterSet(activeArea.key) : new Set();
+    yearNote.classList.toggle("hidden", !activeYears.size);
+    yearNote.innerHTML = activeYears.size
+      ? `Year filter: <b>${yearFilterSummary(activeArea.key)}</b>. Change it from the Specialties home.`
+      : "";
+  }
   let attempts = 0, revSet = 0, paused = 0; const bests = [];
   visibleParts.forEach(p => { const s = partStats(p.key); attempts += s.recs.length; revSet += s.rev; if(s.sess) paused++; if(s.best !== null) bests.push(s.best); });
   $("statAttempts").textContent = attempts;
@@ -2019,20 +2086,24 @@ function partCard(p){
   const runLabel = runTotal
     ? `<span class="pc-runfrac"><b>${runDone}</b><span>/ ${runTotal}</span><small>done</small></span>`
     : `<span class="pc-runfrac empty">No run yet</span>`;
+  const available = filteredQuestionsForPart(p);
+  const availableCount = available.length;
+  const noAvailable = !availableCount && !s.sess;
   const startLabel = s.sess ? "Resume" : "Start";
+  const countLabel = availableCount === p.questions.length ? String(p.questions.length) : `${availableCount} of ${p.questions.length}`;
   const rawNum = String(p.displayKey || p.key.toUpperCase());
   const numLabel = /^\d$/.test(rawNum) ? "0" + rawNum : rawNum;
   return `<div class="part-card pc-runline">
       <div class="pc-run-head">
         <span class="pc-run-num">${esc(numLabel)}</span>
         <div class="pc-title">${esc(p.title)}</div>
-        <span class="pc-run-count">${p.questions.length} ${p.kind === "written" ? "self-assessed cases" : "questions"}</span>
+        <span class="pc-run-count">${countLabel} ${p.kind === "written" ? "self-assessed cases" : "questions"}</span>
       </div>
       <div class="pc-runline-row">${runLabel}<span class="grow"></span><span class="pc-run-status ${runStatusCls}">${runStatus}</span></div>
       <div class="pc-bar"><i style="width:${runPct}%;"></i></div>
       <div class="pc-bestline">Best <b>${best}</b> · ${s.recs.length} ${attemptWord}</div>
       <div class="pc-run-actions">
-        <button class="pc-run-start" data-start="${p.key}">${PLAY_ICON}${startLabel}</button>
+        <button class="pc-run-start" data-start="${p.key}" ${noAvailable ? "disabled" : ""} title="${noAvailable ? "No questions match the current year filter" : "Start or resume this part"}">${PLAY_ICON}${startLabel}</button>
         <span class="grow"></span>
         <div class="pc-run-icons">
           <button class="pc-icon-btn" data-review="${p.key}" ${s.rev ? "" : "disabled"} title="Review incorrect" aria-label="Review ${s.rev} incorrect question${s.rev === 1 ? "" : "s"}">${REVIEW_ICON}${s.rev}</button>
@@ -2146,7 +2217,7 @@ function flaggedPool(){
     if(!flags) return;
     Object.keys(flags).map(Number).sort((a, b) => a - b).forEach(n => {
       const q = p.questions.find(item => item.n === n);
-      if(!q) return;
+      if(!q || questionExcluded(area.key, q)) return;
       totalByArea[area.key] = (totalByArea[area.key] || 0) + 1;
       byArea[area.key] = (byArea[area.key] || 0) + 1;
       if(specialty === "all" || specialty === area.key) items.push({ p: p, q: q });
@@ -2318,6 +2389,7 @@ function mixedPool(){
     p.questions.forEach(q => {
       if(kinds === "mcq" && q.written) return;
       if(kinds === "saq" && !q.written) return;
+      if(area && questionExcluded(area.key, q)) return;
       if(area) totalByArea[area.key]++;
       const alreadySeen = seen.has(p.key + "#" + q.n);
       if(!alreadySeen && area) byArea[area.key]++;
@@ -2415,7 +2487,7 @@ function restartMixed(){                          // the same draw again
   QS().forEach(q => {
     const p = findPart(q.__mp);
     const orig = p && p.questions.find(x => x.n === q.__mq);
-    if(p && orig) items.push({ p: p, q: orig });
+    if(p && orig && !questionExcluded(subjectForPart(p).key, orig)) items.push({ p: p, q: orig });
   });
   if(items.length){
     if(part && part.flagged) startFlaggedItems(items, part.specialty || "all");
@@ -2429,7 +2501,7 @@ function startMixedReviewWrong(){                 // just the ones this run got 
     const pair = currentRecord.mq[n - 1];
     const p = pair && findPart(pair[0]);
     const q = p && p.questions.find(x => x.n === pair[1]);
-    if(p && q) items.push({ p: p, q: q });
+    if(p && q && !questionExcluded(subjectForPart(p).key, q)) items.push({ p: p, q: q });
   });
   if(items.length) startMixedItems(items, "review", currentRecord.ms, currentRecord.mk);
 }
@@ -2624,16 +2696,21 @@ function renderMixed(){
   }
 }
 function mixedCardHtml(){
-  return `<button class="category-card" data-category="${MIXED_KEY}" style="--tone:${SPEC_TONE[MIXED_KEY]}">
-      ${cardArt(MIXED_AREA)}
-      <span class="category-title">Review</span>
-      <span class="category-stats-line category-review-line">Questions by <b>shuffle</b></span>
-      <span class="category-stats-line category-review-line">Questions by <b>flagged</b></span>
-      <span class="category-stats-line category-review-line">Questions by <b>year</b></span>
-      <span class="category-hairline" aria-hidden="true"></span>
-      <span class="category-enter">Enter review →</span>
-    </button>`;
+  const active = AREAS.some(a => yearFilterSet(a.key).size > 0);
+  return `<div class="category-card review-card" data-card-area="${MIXED_KEY}" style="--tone:${SPEC_TONE[MIXED_KEY]}">
+      <button class="category-card-main" data-category="${MIXED_KEY}" type="button">
+        ${cardArt(MIXED_AREA)}
+        <span class="category-title">Review</span>
+        <span class="category-stats-line category-review-line">Questions by <b>shuffle</b></span>
+        <span class="category-stats-line category-review-line">Questions by <b>flagged</b></span>
+        <span class="category-stats-line category-review-line">Questions by <b>year</b></span>
+        <span class="category-filter-line${active ? " on" : ""}" data-review-filter>${allActiveYearFilterSummary()}</span>
+        <span class="category-hairline" aria-hidden="true"></span>
+        <span class="category-enter">Enter review →</span>
+      </button>
+    </div>`;
 }
+
 function clearMixedHistory(){
   const recs = loadRecords(MIXED_KEY);
   if(!recs.length) return;
@@ -3212,11 +3289,19 @@ function startPart(key){
     $("resumeText").innerHTML = `You paused mid-way on <b>Q${Math.min(sess.i+1, sess.q.length)} of ${sess.q.length}</b> (${fmtDate(sess.u).slice(0,10)}). Resume where you left off, or start a fresh run?`;
     $("resumeModal").classList.remove("hidden");
     $("btnResumeGo").onclick = () => { $("resumeModal").classList.add("hidden"); beginSession(key, sess, sess.i); };
-    $("btnResumeFresh").onclick = () => { $("resumeModal").classList.add("hidden"); clearSession(key); startReviewFrom(key, QS().map(q=>q.n), "full"); };
+    $("btnResumeFresh").onclick = () => {
+      const ids = availableQuestionIds(findPart(key));
+      if(!ids.length){ alert("No questions remain in this specialty with the current year filter. Change the filter on the Specialties home."); return; }
+      $("resumeModal").classList.add("hidden");
+      clearSession(key);
+      startReviewFrom(key, ids, "full");
+    };
     $("btnResumeCancel").onclick = () => $("resumeModal").classList.add("hidden");
     return;
   }
-  startReviewFrom(key, QS().map(q=>q.n), "full");
+  const ids = availableQuestionIds(part);
+  if(!ids.length){ alert("No questions remain in this specialty with the current year filter. Change the filter on the Specialties home."); return; }
+  startReviewFrom(key, ids, "full");
 }
 function beginSession(key, sess, startIdx){
   part = findPart(key);
@@ -3264,7 +3349,15 @@ function startReviewFrom(key, qids, m){
   checked = {};
   revealed = {};
   runFinished = false;
-  queue = [...new Set(qids)].map(id => QS().findIndex(q => q.n === Number(id))).filter(i => i >= 0);
+  let ids = qids;
+  const area = subjectForPart(part);
+  if(mode !== "preview" && area && area.key !== MIXED_KEY && area.key !== FLAGGED_KEY){
+    ids = ids.filter(id => {
+      const q = QS().find(x => x.n === Number(id));
+      return q && !questionExcluded(area.key, q);
+    });
+  }
+  queue = [...new Set(ids)].map(id => QS().findIndex(q => q.n === Number(id))).filter(i => i >= 0);
   idx = 0;
   hideAll();
   if(!queue.length){
@@ -4186,6 +4279,178 @@ function cardArt(area){
   if(!art) return "";
   return `<span class="category-art" aria-hidden="true"><svg viewBox="0 0 200 200">${art}</svg></span>`;
 }
+/* ---- per-specialty exam-year filter ---- */
+const YEAR_FILTER_KEY = "hku_mbbs_year_filters_v1";
+const YEAR_FILTER_YEARS = [2026, 2025, 2024, 2023, 2022, 2021, 2020];
+function loadYearFilters(){
+  try{
+    const raw = JSON.parse(localStorage.getItem(YEAR_FILTER_KEY) || "{}");
+    const out = {};
+    if(!raw || typeof raw !== "object" || Array.isArray(raw)) return out;
+    AREAS.forEach(area => {
+      const list = raw[area.key];
+      if(!Array.isArray(list)) return;
+      const tokens = list.map(v => v === "older" ? "older" : Number(v))
+        .filter(v => v === "older" || (Number.isInteger(v) && v >= 2020 && v <= 2026));
+      if(tokens.length) out[area.key] = [...new Set(tokens)];
+    });
+    return out;
+  }catch(e){ return {}; }
+}
+let yearFilters = loadYearFilters();
+function saveYearFilters(){
+  try{ localStorage.setItem(YEAR_FILTER_KEY, JSON.stringify(yearFilters)); }
+  catch(e){ storageError(e); }
+}
+function yearFilterSet(areaKey){ return new Set(yearFilters[areaKey] || []); }
+function setYearFilterTokens(areaKey, set){
+  if(set.size) yearFilters[areaKey] = [...set];
+  else delete yearFilters[areaKey];
+  saveYearFilters();
+}
+function examYearsFor(q){
+  return Array.isArray(q && q.examYears) ? q.examYears : [];
+}
+function questionExcluded(areaKey, q){
+  const set = yearFilterSet(areaKey);
+  if(!set.size) return false;
+  const years = examYearsFor(q);
+  if(set.has("older") && years.some(y => y <= 2019)) return true;
+  return years.some(y => set.has(y));
+}
+function filteredQuestionsForPart(partObj){
+  const area = subjectForPart(partObj);
+  if(!area || area.key === MIXED_KEY || area.key === FLAGGED_KEY) return partObj.questions || [];
+  return (partObj.questions || []).filter(q => !questionExcluded(area.key, q));
+}
+function filteredQuestionsForArea(area){
+  return area.parts.flatMap(p => filteredQuestionsForPart(p));
+}
+function availableQuestionIds(partObj){
+  return filteredQuestionsForPart(partObj).map(q => q.n);
+}
+function yearCountsForArea(area){
+  const counts = { older: 0 };
+  YEAR_FILTER_YEARS.forEach(y => { counts[y] = 0; });
+  area.parts.forEach(p => p.questions.forEach(q => {
+    const years = examYearsFor(q);
+    years.forEach(y => { if(counts[y] !== undefined) counts[y]++; });
+    if(years.some(y => y <= 2019)) counts.older++;
+  }));
+  return counts;
+}
+function yearTokensLabel(areaKey){
+  return [...yearFilterSet(areaKey)].sort((a,b) => {
+    if(a === "older") return 1;
+    if(b === "older") return -1;
+    return b - a;
+  }).map(y => y === "older" ? "Older" : String(y));
+}
+function yearFilterSummary(areaKey){
+  const labels = yearTokensLabel(areaKey);
+  return labels.length ? "Excluding " + labels.join(", ") : "All years included";
+}
+function allActiveYearFilterSummary(){
+  const active = AREAS.filter(a => yearFilterSet(a.key).size);
+  return active.length ? `${active.length} specialty year filter${active.length === 1 ? "" : "s"} active` : "All specialty years included";
+}
+function yearFilterHtml(area){
+  const set = yearFilterSet(area.key);
+  const counts = yearCountsForArea(area);
+  const row = (token, label, count) => `
+    <label class="year-filter-option${count ? "" : " empty"}">
+      <input type="checkbox" data-filter-year="${token}" ${set.has(token) ? "checked" : ""} ${count ? "" : "disabled"}>
+      <span>${label}</span><em>${count} question${count === 1 ? "" : "s"}</em>
+    </label>`;
+  const rows = YEAR_FILTER_YEARS.map(y => row(y, y, counts[y])).join("") + row("older", "Older <small>≤2019</small>", counts.older);
+  const n = set.size;
+  return `<details class="year-filter${n ? " has-selection" : ""}" data-year-filter="${esc(area.key)}">
+    <summary aria-label="Filter exam years for ${esc(area.name)}"><span>Filter</span><b class="year-filter-badge">${n || ""}</b></summary>
+    <div class="year-filter-menu">
+      <div class="year-filter-head"><b>Exclude exam years</b><span>multi-select</span></div>
+      <div class="year-filter-list">${rows}</div>
+      <div class="year-filter-actions"><button type="button" data-year-clear>Clear</button><button type="button" data-year-done>Done</button></div>
+    </div>
+  </details>`;
+}
+function cardCountHtml(area, questions){
+  const written = questions.filter(q => q.written).length;
+  const mcq = questions.length - written;
+  return `<b>${mcq.toLocaleString()}</b> MCQ / EMQ${written ? `<span class="category-dot">·</span><b>${written.toLocaleString()}</b> SAQ` : ""}`;
+}
+function updateCardFilterUI(areaKey){
+  const area = AREAS.find(a => a.key === areaKey);
+  if(!area) return;
+  const card = Array.from(document.querySelectorAll("#categoryCards [data-card-area]")).find(el => el.dataset.cardArea === areaKey);
+  if(card){
+    const questions = filteredQuestionsForArea(area);
+    const counts = card.querySelector("[data-card-counts]");
+    if(counts) counts.innerHTML = cardCountHtml(area, questions);
+    const line = card.querySelector("[data-card-filter]");
+    if(line){
+      const active = yearFilterSet(areaKey).size > 0;
+      line.textContent = yearFilterSummary(areaKey);
+      line.classList.toggle("on", active);
+    }
+    const details = card.querySelector("details.year-filter");
+    if(details){
+      const n = yearFilterSet(areaKey).size;
+      details.classList.toggle("has-selection", n > 0);
+      const badge = details.querySelector(".year-filter-badge");
+      if(badge) badge.textContent = n || "";
+    }
+  }
+  const reviewLine = document.querySelector("[data-review-filter]");
+  if(reviewLine){
+    reviewLine.textContent = allActiveYearFilterSummary();
+    reviewLine.classList.toggle("on", AREAS.some(a => yearFilterSet(a.key).size));
+  }
+}
+function wireYearFilterEvents(){
+  const container = $("categoryCards");
+  if(!container || container.dataset.yearFilterWired) return;
+  container.dataset.yearFilterWired = "1";
+  container.addEventListener("change", event => {
+    const input = event.target.closest("input[data-filter-year]");
+    if(!input) return;
+    const details = input.closest("details.year-filter");
+    if(!details) return;
+    const areaKey = details.dataset.yearFilter;
+    const token = input.dataset.filterYear === "older" ? "older" : Number(input.dataset.filterYear);
+    const set = yearFilterSet(areaKey);
+    if(input.checked) set.add(token); else set.delete(token);
+    setYearFilterTokens(areaKey, set);
+    updateCardFilterUI(areaKey);
+  });
+  container.addEventListener("click", event => {
+    const clear = event.target.closest("[data-year-clear]");
+    if(clear){
+      const details = clear.closest("details.year-filter");
+      const areaKey = details.dataset.yearFilter;
+      setYearFilterTokens(areaKey, new Set());
+      details.querySelectorAll("input[data-filter-year]").forEach(input => { input.checked = false; });
+      updateCardFilterUI(areaKey);
+      return;
+    }
+    const done = event.target.closest("[data-year-done]");
+    if(done){ done.closest("details.year-filter").open = false; }
+  });
+  container.addEventListener("toggle", event => {
+    const details = event.target.closest("details.year-filter");
+    if(!details) return;
+    if(details.open){
+      container.querySelectorAll("details.year-filter[open]").forEach(other => { if(other !== details) other.open = false; });
+    }
+    const card = details.closest(".category-card");
+    if(card) card.classList.toggle("filter-open", details.open);
+  }, true);
+  document.addEventListener("click", event => {
+    if(event.target.closest("details.year-filter")) return;
+    container.querySelectorAll("details.year-filter[open]").forEach(details => { details.open = false; });
+  });
+}
+wireYearFilterEvents();
+
 function showCategories(){
   if(!$("screen-quiz").classList.contains("hidden") && part){
     if(!saveAndQuit()) return;
@@ -4197,21 +4462,26 @@ function showCategories(){
   $("btnCategories").classList.add("hidden");
   $("btnBrandHome").title = "Specialties home";
   const cardOf = area => {
-    const questions = area.parts.flatMap(p => p.questions);
-    const written = area.parts.filter(p => p.kind === "written").reduce((sum, p) => sum + p.questions.length, 0);
     const attempts = area.parts.reduce((sum, p) => sum + loadRecords(p.key).length, 0);
     const paused = area.parts.filter(p => loadSession(p.key)).length;
-    const mcq = questions.length - written;
+    const available = filteredQuestionsForArea(area);
+    const active = yearFilterSet(area.key).size > 0;
     const sectionWord = area.parts.length === 1 ? "section" : "sections";
     const attemptWord = attempts === 1 ? "attempt" : "attempts";
-    return `<button class="category-card" data-category="${esc(area.key)}" style="--tone:${SPEC_TONE[area.key] || "#B12D63"}">
-      ${cardArt(area)}
-      <span class="category-title${area.key === "Orthopaedics" ? " two-line" : area.key === "FamilyMedicine" ? " one-line" : ""}">${area.key === "Orthopaedics" ? "Orthopedics &amp;<br>Traumatology" : esc(area.name)}</span>
-      <span class="category-stats-line"><b>${mcq.toLocaleString()}</b> MCQ / EMQ${written ? `<span class="category-dot">·</span><b>${written.toLocaleString()}</b> SAQ` : ""}</span>
-      <span class="category-stats-line"><b>${area.parts.length}</b> ${sectionWord}<span class="category-dot">·</span><b>${attempts}</b> ${attemptWord}${paused ? `<span class="category-dot">·</span><span class="category-paused"><b>${paused}</b> paused</span>` : ""}</span>
-      <span class="category-hairline" aria-hidden="true"></span>
-      <span class="category-enter">Enter specialty →</span>
-    </button>`;
+    const title = area.key === "Orthopaedics" ? "Orthopedics &amp;<br>Traumatology" : esc(area.name);
+    const titleClass = area.key === "Orthopaedics" ? " two-line" : area.key === "FamilyMedicine" ? " one-line" : "";
+    return `<div class="category-card has-year-filter" data-card-area="${esc(area.key)}" style="--tone:${SPEC_TONE[area.key] || "#B12D63"}">
+      <button class="category-card-main" data-category="${esc(area.key)}" type="button">
+        ${cardArt(area)}
+        <span class="category-title${titleClass}">${title}</span>
+        <span class="category-stats-line" data-card-counts="${esc(area.key)}">${cardCountHtml(area, available)}</span>
+        <span class="category-stats-line"><b>${area.parts.length}</b> ${sectionWord}<span class="category-dot">·</span><b>${attempts}</b> ${attemptWord}${paused ? `<span class="category-dot">·</span><span class="category-paused"><b>${paused}</b> paused</span>` : ""}</span>
+        <span class="category-filter-line${active ? " on" : ""}" data-card-filter="${esc(area.key)}">${yearFilterSummary(area.key)}</span>
+        <span class="category-hairline" aria-hidden="true"></span>
+        <span class="category-enter">Enter specialty →</span>
+      </button>
+      ${yearFilterHtml(area)}
+    </div>`;
   };
   const order = HOME_ORDER.filter(k => k === MIXED_KEY || AREAS.some(a => a.key === k));
   AREAS.forEach(a => { if(!order.includes(a.key)) order.push(a.key); });
