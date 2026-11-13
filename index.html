@@ -1293,10 +1293,9 @@ html[data-theme] .year-filter-menu{background:var(--card); border-color:var(--li
 .section-finder{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 18px;padding:10px 12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.44)}
 .section-search{position:relative;display:flex;align-items:center;flex:1 1 210px;min-width:190px;max-width:330px}
 .section-search>svg{position:absolute;left:10px;width:14px;height:14px;color:var(--muted);pointer-events:none}
-.section-search input{width:100%;height:35px;padding:8px 44px 8px 30px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;font-size:12px}
+.section-search input{width:100%;height:35px;padding:8px 10px 8px 30px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;font-size:12px}
 .section-search input::placeholder{color:var(--muted)}
 .section-search input:focus{outline:3px solid var(--accent-soft);border-color:var(--accent)}
-.section-search kbd{position:absolute;right:8px;padding:2px 5px;border:1px solid var(--line);border-radius:5px;background:var(--card);color:var(--muted);font:inherit;font-size:8.5px;font-weight:800;pointer-events:none}
 .section-filter-chips{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
 .section-filter-chips button{appearance:none;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.4);padding:5px 9px;color:var(--muted);font:inherit;font-size:10px;font-weight:700;line-height:1.35;cursor:pointer;white-space:nowrap}
 .section-filter-chips button span{font-variant-numeric:tabular-nums;color:var(--navy);font-weight:800;font-size:9px}
@@ -1314,8 +1313,6 @@ html[data-theme] .section-filter-chips button[aria-pressed="true"]{background:va
 }
 @media(max-width:560px){
   .section-finder{padding:9px 10px;border-radius:11px}
-  .section-search kbd{display:none}
-  .section-search input{padding-right:10px}
   .section-filter-chips button{font-size:9.5px;padding:5px 8px}
 }
 
@@ -1537,7 +1534,6 @@ html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--lin
         <label class="section-search" for="sectionSearch">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.2"/><path d="m16 16 4.2 4.2"/></svg>
           <input id="sectionSearch" type="search" placeholder="Find a section" autocomplete="off" aria-label="Find a section">
-          <kbd aria-hidden="true">⌘K</kbd>
         </label>
         <div class="section-filter-chips" id="sectionFilterChips" role="group" aria-label="Filter sections">
           <button type="button" data-section-filter="all" aria-pressed="true">All <span id="sectionCountAll">0</span></button>
@@ -4748,8 +4744,7 @@ function wireSectionFinder(){
     if($("screen-hub").classList.contains("hidden")) return;
     const tag = document.activeElement && document.activeElement.tagName;
     const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(tag || "");
-    const commandK = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k";
-    if(commandK || (!typing && event.key === "/" && !event.metaKey && !event.ctrlKey && !event.altKey)){
+    if(!typing && event.key === "/" && !event.metaKey && !event.ctrlKey && !event.altKey){
       event.preventDefault();
       input.focus();
       input.select();
