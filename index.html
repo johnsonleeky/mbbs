@@ -1377,6 +1377,74 @@ html[data-theme] .question-map-panel{background:var(--card);border-color:var(--l
   .quiz-primary-actions .btn{font-size:10.5px;padding:9px 7px}
 }
 
+
+/* ---------- specialty hub: tinted ledger header ---------- */
+.hub-ledger{
+  position:relative;margin-bottom:18px;padding:28px 32px 20px;overflow:hidden;color:var(--ink);
+  border:1px solid color-mix(in srgb,var(--accent) 14%,var(--glass-line));border-radius:18px;
+  background:
+    radial-gradient(78% 170% at 0% 0%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 64%),
+    var(--glass-sheen);
+  box-shadow:var(--glass-shadow);
+  backdrop-filter:blur(12px) saturate(150%);-webkit-backdrop-filter:blur(12px) saturate(150%);
+}
+.hub-ledger-head{display:flex;align-items:flex-start;justify-content:space-between;gap:28px;position:relative;z-index:1}
+.hub-ledger-eyebrow{display:block;color:var(--muted);font-size:9.5px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;line-height:1.2}
+.hub-ledger-head h2{margin:4px 0 0;color:var(--navy);font-size:15px;font-weight:800;letter-spacing:-.015em;line-height:1.2}
+.hub-type-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:0 0 auto}
+.hub-type-label{font-size:8.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);line-height:1}
+.hub-type-tabs{display:inline-flex;align-items:stretch;gap:3px;padding:4px;border:1px solid color-mix(in srgb,var(--accent) 18%,transparent);border-radius:999px;background:rgba(255,255,255,.7);box-shadow:inset 0 1px 2px rgba(70,20,42,.04),0 7px 18px -18px rgba(70,20,42,.55)}
+.hub-type-tab{appearance:none;border:0;background:transparent;border-radius:999px;display:inline-flex;align-items:center;gap:7px;padding:7px 10px;color:var(--muted);font:inherit;font-size:10px;font-weight:800;line-height:1.1;cursor:pointer;white-space:nowrap;transition:background .14s,color .14s,box-shadow .14s}
+.hub-type-tab span{border-radius:999px;background:rgba(70,20,42,.055);padding:2px 5px;color:var(--muted);font-size:8.5px;font-weight:800;line-height:1;letter-spacing:0;font-variant-numeric:tabular-nums}
+.hub-type-tab:hover{background:var(--accent-soft);color:var(--accent)}
+.hub-type-tab[aria-selected="true"]{background:var(--accent);color:var(--theme-btn-ink,#fff);box-shadow:0 6px 14px -10px var(--accent)}
+.hub-type-tab[aria-selected="true"] span{background:rgba(255,255,255,.18);color:inherit}
+.hub-type-tab:focus-visible{outline:3px solid var(--accent-soft);outline-offset:2px}
+.hub-ledger-body{display:flex;align-items:flex-end;justify-content:space-between;gap:45px;margin-top:37px;position:relative;z-index:1}
+.hub-ledger-lead{min-width:0}
+.hub-ledger-number{display:flex;align-items:baseline;gap:11px;min-width:0}
+.hub-ledger-number b{font-size:58px;line-height:.82;font-weight:800;color:var(--accent);letter-spacing:-.075em;font-variant-numeric:tabular-nums}
+.hub-ledger-number>span{color:var(--muted);font-size:10.5px;line-height:1.4}
+.hub-ledger-sections{display:flex;align-items:baseline;gap:5px;margin-top:13px;color:var(--muted);font-size:9.5px}
+.hub-ledger-sections b{color:var(--navy);font-size:12px;font-weight:800;font-variant-numeric:tabular-nums}
+.hub-ledger-records{display:grid;grid-template-columns:repeat(4,minmax(86px,1fr));gap:0;flex:1;max-width:600px;padding-bottom:2px}
+.hub-ledger-record{padding:0 23px;border-left:1px solid color-mix(in srgb,var(--line) 84%,var(--accent))}
+.hub-ledger-record:first-child{padding-left:0;border-left:0}
+.hub-ledger-record b{display:block;color:var(--navy);font-size:22px;font-weight:800;line-height:1;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.hub-ledger-record span{display:block;margin-top:7px;color:var(--muted);font-size:9.5px;line-height:1.35}
+.hub-ledger-record.best b{color:var(--good)}
+.hub-ledger-record.paused b{color:var(--warn)}
+.hub-ledger-utility{position:relative;z-index:1;display:flex;justify-content:flex-end;border-top:1px solid color-mix(in srgb,var(--line) 84%,var(--accent));margin-top:22px;padding-top:12px}
+.hub-ledger-clear{appearance:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.54);padding:6px 9px;color:var(--muted);font:inherit;font-size:9.5px;font-weight:800;cursor:pointer;transition:border-color .14s,color .14s,background .14s}
+.hub-ledger-clear svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.hub-ledger-clear:hover,.hub-ledger-clear:focus-visible{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 36%,var(--line));background:color-mix(in srgb,var(--bad) 5%,var(--card));outline:none}
+html[data-theme] .hub-ledger{background:radial-gradient(78% 170% at 0% 0%,color-mix(in srgb,var(--accent) 13%,transparent),transparent 64%),var(--glass-sheen);border-color:var(--glass-brd)}
+html[data-theme] .hub-type-tabs{background:var(--card);border-color:var(--line)}
+html[data-theme] .hub-type-tab span{background:color-mix(in srgb,var(--ink) 8%,transparent)}
+html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--line)}
+@media(max-width:850px){
+  .hub-ledger-body{align-items:flex-start;flex-direction:column;gap:24px}
+  .hub-ledger-records{width:100%;max-width:none}
+}
+@media(max-width:620px){
+  .hub-ledger{padding:20px 18px 17px;border-radius:15px}
+  .hub-ledger-head{flex-wrap:wrap;gap:15px}
+  .hub-type-wrap{align-items:stretch;width:100%}
+  .hub-type-label{text-align:left}
+  .hub-type-tabs{width:100%}
+  .hub-type-tab{flex:1;justify-content:center}
+  .hub-ledger-body{margin-top:26px}
+  .hub-ledger-number b{font-size:47px}
+  .hub-ledger-records{grid-template-columns:1fr 1fr;gap:16px 0}
+  .hub-ledger-record:nth-child(3){padding-left:0;border-left:0}
+  .hub-ledger-record:nth-child(n+3){padding-top:15px;border-top:1px solid color-mix(in srgb,var(--line) 84%,var(--accent))}
+  .hub-ledger-utility{margin-top:18px}
+}
+@media(max-width:380px){
+  .hub-ledger-records{grid-template-columns:1fr}
+  .hub-ledger-record,.hub-ledger-record:nth-child(3){padding-left:0;border-left:0}
+  .hub-ledger-record+.hub-ledger-record{margin-top:10px;padding-top:10px;border-top:1px solid color-mix(in srgb,var(--line) 84%,var(--accent))}
+}
 </style>
 </head>
 <body>
@@ -1436,27 +1504,41 @@ html[data-theme] .question-map-panel{background:var(--card);border-color:var(--l
 <div id="categoryCards" class="halo"></div>
 <div class="disclaimer" role="note"><b>Disclaimer:</b> Questions, answers, and explanations (either recalled by students or AI-generated) may contain errors and are not guaranteed to be accurate. Use this as a revision aid and verify important points against reliable, current sources.</div></section>
 <section id="screen-hub" class="hidden">
-    <div class="card">
-      <h2>Overall progress</h2>
-      <div class="stat-grid">
-        <div class="stat"><b id="statParts">15</b><span>Parts</span></div>
-        <div class="stat"><b id="statCount">0</b><span>Questions</span></div>
-        <div class="stat"><b id="statAttempts">0</b><span>Attempts recorded</span></div>
-        <div class="stat"><b id="statRevSet">0</b><span>In revision sets</span></div>
-        <div class="stat"><b id="statBest">—</b><span>Overall best score</span></div>
-        <div class="stat"><b id="statPaused">0</b><span>Paused sessions</span></div>
+    <section class="hub-ledger" aria-labelledby="hubProgressTitle">
+      <div class="hub-ledger-head">
+        <div>
+          <span class="hub-ledger-eyebrow" id="hubAreaName">Specialty</span>
+          <h2 id="hubProgressTitle">Overall progress</h2>
+        </div>
+        <div class="hub-type-wrap">
+          <span class="hub-type-label">Question type</span>
+          <div class="hub-type-tabs" role="tablist" aria-label="Question type">
+            <button id="tabChoice" class="hub-type-tab" type="button" role="tab" aria-selected="true" aria-controls="areaBlocks">MCQ / EMQ <span id="tabChoiceCount">0</span></button>
+            <button id="tabWritten" class="hub-type-tab" type="button" role="tab" aria-selected="false" aria-controls="areaBlocks" tabindex="-1">SAQ <span id="tabWrittenCount">0</span></button>
+          </div>
+        </div>
       </div>
-      <div class="btn-row" style="margin-top:6px;">
-        <button class="btn ghost small" id="btnClearHist">Clear this specialty's history &amp; revision sets</button>
+      <div class="hub-ledger-body">
+        <div class="hub-ledger-lead">
+          <div class="hub-ledger-number"><b id="statCount">0</b><span id="statCountWord">questions</span></div>
+          <div class="hub-ledger-sections"><b id="statParts">0</b> <span id="statPartsWord">sections</span></div>
+        </div>
+        <div class="hub-ledger-records">
+          <div class="hub-ledger-record"><b id="statAttempts">0</b><span>Attempts recorded</span></div>
+          <div class="hub-ledger-record"><b id="statRevSet">0</b><span>In revision sets</span></div>
+          <div class="hub-ledger-record best"><b id="statBest">—</b><span>Overall best score</span></div>
+          <div class="hub-ledger-record paused"><b id="statPaused">0</b><span>Paused sessions</span></div>
+        </div>
       </div>
-    </div>
+      <div class="hub-ledger-utility">
+        <button class="hub-ledger-clear" id="btnClearHist" type="button" aria-label="Clear this specialty's history and revision sets">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg>
+          Clear history
+        </button>
+      </div>
+    </section>
 
     <p class="hub-year-filter hidden" id="hubYearFilter"></p>
-
-    <div class="specialty-tabs" role="tablist" aria-label="Question type">
-      <button id="tabChoice" class="btn ghost" role="tab" aria-selected="true" aria-controls="areaBlocks">MCQ / EMQ</button>
-      <button id="tabWritten" class="btn ghost" role="tab" aria-selected="false" aria-controls="areaBlocks" tabindex="-1">SAQ</button>
-    </div>
     <div class="section-finder" id="sectionFinder">
       <label class="section-search" for="sectionSearch">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.2"/><path d="m16 16 4.2 4.2"/></svg>
@@ -2171,11 +2253,20 @@ function flashCopy(ok){
 
 /* ================= hub ================= */
 function renderHub(){
+  const allParts = activeArea ? activeArea.parts : PARTS;
   const tabKind = activeArea ? specialtyTabs[activeArea.key] || "choice" : "choice";
-  const visibleParts = (activeArea ? activeArea.parts : PARTS).filter(p => p.kind === tabKind);
+  const visibleParts = allParts.filter(p => p.kind === tabKind);
   if(activeArea) updateSpecialtyTabs();
-  $("statParts").textContent = visibleParts.length;
-  $("statCount").textContent = visibleParts.reduce((a,p)=>a+filteredQuestionsForPart(p).length,0);
+  const hubCount = visibleParts.reduce((a,p)=>a+filteredQuestionsForPart(p).length,0);
+  const countForKind = kind => allParts.filter(p => p.kind === kind)
+    .reduce((sum,p) => sum + filteredQuestionsForPart(p).length, 0);
+  $("hubAreaName").textContent = activeArea ? activeArea.name : "All specialties";
+  $("statParts").textContent = visibleParts.length.toLocaleString();
+  $("statPartsWord").textContent = visibleParts.length === 1 ? "section" : "sections";
+  $("statCount").textContent = hubCount.toLocaleString();
+  $("statCountWord").textContent = tabKind === "written" ? "cases" : "questions";
+  $("tabChoiceCount").textContent = countForKind("choice").toLocaleString();
+  $("tabWrittenCount").textContent = countForKind("written").toLocaleString();
   const yearNote = $("hubYearFilter");
   if(yearNote){
     const activeYears = activeArea ? yearFilterSet(activeArea.key) : new Set();
@@ -2186,9 +2277,9 @@ function renderHub(){
   }
   let attempts = 0, revSet = 0, paused = 0; const bests = [];
   visibleParts.forEach(p => { const s = partStats(p.key); attempts += s.recs.length; revSet += s.rev; if(s.sess) paused++; if(s.best !== null) bests.push(s.best); });
-  $("statAttempts").textContent = attempts;
-  $("statRevSet").textContent = revSet;
-  $("statPaused").textContent = paused;
+  $("statAttempts").textContent = attempts.toLocaleString();
+  $("statRevSet").textContent = revSet.toLocaleString();
+  $("statPaused").textContent = paused.toLocaleString();
   $("statBest").textContent = bests.length ? Math.max(...bests) + "%" : "—";
 
   const sectionStates = new Map(visibleParts.map(p => [p.key, sectionPartState(p)]));
@@ -5414,7 +5505,7 @@ function closeScratchpad(restoreFocus=true){
 }
 $("tabChoice").addEventListener("click", () => selectSpecialtyTab("choice"));
 $("tabWritten").addEventListener("click", () => selectSpecialtyTab("written"));
-document.querySelector(".specialty-tabs").addEventListener("keydown", event => {
+document.querySelector(".hub-type-tabs").addEventListener("keydown", event => {
   if(!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
   event.preventDefault();
   const kind = event.key === "Home" ? "choice" : event.key === "End" ? "written" :
