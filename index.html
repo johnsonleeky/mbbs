@@ -1418,7 +1418,10 @@ html[data-theme] .question-map-panel{background:var(--card);border-color:var(--l
 .hub-ledger-clear:hover,.hub-ledger-clear:focus-visible{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 36%,var(--line));background:color-mix(in srgb,var(--bad) 5%,var(--card));outline:none}
 html[data-theme] .hub-ledger{background:radial-gradient(78% 170% at 0% 0%,color-mix(in srgb,var(--accent) 13%,transparent),transparent 64%),var(--glass-sheen);border-color:var(--glass-brd)}
 html[data-theme] .hub-section-finder{background:transparent;border-top-color:var(--line)}
-html[data-theme] .hub-section-finder .section-search input,html[data-theme] .hub-section-finder .section-filter-chips button{background:var(--card);border-color:var(--line)}
+html[data-theme] .hub-section-finder .section-search input{background:var(--card);border-color:var(--line)}
+html[data-theme] .hub-section-finder .section-filter-chips button:not([aria-pressed="true"]){background:var(--card);border-color:var(--line)}
+html[data-theme] .hub-section-finder .section-filter-chips button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--theme-btn-ink,#fff)}
+html[data-theme] .hub-section-finder .section-filter-chips button[aria-pressed="true"] span{color:inherit}
 html[data-theme] .hub-type-tabs{background:var(--card);border-color:var(--line)}
 html[data-theme] .hub-type-tab span{background:color-mix(in srgb,var(--ink) 8%,transparent)}
 html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--line)}
