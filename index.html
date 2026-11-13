@@ -1288,6 +1288,95 @@ html[data-theme] .year-filter-menu{background:var(--card); border-color:var(--li
 /* Audit preview: choices missing from the source remain visible but cannot be selected. */
 .opt.unavailable{opacity:.5;cursor:not-allowed;border-style:dashed;}
 .opt.unavailable .txt{color:var(--muted);font-style:italic;}
+
+/* ---------- section finder ---------- */
+.section-finder{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 18px;padding:10px 12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.44)}
+.section-search{position:relative;display:flex;align-items:center;flex:1 1 210px;min-width:190px;max-width:330px}
+.section-search>svg{position:absolute;left:10px;width:14px;height:14px;color:var(--muted);pointer-events:none}
+.section-search input{width:100%;height:35px;padding:8px 44px 8px 30px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;font-size:12px}
+.section-search input::placeholder{color:var(--muted)}
+.section-search input:focus{outline:3px solid var(--accent-soft);border-color:var(--accent)}
+.section-search kbd{position:absolute;right:8px;padding:2px 5px;border:1px solid var(--line);border-radius:5px;background:var(--card);color:var(--muted);font:inherit;font-size:8.5px;font-weight:800;pointer-events:none}
+.section-filter-chips{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.section-filter-chips button{appearance:none;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.4);padding:5px 9px;color:var(--muted);font:inherit;font-size:10px;font-weight:700;line-height:1.35;cursor:pointer;white-space:nowrap}
+.section-filter-chips button span{font-variant-numeric:tabular-nums;color:var(--navy);font-weight:800;font-size:9px}
+.section-filter-chips button:hover{border-color:var(--accent);color:var(--accent)}
+.section-filter-chips button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.section-filter-chips button[aria-pressed="true"] span{color:inherit;opacity:.78}
+.section-filter-chips button:focus-visible{outline:3px solid var(--accent-soft);outline-offset:2px}
+.section-match-count{margin-left:auto;color:var(--muted);font-size:10px;font-weight:700;white-space:nowrap}
+html[data-theme] .section-finder{background:var(--glass-sheen)}
+html[data-theme] .section-search input,html[data-theme] .section-filter-chips button{background:var(--card);color:var(--muted);border-color:var(--line)}
+html[data-theme] .section-filter-chips button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--theme-btn-ink,#fff)}
+@media(max-width:760px){
+  .section-finder{align-items:stretch;gap:7px}
+  .section-search{flex-basis:100%;max-width:none}
+  .section-filter-chips{order:2}
+  .section-match-count{order:3;margin-left:auto}
+}
+@media(max-width:560px){
+  .section-finder{padding:9px 10px;border-radius:11px}
+  .section-search kbd{display:none}
+  .section-search input{padding-right:10px}
+  .section-filter-chips button{font-size:9.5px;padding:5px 8px}
+  .section-match-count{font-size:9.5px;width:100%;margin-left:0}
+}
+
+/* ---------- question map ---------- */
+.tool-btn.map-tool{display:inline-flex;align-items:center;gap:5px}
+.map-tool-icon{width:14px;height:14px;flex:0 0 auto}
+.tool-btn.map-tool[aria-expanded="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.question-map-panel{position:fixed;right:0;top:0;height:100dvh;width:min(480px,100vw);overflow-y:auto;background:var(--card);padding:22px;box-shadow:-8px 0 30px rgba(15,23,42,.2);z-index:72;border-left:1px solid var(--line)}
+#questionMapTopic{margin-top:9px;font-size:12px}
+.question-map-summary{margin:9px 0 13px;color:var(--muted);font-size:11px;line-height:1.45}
+.question-map-legend{display:flex;flex-wrap:wrap;gap:7px 11px;padding:10px;margin-bottom:12px;border:1px solid var(--line);border-radius:9px;background:var(--accent-soft);font-size:9px;font-weight:700;color:var(--muted)}
+.question-map-legend span{display:inline-flex;align-items:center;gap:5px}
+.map-key{width:8px;height:8px;border-radius:3px;display:inline-block;background:var(--card);border:1px solid var(--line)}
+.map-key.correct{background:var(--good-soft);border-color:var(--good)}
+.map-key.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.map-key.flagged{background:var(--warn-soft);border-color:var(--warn)}
+.map-key.current{background:var(--accent);border-color:var(--accent)}
+.map-key.unseen{background:var(--card);border-color:var(--muted)}
+.question-map-grid{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:5px}
+.qmap-cell{position:relative;appearance:none;height:34px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--muted);font:inherit;font-size:10px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer;transition:transform .08s,border-color .08s,background .08s}
+.qmap-cell:hover,.qmap-cell:focus-visible{outline:none;transform:translateY(-1px);border-color:var(--accent);box-shadow:0 4px 10px -8px rgba(70,20,42,.5)}
+.qmap-cell.qmap-correct{background:var(--good-soft);border-color:color-mix(in srgb,var(--good) 36%,var(--line));color:var(--good)}
+.qmap-cell.qmap-wrong{background:var(--bad-soft);border-color:color-mix(in srgb,var(--bad) 36%,var(--line));color:var(--bad)}
+.qmap-cell.qmap-unscored{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 30%,var(--line));color:var(--accent)}
+.qmap-cell.qmap-flagged::after{content:"";position:absolute;top:3px;right:3px;width:5px;height:5px;border-radius:50%;background:var(--warn);box-shadow:0 0 0 2px var(--card)}
+.qmap-cell.qmap-current{box-shadow:inset 0 0 0 2px var(--accent),0 0 0 2px var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:800}
+html[data-theme] .question-map-panel{background:var(--card);border-color:var(--line)}
+.question-map-footer{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:13px;border-top:1px solid var(--line)}
+.question-map-footer span{margin-left:auto;color:var(--muted);font-size:10px}
+@media(max-width:560px){
+  .question-map-panel{padding:18px}
+  .question-map-grid{grid-template-columns:repeat(8,minmax(0,1fr));gap:4px}
+  .qmap-cell{height:32px;font-size:9px}
+}
+
+/* ---------- sticky quiz dock ---------- */
+.dock-flag,.dock-progress{display:none}
+@media(max-width:700px){
+  #btnFlagQuestion{display:none}
+  #screen-quiz{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+  .quiz-actions{position:fixed;left:0;right:0;bottom:0;z-index:55;margin:0;padding:9px 10px calc(9px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);border-radius:0;background:var(--card);box-shadow:0 -12px 28px -24px rgba(70,20,42,.52);display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
+  html[data-theme] .quiz-actions{background:var(--card);border-top-color:var(--line)}
+  .quiz-nav-actions{display:flex;gap:4px;flex:0 0 auto}
+  .quiz-nav-actions .btn{padding:9px 8px;min-height:44px;font-size:10.5px;border-radius:8px}
+  .quiz-primary-actions{display:flex;flex:1;min-width:0;margin-left:2px}
+  .quiz-primary-actions .btn{width:100%;min-height:44px;padding:9px 10px;font-size:11.5px;border-radius:8px;white-space:nowrap}
+  .dock-flag{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;flex:0 0 auto;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--muted);cursor:pointer;padding:0}
+  .dock-flag .flag-icon{width:15px;height:15px}
+  .dock-flag[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  .dock-progress{display:inline-block;flex:0 0 auto;color:var(--muted);font-size:8.5px;font-weight:800;letter-spacing:.02em;white-space:nowrap;padding:0 1px}
+  .kbd-hint{display:none}
+}
+@media(max-width:380px){
+  .dock-progress{display:none}
+  .quiz-nav-actions .btn{padding:8px 6px}
+  .quiz-primary-actions .btn{font-size:10.5px;padding:9px 7px}
+}
+
 </style>
 </head>
 <body>
@@ -1367,6 +1456,20 @@ html[data-theme] .year-filter-menu{background:var(--card); border-color:var(--li
     <div class="specialty-tabs" role="tablist" aria-label="Question type">
       <button id="tabChoice" class="btn ghost" role="tab" aria-selected="true" aria-controls="areaBlocks">MCQ / EMQ</button>
       <button id="tabWritten" class="btn ghost" role="tab" aria-selected="false" aria-controls="areaBlocks" tabindex="-1">SAQ</button>
+    </div>
+    <div class="section-finder" id="sectionFinder">
+      <label class="section-search" for="sectionSearch">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.2"/><path d="m16 16 4.2 4.2"/></svg>
+        <input id="sectionSearch" type="search" placeholder="Find a section" autocomplete="off" aria-label="Find a section">
+        <kbd aria-hidden="true">⌘K</kbd>
+      </label>
+      <div class="section-filter-chips" id="sectionFilterChips" role="group" aria-label="Filter sections">
+        <button type="button" data-section-filter="all" aria-pressed="true">All <span id="sectionCountAll">0</span></button>
+        <button type="button" data-section-filter="new" aria-pressed="false">Not started <span id="sectionCountNew">0</span></button>
+        <button type="button" data-section-filter="active" aria-pressed="false">In progress <span id="sectionCountActive">0</span></button>
+        <button type="button" data-section-filter="paused" aria-pressed="false">Paused <span id="sectionCountPaused">0</span></button>
+      </div>
+      <span class="section-match-count" id="sectionMatchCount" aria-live="polite"></span>
     </div>
     <div id="areaBlocks" role="tabpanel" aria-labelledby="tabChoice" tabindex="0"></div>
 
@@ -1495,6 +1598,10 @@ html[data-theme] .year-filter-menu{background:var(--card); border-color:var(--li
         <span class="mock-timer hidden" id="mockTimer" aria-label="Mock exam elapsed time">00:00:00</span>
       </div>
       <div class="quiz-toolbar-actions">
+        <button class="tool-btn map-tool" id="btnQuestionMap" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="questionMapPanel" aria-label="Open question map">
+          <svg class="map-tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1.2"/><rect x="14" y="4" width="6" height="6" rx="1.2"/><rect x="4" y="14" width="6" height="6" rx="1.2"/><rect x="14" y="14" width="6" height="6" rx="1.2"/></svg>
+          <span>Map</span>
+        </button>
         <button class="tool-btn" id="btnFlagQuestion" type="button" aria-pressed="false">Flag</button>
         <button class="tool-btn" id="btnScratchpad" type="button" aria-haspopup="dialog">Notes</button>
         <div class="quiz-more-wrap">
@@ -1534,6 +1641,10 @@ html[data-theme] .year-filter-menu{background:var(--card); border-color:var(--li
         <button class="btn ghost small" id="btnBack" type="button">← Back</button>
         <button class="btn ghost small" id="btnSkip" type="button">Skip →</button>
       </div>
+      <button class="dock-flag" id="btnDockFlag" type="button" aria-pressed="false" aria-label="Flag question" title="Flag question">
+        <svg class="flag-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2h2v2h12l-3 5 3 5H7v8H5V2zm2 4v6h8.5l-1.8-3 1.8-3H7z"/></svg>
+      </button>
+      <span class="dock-progress" id="dockProgress">1 / 1</span>
       <div class="quiz-primary-actions">
         <button class="btn quiz-primary" id="btnSubmit" disabled>Check answer</button>
         <button class="btn quiz-primary hidden" id="btnNext">Next question →</button>
@@ -1669,13 +1780,13 @@ html[data-theme] .year-filter-menu{background:var(--card); border-color:var(--li
     </div>
     <div class="guide-body">
       <h4>Getting around</h4>
-      <p>Use the menu for <b>About</b>, <b>User Guide</b>, <b>Select Theme</b> and <b>Lock Quiz</b>. On the Specialties home, choose a specialty card or <b>Review</b>. Use <b>Save &amp; Quit</b> to pause a run; <b>Resume last run</b> reopens the newest paused run.</p>
+      <p>Use the menu for <b>About</b>, <b>User Guide</b>, <b>Select Theme</b> and <b>Lock Quiz</b>. On the Specialties home, choose a specialty card or <b>Review</b>. Use <b>Save &amp; Quit</b> to pause a run; <b>Resume last run</b> reopens the newest paused run. On a specialty page, use <b>Find a section</b> and the status chips to narrow a long section list.</p>
 
       <h4>Year filter</h4>
       <p>Each specialty card has a <b>Filter</b> menu. Tick exam years to leave them out of that specialty's questions: 2026 down to 2020, or <b>Older</b> for 2019 and earlier. The choice applies only to that specialty and is remembered in this browser. Mixed review respects each specialty's filter; <b>Review by year</b> keeps its own year picker.</p>
 
       <h4>Answering questions</h4>
-      <p>Select an answer and choose <b>Check answer</b>. Use <b>Back</b>, <b>Skip</b> or <b>Jump</b> to move around; checked answers stay locked. If you finish with unanswered questions, you can return to them or finish anyway. Unanswered scorable questions count as incorrect and join the revision set.</p>
+      <p>Select an answer and choose <b>Check answer</b>. Use <b>Back</b>, <b>Skip</b> or <b>Jump</b> to move around; checked answers stay locked. Open <b>Map</b> to see the whole run, including correct, incorrect, flagged and not-checked questions. On phones, the main quiz actions stay in a sticky bottom bar. If you finish with unanswered questions, you can return to them or finish anyway. Unanswered scorable questions count as incorrect and join the revision set.</p>
 
       <h4>Revision sets</h4>
       <p>Wrong answers are added to the part's revision set. Answer them correctly in a later run, or delete the attempt that added them, to clear them.</p>
@@ -1731,6 +1842,21 @@ html[data-theme] .year-filter-menu{background:var(--card); border-color:var(--li
   <p id="flagPanelTopic" class="muted"></p>
   <p class="annotation-help">Flags are saved for this topic only. Select a question to jump to it; remove its flag with the adjacent button.</p>
   <div id="flagList"></div>
+</aside>
+<div id="questionMapBackdrop" class="flag-backdrop hidden"></div>
+<aside id="questionMapPanel" class="question-map-panel hidden" role="dialog" aria-modal="true" aria-labelledby="questionMapTitle">
+  <div class="flag-panel-header"><h2 id="questionMapTitle">Question map</h2><button id="btnCloseQuestionMap" class="btn ghost small" type="button" aria-label="Close question map">Close</button></div>
+  <p id="questionMapTopic" class="muted"></p>
+  <p id="questionMapSummary" class="question-map-summary"></p>
+  <div class="question-map-legend" aria-hidden="true">
+    <span><i class="map-key correct"></i>Correct</span>
+    <span><i class="map-key wrong"></i>Incorrect</span>
+    <span><i class="map-key flagged"></i>Flagged</span>
+    <span><i class="map-key current"></i>Current</span>
+    <span><i class="map-key unseen"></i>Not checked</span>
+  </div>
+  <div id="questionMapGrid" class="question-map-grid" role="group" aria-label="Questions in this run"></div>
+  <div class="question-map-footer"><button class="btn ghost small" id="btnMapFirstUnanswered" type="button">First unanswered →</button><span>Select a square to jump</span></div>
 </aside>
 <div id="highlightPopup" class="highlight-popup hidden" role="toolbar" aria-label="Saved text highlight">
   <button id="btnSaveHighlight" type="button" class="btn small">Save highlight</button>
@@ -2065,11 +2191,23 @@ function renderHub(){
   $("statPaused").textContent = paused;
   $("statBest").textContent = bests.length ? Math.max(...bests) + "%" : "—";
 
-  $("areaBlocks").innerHTML = (activeArea ? [activeArea] : AREAS).map(area => `
+  const sectionStates = new Map(visibleParts.map(p => [p.key, sectionPartState(p)]));
+  const shownParts = visibleParts.filter(p => sectionMatches(p, sectionStates.get(p.key)));
+  const shownKeys = new Set(shownParts.map(p => p.key));
+  updateSectionFinder(visibleParts, sectionStates, shownParts.length);
+
+  $("areaBlocks").innerHTML = (activeArea ? [activeArea] : AREAS).map(area => {
+    const allInTab = area.parts.filter(p => p.kind === tabKind);
+    const areaParts = allInTab.filter(p => shownKeys.has(p.key));
+    const emptyMessage = allInTab.length
+      ? "No sections match your search or filter."
+      : "No " + (tabKind === "written" ? "SAQ" : "MCQ / EMQ") + " questions are available for this specialty.";
+    return `
     <div class="area-block">
       <div class="area-name">${bloomSvg(13)}${esc(area.name)}</div>
-      <div class="part-grid">${area.parts.filter(p => p.kind === tabKind).map(partCard).join("") || '<p class="empty">No ' + (tabKind === "written" ? "SAQ" : "MCQ / EMQ") + ' questions are available for this specialty.</p>'}</div>
-    </div>`).join("");
+      <div class="part-grid">${areaParts.map(partCard).join("") || '<p class="empty">' + emptyMessage + '</p>'}</div>
+    </div>`;
+  }).join("");
   bindCards();
 }
 function partCard(p){
@@ -3376,6 +3514,7 @@ function startReviewFrom(key, qids, m){
 function hideAll(){
   closeScratchpad(false);
   closeFlags(false);
+  closeQuestionMap(false);
   dismissHighlightPopup();
   $("btnCategories").classList.remove("hidden");
   $("btnBrandHome").title = "Back to Specialties";
@@ -3433,6 +3572,8 @@ function updateNavigation(){
   $("jumpError").textContent = "";
   $("btnSkip").classList.toggle("hidden", mock || !!checked[QS()[queue[idx]].n]);
   if(!mock) $("btnSkip").textContent = idx === queue.length - 1 ? "Skip & finish…" : "Skip →";
+  const dockProgress = $("dockProgress");
+  if(dockProgress) dockProgress.textContent = `${idx + 1} / ${queue.length}`;
 }
 
 function isUnavailableChoiceText(text){
@@ -4467,6 +4608,69 @@ function wireYearFilterEvents(){
 }
 wireYearFilterEvents();
 
+/* ---- section finder ---- */
+let sectionQuery = "";
+let sectionFilter = "all";
+function sectionPartState(p){
+  const s = partStats(p.key);
+  if(s.sess) return "paused";
+  if(s.recs.length) return "active";
+  return "new";
+}
+function sectionMatches(p, state = sectionPartState(p)){
+  const term = sectionQuery.trim().toLowerCase();
+  if(term){
+    const haystack = [p.title, p.displayKey, p.fullTitle].filter(Boolean).join(" ").toLowerCase();
+    if(!term.split(/\s+/).every(part => haystack.includes(part))) return false;
+  }
+  return sectionFilter === "all" || state === sectionFilter;
+}
+function updateSectionFinder(parts, states, shown){
+  const counts = { all:parts.length, new:0, active:0, paused:0 };
+  parts.forEach(p => { const state = states.get(p.key); if(counts[state] !== undefined) counts[state]++; });
+  $("sectionCountAll").textContent = counts.all;
+  $("sectionCountNew").textContent = counts.new;
+  $("sectionCountActive").textContent = counts.active;
+  $("sectionCountPaused").textContent = counts.paused;
+  document.querySelectorAll("#sectionFilterChips [data-section-filter]").forEach(button => {
+    button.setAttribute("aria-pressed", String(button.dataset.sectionFilter === sectionFilter));
+  });
+  const filtered = !!sectionQuery.trim() || sectionFilter !== "all";
+  $("sectionMatchCount").textContent = filtered
+    ? `${shown} of ${parts.length} section${parts.length === 1 ? "" : "s"}`
+    : `${parts.length} section${parts.length === 1 ? "" : "s"}`;
+}
+function resetSectionFinder(){
+  sectionQuery = "";
+  sectionFilter = "all";
+  const input = $("sectionSearch");
+  if(input) input.value = "";
+}
+function wireSectionFinder(){
+  const input = $("sectionSearch");
+  const chips = $("sectionFilterChips");
+  if(!input || !chips) return;
+  input.addEventListener("input", () => { sectionQuery = input.value; renderHub(); });
+  chips.addEventListener("click", event => {
+    const button = event.target.closest("[data-section-filter]");
+    if(!button) return;
+    sectionFilter = button.dataset.sectionFilter;
+    renderHub();
+  });
+  document.addEventListener("keydown", event => {
+    if($("screen-hub").classList.contains("hidden")) return;
+    const tag = document.activeElement && document.activeElement.tagName;
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(tag || "");
+    const commandK = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k";
+    if(commandK || (!typing && event.key === "/" && !event.metaKey && !event.ctrlKey && !event.altKey)){
+      event.preventDefault();
+      input.focus();
+      input.select();
+    }
+  });
+}
+wireSectionFinder();
+
 function showCategories(){
   if(!$("screen-quiz").classList.contains("hidden") && part){
     if(!saveAndQuit()) return;
@@ -4511,6 +4715,7 @@ function showCategories(){
     button.addEventListener("click", () => {
       if(button.dataset.category === MIXED_KEY){ enterMixed(); return; }
       activeArea = AREAS.find(area => area.key === button.dataset.category);
+      resetSectionFinder();
       showHub();
     });
   });
@@ -4731,6 +4936,12 @@ function refreshQuestionFlag(){
   $("btnFlagQuestion").setAttribute("aria-label", (flagged ? "Unflag" : "Flag") + " question " + target.n);
   $("btnOpenFlags").innerHTML = FLAG_ICON + " Flagged (" + flaggedQuestions(part.key).length + ")";
   $("btnOpenFlags").classList.toggle("hidden", !!part.flagged);
+  const dockFlag = $("btnDockFlag");
+  if(dockFlag){
+    dockFlag.setAttribute("aria-pressed", String(flagged));
+    dockFlag.setAttribute("aria-label", (flagged ? "Unflag" : "Flag") + " question " + target.n);
+    dockFlag.title = (flagged ? "Unflag" : "Flag") + " question";
+  }
 }
 function renderFlagList(){
   const category = subjectForPart(flagPanelPart);
@@ -4755,6 +4966,7 @@ function renderFlagList(){
 }
 function openFlags(key, trigger){
   closeScratchpad(false);
+  closeQuestionMap(false);
   dismissHighlightPopup();
   flagPanelPart = findPart(key);
   flagReturnFocus = trigger || document.activeElement;
@@ -4771,6 +4983,81 @@ function closeFlags(restoreFocus=true){
   if(restoreFocus && flagReturnFocus && flagReturnFocus.isConnected) flagReturnFocus.focus();
   flagPanelPart = null;
 }
+
+let questionMapReturnFocus = null;
+function questionFlagTarget(q){
+  return part.flagged && q.__mp ? { key: q.__mp, n: q.__mq } : { key: part.key, n: q.n };
+}
+function renderQuestionMap(){
+  if(!part) return;
+  const area = subjectForPart(part);
+  $("questionMapTopic").textContent = (area ? area.name + " / " : "") + part.title;
+  const flagsByPart = {};
+  let correct = 0, wrong = 0, unscored = 0, flagged = 0, answered = 0;
+  const cells = queue.map((qi, position) => {
+    const q = QS()[qi];
+    const done = !!checked[q.n];
+    const state = done ? (q.noAns ? "unscored" : isCorrect(q) ? "correct" : "wrong") : "unseen";
+    if(done) answered++;
+    if(state === "correct") correct++;
+    else if(state === "wrong") wrong++;
+    else if(state === "unscored") unscored++;
+    const target = questionFlagTarget(q);
+    if(!flagsByPart[target.key]) flagsByPart[target.key] = readAnnotations(target.key, "flags") || {};
+    const isFlagged = !!flagsByPart[target.key][target.n];
+    if(isFlagged) flagged++;
+    const current = position === idx;
+    const classes = ["qmap-cell", "qmap-" + state];
+    if(isFlagged) classes.push("qmap-flagged");
+    if(current) classes.push("qmap-current");
+    const status = state === "unseen" ? "not checked" : state === "unscored" ? "unscored" : state;
+    const label = `Question ${position + 1}${current ? ", current" : ""}, ${status}${isFlagged ? ", flagged" : ""}`;
+    return `<button type="button" class="${classes.join(" ")}" data-map-jump="${position}" aria-label="${esc(label)}" title="${esc("Question " + (position + 1) + (q.sourceId ? " · " + q.sourceId : ""))}">${position + 1}</button>`;
+  }).join("");
+  $("questionMapGrid").innerHTML = cells;
+  const summary = [`${correct} correct`, `${wrong} incorrect`, `${flagged} flagged`, `${queue.length - answered} not checked`];
+  if(unscored) summary.push(`${unscored} unscored`);
+  $("questionMapSummary").textContent = summary.join(" · ");
+  const first = queue.findIndex(i => !checked[QS()[i].n]);
+  const firstButton = $("btnMapFirstUnanswered");
+  firstButton.disabled = first < 0;
+  firstButton.onclick = first < 0 ? null : () => { closeQuestionMap(false); moveTo(first); $("qNum").focus(); };
+  $("questionMapGrid").querySelectorAll("[data-map-jump]").forEach(button => {
+    button.addEventListener("click", () => {
+      const position = Number(button.dataset.mapJump);
+      closeQuestionMap(false);
+      moveTo(position);
+      $("qNum").focus();
+    });
+  });
+}
+function openQuestionMap(trigger){
+  if(!part || !queue.length) return;
+  closeQuizMore(false);
+  closeScratchpad(false);
+  dismissHighlightPopup();
+  if(!$("flagPanel").classList.contains("hidden")) closeFlags(false);
+  questionMapReturnFocus = trigger || document.activeElement;
+  renderQuestionMap();
+  $("questionMapPanel").classList.remove("hidden");
+  $("questionMapBackdrop").classList.remove("hidden");
+  $("btnQuestionMap").setAttribute("aria-expanded", "true");
+  $("appShell").inert = true;
+  $("btnCloseQuestionMap").focus();
+  requestAnimationFrame(() => {
+    const current = $("questionMapGrid").querySelector(".qmap-current");
+    if(current) current.scrollIntoView({ block: "nearest" });
+  });
+}
+function closeQuestionMap(restoreFocus=true){
+  $("questionMapPanel").classList.add("hidden");
+  $("questionMapBackdrop").classList.add("hidden");
+  $("btnQuestionMap").setAttribute("aria-expanded", "false");
+  $("appShell").inert = !unlocked;
+  if(restoreFocus && questionMapReturnFocus && questionMapReturnFocus.isConnected) questionMapReturnFocus.focus();
+  questionMapReturnFocus = null;
+}
+
 function jumpToFlagged(key, number){
   if(!$("screen-quiz").classList.contains("hidden")){
     const position = part.key === key ? queue.findIndex(i => QS()[i].n === number) : -1;
@@ -4967,7 +5254,7 @@ function saveSelectedHighlight(remove=false){
   annotationMessage(remove ? "Highlight removed." : "Highlight saved. Select it again or click it to remove.");
 }
 
-$("btnFlagQuestion").addEventListener("click", () => {
+function toggleCurrentQuestionFlag(){
   const q = QS()[queue[idx]];
   const target = part.flagged && q.__mp ? { key: q.__mp, n: q.__mq } : { key: part.key, n: q.n };
   const flags = readAnnotations(target.key, "flags");
@@ -4975,7 +5262,9 @@ $("btnFlagQuestion").addEventListener("click", () => {
     setQuestionFlag(target.key, target.n, !flags[target.n]);
     if(part.flagged) refreshQuestionFlag();
   }
-});
+}
+$("btnFlagQuestion").addEventListener("click", toggleCurrentQuestionFlag);
+$("btnDockFlag").addEventListener("click", toggleCurrentQuestionFlag);
 $("btnOpenFlags").addEventListener("click", () => {
   const trigger = $("btnQuizMore");
   closeQuizMore(false);
@@ -4983,6 +5272,24 @@ $("btnOpenFlags").addEventListener("click", () => {
 });
 $("btnCloseFlags").addEventListener("click", () => closeFlags());
 $("flagBackdrop").addEventListener("click", () => closeFlags());
+$("btnQuestionMap").addEventListener("click", () => openQuestionMap($("btnQuestionMap")));
+$("btnCloseQuestionMap").addEventListener("click", () => closeQuestionMap());
+$("questionMapBackdrop").addEventListener("click", () => closeQuestionMap());
+document.addEventListener("keydown", event => {
+  if($("questionMapPanel").classList.contains("hidden")) return;
+  if(event.key === "Escape"){
+    event.preventDefault();
+    closeQuestionMap();
+  }else if(event.key === "Tab"){
+    const buttons = Array.from($("questionMapPanel").querySelectorAll("button:not(:disabled)"));
+    if(!buttons.length) return;
+    const first = buttons[0];
+    const last = buttons[buttons.length - 1];
+    if(event.shiftKey && document.activeElement === first){ event.preventDefault(); last.focus(); }
+    else if(!event.shiftKey && document.activeElement === last){ event.preventDefault(); first.focus(); }
+  }
+});
+
 $("btnReturnFlagRun").addEventListener("click", returnFromFlagPreview);
 $("btnSaveHighlight").addEventListener("click", () => saveSelectedHighlight());
 $("btnRemoveHighlight").addEventListener("click", () => saveSelectedHighlight(true));
