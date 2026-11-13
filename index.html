@@ -1304,7 +1304,6 @@ html[data-theme] .year-filter-menu{background:var(--card); border-color:var(--li
 .section-filter-chips button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 .section-filter-chips button[aria-pressed="true"] span{color:inherit;opacity:.78}
 .section-filter-chips button:focus-visible{outline:3px solid var(--accent-soft);outline-offset:2px}
-.section-match-count{margin-left:auto;color:var(--muted);font-size:10px;font-weight:700;white-space:nowrap}
 html[data-theme] .section-finder{background:var(--glass-sheen)}
 html[data-theme] .section-search input,html[data-theme] .section-filter-chips button{background:var(--card);color:var(--muted);border-color:var(--line)}
 html[data-theme] .section-filter-chips button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--theme-btn-ink,#fff)}
@@ -1312,14 +1311,12 @@ html[data-theme] .section-filter-chips button[aria-pressed="true"]{background:va
   .section-finder{align-items:stretch;gap:7px}
   .section-search{flex-basis:100%;max-width:none}
   .section-filter-chips{order:2}
-  .section-match-count{order:3;margin-left:auto}
 }
 @media(max-width:560px){
   .section-finder{padding:9px 10px;border-radius:11px}
   .section-search kbd{display:none}
   .section-search input{padding-right:10px}
   .section-filter-chips button{font-size:9.5px;padding:5px 8px}
-  .section-match-count{font-size:9.5px;width:100%;margin-left:0}
 }
 
 /* ---------- question map ---------- */
@@ -1380,7 +1377,7 @@ html[data-theme] .question-map-panel{background:var(--card);border-color:var(--l
 
 /* ---------- specialty hub: tinted ledger header ---------- */
 .hub-ledger{
-  position:relative;margin-bottom:18px;padding:28px 32px 20px;overflow:hidden;color:var(--ink);
+  position:relative;margin-bottom:18px;padding:20px 24px 13px;overflow:hidden;color:var(--ink);
   border:1px solid color-mix(in srgb,var(--accent) 14%,var(--glass-line));border-radius:18px;
   background:
     radial-gradient(78% 170% at 0% 0%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 64%),
@@ -1388,10 +1385,10 @@ html[data-theme] .question-map-panel{background:var(--card);border-color:var(--l
   box-shadow:var(--glass-shadow);
   backdrop-filter:blur(12px) saturate(150%);-webkit-backdrop-filter:blur(12px) saturate(150%);
 }
-.hub-ledger-head{display:flex;align-items:flex-start;justify-content:space-between;gap:28px;position:relative;z-index:1}
+.hub-ledger-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;position:relative;z-index:1}
 .hub-ledger-eyebrow{display:block;color:var(--muted);font-size:9.5px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;line-height:1.2}
 .hub-ledger-head h2{margin:4px 0 0;color:var(--navy);font-size:15px;font-weight:800;letter-spacing:-.015em;line-height:1.2}
-.hub-type-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:0 0 auto}
+.hub-type-wrap{display:flex;flex-direction:row;align-items:center;gap:8px;flex:0 0 auto}
 .hub-type-label{font-size:8.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);line-height:1}
 .hub-type-tabs{display:inline-flex;align-items:stretch;gap:3px;padding:4px;border:1px solid color-mix(in srgb,var(--accent) 18%,transparent);border-radius:999px;background:rgba(255,255,255,.7);box-shadow:inset 0 1px 2px rgba(70,20,42,.04),0 7px 18px -18px rgba(70,20,42,.55)}
 .hub-type-tab{appearance:none;border:0;background:transparent;border-radius:999px;display:inline-flex;align-items:center;gap:7px;padding:7px 10px;color:var(--muted);font:inherit;font-size:10px;font-weight:800;line-height:1.1;cursor:pointer;white-space:nowrap;transition:background .14s,color .14s,box-shadow .14s}
@@ -1400,25 +1397,31 @@ html[data-theme] .question-map-panel{background:var(--card);border-color:var(--l
 .hub-type-tab[aria-selected="true"]{background:var(--accent);color:var(--theme-btn-ink,#fff);box-shadow:0 6px 14px -10px var(--accent)}
 .hub-type-tab[aria-selected="true"] span{background:rgba(255,255,255,.18);color:inherit}
 .hub-type-tab:focus-visible{outline:3px solid var(--accent-soft);outline-offset:2px}
-.hub-ledger-body{display:flex;align-items:flex-end;justify-content:space-between;gap:45px;margin-top:37px;position:relative;z-index:1}
+.hub-ledger-body{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;margin-top:18px;position:relative;z-index:1}
 .hub-ledger-lead{min-width:0}
 .hub-ledger-number{display:flex;align-items:baseline;gap:11px;min-width:0}
-.hub-ledger-number b{font-size:58px;line-height:.82;font-weight:800;color:var(--accent);letter-spacing:-.075em;font-variant-numeric:tabular-nums}
+.hub-ledger-number b{font-size:46px;line-height:.84;font-weight:800;color:var(--accent);letter-spacing:-.065em;font-variant-numeric:tabular-nums}
 .hub-ledger-number>span{color:var(--muted);font-size:10.5px;line-height:1.4}
-.hub-ledger-sections{display:flex;align-items:baseline;gap:5px;margin-top:13px;color:var(--muted);font-size:9.5px}
+.hub-ledger-sections{display:flex;align-items:baseline;gap:5px;margin-top:8px;color:var(--muted);font-size:9.5px}
 .hub-ledger-sections b{color:var(--navy);font-size:12px;font-weight:800;font-variant-numeric:tabular-nums}
 .hub-ledger-records{display:grid;grid-template-columns:repeat(4,minmax(86px,1fr));gap:0;flex:1;max-width:600px;padding-bottom:2px}
-.hub-ledger-record{padding:0 23px;border-left:1px solid color-mix(in srgb,var(--line) 84%,var(--accent))}
+.hub-ledger-record{padding:0 18px;border-left:1px solid color-mix(in srgb,var(--line) 84%,var(--accent))}
 .hub-ledger-record:first-child{padding-left:0;border-left:0}
-.hub-ledger-record b{display:block;color:var(--navy);font-size:22px;font-weight:800;line-height:1;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
-.hub-ledger-record span{display:block;margin-top:7px;color:var(--muted);font-size:9.5px;line-height:1.35}
+.hub-ledger-record b{display:block;color:var(--navy);font-size:20px;font-weight:800;line-height:1;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.hub-ledger-record span{display:block;margin-top:5px;color:var(--muted);font-size:9px;line-height:1.3}
 .hub-ledger-record.best b{color:var(--good)}
 .hub-ledger-record.paused b{color:var(--warn)}
-.hub-ledger-utility{position:relative;z-index:1;display:flex;justify-content:flex-end;border-top:1px solid color-mix(in srgb,var(--line) 84%,var(--accent));margin-top:22px;padding-top:12px}
-.hub-ledger-clear{appearance:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.54);padding:6px 9px;color:var(--muted);font:inherit;font-size:9.5px;font-weight:800;cursor:pointer;transition:border-color .14s,color .14s,background .14s}
+.hub-section-finder{margin:14px 0 0;padding:12px 0 0;border:0;border-top:1px solid color-mix(in srgb,var(--line) 84%,var(--accent));border-radius:0;background:transparent}
+.hub-section-finder .section-search input{border-color:color-mix(in srgb,var(--line) 82%,var(--accent));background:rgba(255,255,255,.68)}
+.hub-section-finder .section-filter-chips button{border-color:color-mix(in srgb,var(--line) 88%,var(--accent));background:rgba(255,255,255,.5)}
+.hub-section-finder .section-filter-chips button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--theme-btn-ink,#fff)}
+.hub-section-finder .section-filter-chips button[aria-pressed="true"] span{color:inherit}
+.hub-ledger-clear{appearance:none;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:7px;background:rgba(255,255,255,.54);padding:5px 8px;color:var(--muted);font:inherit;font-size:9px;font-weight:800;cursor:pointer;transition:border-color .14s,color .14s,background .14s;order:3;margin-left:auto;flex:0 0 auto}
 .hub-ledger-clear svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .hub-ledger-clear:hover,.hub-ledger-clear:focus-visible{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 36%,var(--line));background:color-mix(in srgb,var(--bad) 5%,var(--card));outline:none}
 html[data-theme] .hub-ledger{background:radial-gradient(78% 170% at 0% 0%,color-mix(in srgb,var(--accent) 13%,transparent),transparent 64%),var(--glass-sheen);border-color:var(--glass-brd)}
+html[data-theme] .hub-section-finder{background:transparent;border-top-color:var(--line)}
+html[data-theme] .hub-section-finder .section-search input,html[data-theme] .hub-section-finder .section-filter-chips button{background:var(--card);border-color:var(--line)}
 html[data-theme] .hub-type-tabs{background:var(--card);border-color:var(--line)}
 html[data-theme] .hub-type-tab span{background:color-mix(in srgb,var(--ink) 8%,transparent)}
 html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--line)}
@@ -1427,18 +1430,18 @@ html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--lin
   .hub-ledger-records{width:100%;max-width:none}
 }
 @media(max-width:620px){
-  .hub-ledger{padding:20px 18px 17px;border-radius:15px}
+  .hub-ledger{padding:17px 16px 12px;border-radius:15px}
   .hub-ledger-head{flex-wrap:wrap;gap:15px}
-  .hub-type-wrap{align-items:stretch;width:100%}
+  .hub-type-wrap{align-items:stretch;width:100%;flex-direction:column;gap:5px}
   .hub-type-label{text-align:left}
   .hub-type-tabs{width:100%}
   .hub-type-tab{flex:1;justify-content:center}
-  .hub-ledger-body{margin-top:26px}
-  .hub-ledger-number b{font-size:47px}
+  .hub-ledger-body{margin-top:18px}
+  .hub-ledger-number b{font-size:40px}
   .hub-ledger-records{grid-template-columns:1fr 1fr;gap:16px 0}
   .hub-ledger-record:nth-child(3){padding-left:0;border-left:0}
   .hub-ledger-record:nth-child(n+3){padding-top:15px;border-top:1px solid color-mix(in srgb,var(--line) 84%,var(--accent))}
-  .hub-ledger-utility{margin-top:18px}
+  .hub-section-finder{margin-top:10px;padding:10px 0 0;border-radius:0;background:transparent}
 }
 @media(max-width:380px){
   .hub-ledger-records{grid-template-columns:1fr}
@@ -1530,7 +1533,18 @@ html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--lin
           <div class="hub-ledger-record paused"><b id="statPaused">0</b><span>Paused sessions</span></div>
         </div>
       </div>
-      <div class="hub-ledger-utility">
+      <div class="section-finder hub-section-finder" id="sectionFinder">
+        <label class="section-search" for="sectionSearch">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.2"/><path d="m16 16 4.2 4.2"/></svg>
+          <input id="sectionSearch" type="search" placeholder="Find a section" autocomplete="off" aria-label="Find a section">
+          <kbd aria-hidden="true">⌘K</kbd>
+        </label>
+        <div class="section-filter-chips" id="sectionFilterChips" role="group" aria-label="Filter sections">
+          <button type="button" data-section-filter="all" aria-pressed="true">All <span id="sectionCountAll">0</span></button>
+          <button type="button" data-section-filter="new" aria-pressed="false">Not started <span id="sectionCountNew">0</span></button>
+          <button type="button" data-section-filter="active" aria-pressed="false">In progress <span id="sectionCountActive">0</span></button>
+          <button type="button" data-section-filter="paused" aria-pressed="false">Paused <span id="sectionCountPaused">0</span></button>
+        </div>
         <button class="hub-ledger-clear" id="btnClearHist" type="button" aria-label="Clear this specialty's history and revision sets">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg>
           Clear history
@@ -1539,20 +1553,6 @@ html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--lin
     </section>
 
     <p class="hub-year-filter hidden" id="hubYearFilter"></p>
-    <div class="section-finder" id="sectionFinder">
-      <label class="section-search" for="sectionSearch">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.2"/><path d="m16 16 4.2 4.2"/></svg>
-        <input id="sectionSearch" type="search" placeholder="Find a section" autocomplete="off" aria-label="Find a section">
-        <kbd aria-hidden="true">⌘K</kbd>
-      </label>
-      <div class="section-filter-chips" id="sectionFilterChips" role="group" aria-label="Filter sections">
-        <button type="button" data-section-filter="all" aria-pressed="true">All <span id="sectionCountAll">0</span></button>
-        <button type="button" data-section-filter="new" aria-pressed="false">Not started <span id="sectionCountNew">0</span></button>
-        <button type="button" data-section-filter="active" aria-pressed="false">In progress <span id="sectionCountActive">0</span></button>
-        <button type="button" data-section-filter="paused" aria-pressed="false">Paused <span id="sectionCountPaused">0</span></button>
-      </div>
-      <span class="section-match-count" id="sectionMatchCount" aria-live="polite"></span>
-    </div>
     <div id="areaBlocks" role="tabpanel" aria-labelledby="tabChoice" tabindex="0"></div>
 
   </section>
@@ -2285,7 +2285,7 @@ function renderHub(){
   const sectionStates = new Map(visibleParts.map(p => [p.key, sectionPartState(p)]));
   const shownParts = visibleParts.filter(p => sectionMatches(p, sectionStates.get(p.key)));
   const shownKeys = new Set(shownParts.map(p => p.key));
-  updateSectionFinder(visibleParts, sectionStates, shownParts.length);
+  updateSectionFinder(visibleParts, sectionStates);
 
   $("areaBlocks").innerHTML = (activeArea ? [activeArea] : AREAS).map(area => {
     const allInTab = area.parts.filter(p => p.kind === tabKind);
@@ -4716,7 +4716,7 @@ function sectionMatches(p, state = sectionPartState(p)){
   }
   return sectionFilter === "all" || state === sectionFilter;
 }
-function updateSectionFinder(parts, states, shown){
+function updateSectionFinder(parts, states){
   const counts = { all:parts.length, new:0, active:0, paused:0 };
   parts.forEach(p => { const state = states.get(p.key); if(counts[state] !== undefined) counts[state]++; });
   $("sectionCountAll").textContent = counts.all;
@@ -4726,10 +4726,6 @@ function updateSectionFinder(parts, states, shown){
   document.querySelectorAll("#sectionFilterChips [data-section-filter]").forEach(button => {
     button.setAttribute("aria-pressed", String(button.dataset.sectionFilter === sectionFilter));
   });
-  const filtered = !!sectionQuery.trim() || sectionFilter !== "all";
-  $("sectionMatchCount").textContent = filtered
-    ? `${shown} of ${parts.length} section${parts.length === 1 ? "" : "s"}`
-    : `${parts.length} section${parts.length === 1 ? "" : "s"}`;
 }
 function resetSectionFinder(){
   sectionQuery = "";
