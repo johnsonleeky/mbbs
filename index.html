@@ -690,12 +690,12 @@ header.top{
 .hub-figures{display:flex; flex-direction:column; gap:1px; min-width:0;}
 .hub-figures b{font-size:33px; font-weight:800; color:var(--navy); line-height:1.05; letter-spacing:-.02em;}
 .hub-figures span{font-size:12.5px; color:var(--muted);}
-.hub-chips{display:flex; gap:7px; flex-wrap:wrap;}
+.hub-chips{display:flex; gap:7px; flex-wrap:nowrap; flex:0 0 auto;}
 .hub-chip{font-size:11.5px; font-weight:700; color:var(--accent); background:rgba(255,255,255,.75);
   border:1px solid var(--line); border-radius:999px; padding:4px 10px; white-space:nowrap;}
 .hub-actions{display:flex; gap:9px; flex-wrap:nowrap; align-items:center; margin-left:auto; min-width:0;}
 .hub-actions .btn{white-space:nowrap; flex:0 0 auto;}
-.hub-last{font-size:12.5px; font-weight:700; color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;}
+.hub-last{font-size:12.5px; font-weight:700; color:var(--accent); white-space:normal; overflow:visible; text-overflow:clip; min-width:0; max-width:150px; line-height:1.2;}
 @media (max-width:970px){
   .halo-row{grid-template-columns:repeat(2,1fr);}
   .hub-band{flex-wrap:wrap; gap:16px;}
@@ -3635,7 +3635,7 @@ function hubBandHtml(){
       </div>
       ${last ? `<div class="hub-actions">
         <button class="btn primary" id="hubResume">▶ &nbsp;Resume last run</button>
-        <span class="hub-last">${esc(runLabel(last.key, last.sess))}</span>
+        <span class="hub-last">${runLabelHtml(last.key, last.sess)}</span>
       </div>` : ""}
     </div>`;
 }
@@ -3657,6 +3657,12 @@ function runLabel(key, sess){
   if(key === MOCK_KEY) return `${sess && sess.my ? sess.my : ""} ${sess && sess.ms ? mockSpecialtyName(sess.ms) : "mock exam"}${sess && sess.my ? " mock exam" : ""}`.trim();
   const area = subjectForPart(findPart(key));
   return area ? area.name : key;
+}
+function runLabelHtml(key, sess){
+  const label = runLabel(key, sess);
+  if(label === "Obstetrics & Gynecology") return "Obstetrics &amp;<br>Gynecology";
+  if(label === "Orthopedics & Traumatology") return "Orthopedics &amp;<br>Traumatology";
+  return esc(label);
 }
 function resumeLatestRun(){
   const run = latestRun();
