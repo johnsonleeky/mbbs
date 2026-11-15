@@ -1625,6 +1625,12 @@ html:not([data-theme="cosmic"]) .hub-c .hub-ledger{
 }
 html[data-theme] #hubResume .hub-resume-text{--hub-base:var(--theme-hero-btn-ink);--hub-highlight:#FFFDF8}
 html[data-theme="cosmic"] #hubResume .hub-resume-text{--hub-highlight:var(--theme-gold)}
+/* Teal: Resume matches the gold menu circle */
+html[data-theme="teal"] .hub-actions #hubResume{
+  background:var(--theme-menu-bg);color:var(--theme-menu-ink);
+  box-shadow:0 10px 20px -16px rgba(19,32,25,.6);
+}
+html[data-theme="teal"] #hubResume .hub-resume-text{--hub-base:var(--theme-menu-ink);--hub-highlight:#FFF9E4}
 @media (prefers-reduced-motion: reduce){
   #hubResume .hub-resume-text{animation:none!important}
 }
