@@ -395,6 +395,14 @@ html[data-theme] .section-empty{background:var(--card);border-color:var(--line)}
   .search-badge.note{background:var(--accent-soft); color:var(--accent);}
   .search-badge.flag{background:var(--warn-soft); color:var(--warn);}
   .search-badge.best{background:var(--accent-soft); color:var(--accent);}
+  .search-more{
+    width:calc(100% - 20px); margin:2px 10px 4px; padding:7px 10px;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    border:1px dashed var(--line); border-radius:9px; background:transparent;
+    color:var(--accent); font-size:11.5px; font-weight:800; cursor:pointer;
+  }
+  .search-more:hover{background:var(--accent-soft); border-color:var(--accent);}
+  .search-more span{font-weight:600; color:var(--muted);}
   .search-detail{
     border-left:1px solid var(--line); padding:20px 20px 18px; overflow-y:auto; min-width:0;
     background:var(--accent-soft);
@@ -2392,6 +2400,7 @@ let searchFilter = "all";
 let searchSelected = 0;
 let searchFlat = [];
 let searchCurrent = null;
+let searchLimits = Object.create(null);
 let searchDetailActive = false;
 let searchReturnFocus = null;
 let searchPreview = false;
@@ -4921,7 +4930,7 @@ renderThemeOptions();
 /* ---------- global search ---------- */
 const SEARCH_LABELS = {action:"Actions", topic:"Topics", question:"Questions", note:"Notes", flag:"Flags"};
 const SEARCH_ORDER = {action:0, topic:1, question:2, note:3, flag:4};
-const SEARCH_LIMITS = {action:4, topic:4, question:5, note:3, flag:3};
+const SEARCH_PAGE = 5;
 const SEARCH_ICONS = {
   topic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 5.5v16"/><path d="M8 7h8M8 11h6"/></svg>',
   question:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1.1.9-1.1 1.7v.3"/><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/></svg>',
@@ -5147,7 +5156,8 @@ function searchGroups(){
   if(!query){
     if(searchFilter !== "all"){
       const items = searchItemsByFilter(searchFilter);
-      return items.length ? [{type:searchFilter, items:items.slice(0, 10), total:items.length, max:0}] : [];
+      const limit = searchLimits[searchFilter] || SEARCH_PAGE;
+      return items.length ? [{type:searchFilter, items:items.slice(0, limit), total:items.length, max:0}] : [];
     }
     const groups = [];
     const actions = searchRecentActions();
@@ -5171,9 +5181,10 @@ function searchGroups(){
   const groups = [];
   buckets.forEach((entries, type) => {
     entries.sort((a, b) => b.score - a.score || String(a.item.title).localeCompare(String(b.item.title)));
+    const limit = searchLimits[type] || SEARCH_PAGE;
     groups.push({
       type,
-      items:entries.slice(0, SEARCH_LIMITS[type] || 4).map(entry => entry.item),
+      items:entries.slice(0, limit).map(entry => entry.item),
       total:entries.length,
       max:entries[0].score
     });
@@ -5235,7 +5246,7 @@ function scheduleSearchRender(){
   });
 }
 
-function renderSearch(){
+function renderSearch(keepKey = null, keepScroll = null){
   const groups = searchGroups();
   const results = $("searchResults");
   searchFlat = [];
@@ -5254,6 +5265,7 @@ function renderSearch(){
       $("searchInput").value = "";
       searchQuery = "";
       searchDetailActive = false;
+      searchLimits = Object.create(null);
       renderSearch();
       $("searchInput").focus();
     });
@@ -5266,8 +5278,9 @@ function renderSearch(){
   let total = 0;
   results.innerHTML = groups.map(group => {
     total += group.total;
+    const groupStart = index;
     const countLabel = group.total > group.items.length
-      ? `Top ${group.items.length} of ${group.total}`
+      ? `Showing ${group.items.length} of ${group.total}`
       : `${group.total} result${group.total === 1 ? "" : "s"}`;
     const rows = group.items.map(item => {
       searchFlat.push(item);
@@ -5275,9 +5288,12 @@ function renderSearch(){
       index += 1;
       return html;
     }).join("");
+    const more = group.total > group.items.length
+      ? `<button class="search-more" type="button" data-search-more="${group.type}" data-search-more-first="${groupStart + group.items.length}">View more <span>${group.total - group.items.length} remaining</span></button>`
+      : "";
     return `<div class="search-group">
       <div class="search-group-head"><span>${SEARCH_LABELS[group.type]}</span><span>${countLabel}</span></div>
-      ${rows}
+      ${rows}${more}
     </div>`;
   }).join("");
 
@@ -5293,6 +5309,27 @@ function renderSearch(){
     button.addEventListener("focus", select);
     button.addEventListener("click", () => openSearchItem(searchFlat[Number(button.dataset.index)]));
   });
+
+  results.querySelectorAll("[data-search-more]").forEach(button => {
+    button.addEventListener("click", () => {
+      const type = button.dataset.searchMore;
+      const firstNew = Number(button.dataset.searchMoreFirst);
+      const scrollTop = results.scrollTop;
+      searchLimits[type] = (searchLimits[type] || SEARCH_PAGE) + SEARCH_PAGE;
+      renderSearch(null, scrollTop);
+      const next = results.querySelector(`.search-result[data-index="${firstNew}"]`);
+      if(next){
+        next.focus({preventScroll:true});
+        next.scrollIntoView({block:"nearest"});
+      }
+    });
+  });
+
+  if(keepKey){
+    const position = searchFlat.findIndex(item => item.type + ":" + item.id === keepKey);
+    if(position >= 0) searchSelected = position;
+  }
+  if(keepScroll !== null) results.scrollTop = keepScroll;
 
   $("searchFootLeft").textContent = `${total} result${total === 1 ? "" : "s"}`;
   updateSearchSelection();
@@ -5531,6 +5568,7 @@ function openSearch(){
   searchFilter = "all";
   searchSelected = 0;
   searchDetailActive = false;
+  searchLimits = Object.create(null);
   searchDetailKey = null;
   if(searchRenderFrame !== null){ cancelAnimationFrame(searchRenderFrame); searchRenderFrame = null; }
   $("searchInput").value = "";
@@ -5568,12 +5606,14 @@ $("searchBackdrop").addEventListener("click", event => { if(event.target === $("
 $("searchInput").addEventListener("input", () => {
   searchQuery = $("searchInput").value;
   searchDetailActive = !!searchQuery.trim();
+  searchLimits = Object.create(null);
   scheduleSearchRender();
 });
 $("searchFilters").addEventListener("click", event => {
   const button = event.target.closest("[data-search-filter]");
   if(!button) return;
   if(searchRenderFrame !== null){ cancelAnimationFrame(searchRenderFrame); searchRenderFrame = null; }
+  searchLimits = Object.create(null);
   setSearchFilter(button.dataset.searchFilter);
   searchDetailActive = searchFilter !== "all" || !!searchQuery.trim();
   renderSearch();
