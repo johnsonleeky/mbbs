@@ -1607,33 +1607,42 @@ html:not([data-theme="cosmic"]) .hub-c .hub-ledger{
     linear-gradient(90deg,color-mix(in srgb,var(--accent) 10%,#fff) 0%,color-mix(in srgb,var(--accent) 4%,#fff) 55%,#fff 100%);
 }
 
-/* Soft, fast sheen on the home primary actions */
-@keyframes actionSheen{
-  0%{transform:translateX(-180%) skewX(-18deg);opacity:0}
-  7%{opacity:.55}
-  28%{transform:translateX(180%) skewX(-18deg);opacity:0}
-  100%{transform:translateX(180%) skewX(-18deg);opacity:0}
+/* Letter-only shimmer on home primary actions */
+@keyframes textShimmer{
+  0%{background-position:140% 0}
+  8%{background-position:50% 0}
+  22%{background-position:-40% 0}
+  100%{background-position:-40% 0}
 }
-.category-card-main .category-enter{position:relative;isolation:isolate;overflow:hidden}
-.category-card-main .category-enter::after{
-  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(100deg,transparent 27%,rgba(255,255,255,.62) 50%,transparent 73%);
-  transform:translateX(-180%) skewX(-18deg);opacity:0;
-  animation:actionSheen 12s ease-in-out infinite;
+.category-card-main .category-enter{
+  display:inline-block;width:max-content;max-width:100%;align-self:flex-start;
+  --enter-base:var(--accent);
+  --enter-highlight:color-mix(in srgb,var(--accent) 32%,#fff);
+  background-image:linear-gradient(100deg,var(--enter-base) 0%,var(--enter-base) 42%,var(--enter-highlight) 50%,var(--enter-base) 58%,var(--enter-base) 100%);
+  background-size:240% 100%;background-position:140% 0;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+  animation:textShimmer 12s ease-in-out infinite;
 }
-.halo-row .category-card:nth-child(1) .category-enter::after{animation-delay:.1s}
-.halo-row .category-card:nth-child(2) .category-enter::after{animation-delay:.9s}
-.halo-row .category-card:nth-child(3) .category-enter::after{animation-delay:1.7s}
-.halo-row .category-card:nth-child(4) .category-enter::after{animation-delay:2.5s}
-#hubResume{position:relative;isolation:isolate;overflow:hidden}
-#hubResume::after{
-  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(100deg,transparent 24%,color-mix(in srgb,var(--accent) 18%,transparent) 42%,rgba(255,255,255,.55) 52%,transparent 76%);
-  transform:translateX(-180%) skewX(-18deg);opacity:0;
-  animation:actionSheen 12s ease-in-out infinite;animation-delay:.35s;
+.halo-row .category-card:nth-child(1) .category-enter{animation-delay:.1s}
+.halo-row .category-card:nth-child(2) .category-enter{animation-delay:.9s}
+.halo-row .category-card:nth-child(3) .category-enter{animation-delay:1.7s}
+.halo-row .category-card:nth-child(4) .category-enter{animation-delay:2.5s}
+#hubResume .hub-resume-text{
+  display:inline-block;
+  --hub-base:#fff;
+  --hub-highlight:#FFD6E8;
+  background-image:linear-gradient(100deg,var(--hub-base) 0%,var(--hub-base) 42%,var(--hub-highlight) 50%,var(--hub-base) 58%,var(--hub-base) 100%);
+  background-size:240% 100%;background-position:140% 0;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+  animation:textShimmer 12s ease-in-out infinite .35s;
 }
+html[data-theme] #hubResume .hub-resume-text{--hub-base:var(--theme-hero-btn-ink);--hub-highlight:#FFFDF8}
+html[data-theme="cosmic"] #hubResume .hub-resume-text{--hub-highlight:var(--theme-gold)}
+html[data-theme="cosmic"] .category-card-main .category-enter{--enter-highlight:#F4F7FB}
 @media (prefers-reduced-motion: reduce){
-  .category-card-main .category-enter::after,#hubResume::after{animation:none!important;opacity:0}
+  .category-card-main .category-enter,#hubResume .hub-resume-text{animation:none!important}
 }
 </style>
 </head>
@@ -3663,7 +3672,7 @@ function hubBandHtml(){
         <span class="hub-chip">${paused} paused</span>
       </div>
       ${last ? `<div class="hub-actions">
-        <button class="btn primary" id="hubResume">▶ &nbsp;Resume last run</button>
+        <button class="btn primary" id="hubResume"><span class="hub-resume-text">▶ &nbsp;Resume last run</span></button>
         <span class="hub-last">${runLabelHtml(last.key, last.sess)}</span>
       </div>` : ""}
     </div>`;
