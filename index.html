@@ -330,7 +330,7 @@ html[data-theme] .section-empty{background:var(--card);border-color:var(--line)}
   body.search-open{overflow:hidden;}
   .search-backdrop{
     position:fixed; inset:0; z-index:90; display:grid; place-items:center;
-    padding:min(10vh,72px) 16px 20px; background:rgba(15,23,42,.44); backdrop-filter:blur(4px);
+    padding:min(10vh,72px) 16px 20px; background:rgba(8,18,15,.56);
   }
   .search-palette{
     width:min(900px,100%); height:min(660px,84vh); display:flex; flex-direction:column;
@@ -426,14 +426,10 @@ html[data-theme] .section-empty{background:var(--card);border-color:var(--line)}
   .search-btn:hover{filter:brightness(1.06);}
   .search-btn.ghost{background:transparent; color:var(--accent); border-color:var(--line);}
   .search-btn.ghost:hover{background:var(--accent-soft);}
-  .search-examples{display:flex; gap:6px; flex-wrap:wrap; margin:12px 0 16px;}
-  .search-example{border:1px solid var(--line); background:var(--card); border-radius:999px; padding:6px 10px; font-size:11.5px; font-weight:800; color:var(--accent); cursor:pointer;}
-  .search-example:hover{background:var(--accent-soft);}
   .search-empty{padding:44px 20px; text-align:center; color:var(--muted);}
   .search-empty b{display:block; font-size:14px; color:var(--ink); margin-bottom:4px;}
   .search-empty p{font-size:12.5px; line-height:1.5; max-width:320px; margin:0 auto 13px;}
-  .search-foot{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:9px 16px; border-top:1px solid var(--line); background:var(--card); font-size:11px; color:var(--muted); flex:0 0 auto;}
-  .search-foot span:last-child{opacity:.8;}
+  .search-foot{display:flex; align-items:center; padding:9px 16px; border-top:1px solid var(--line); background:var(--card); font-size:11px; color:var(--muted); flex:0 0 auto;}
   .hub-topic-row.search-hit{background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent);}
   @media (max-width:680px){
     .search-backdrop{padding:8px; align-items:stretch;}
@@ -2266,7 +2262,7 @@ html[data-theme="teal"] #hubResume .hub-resume-text{--hub-base:var(--theme-menu-
       <div class="search-results" id="searchResults" role="region" aria-label="Search results"></div>
       <aside class="search-detail" id="searchDetail" aria-live="polite"></aside>
     </div>
-    <div class="search-foot"><span id="searchFootLeft">7,126 questions · 192 topics</span><span>Local to this browser</span></div>
+    <div class="search-foot"><span id="searchFootLeft">7,126 questions · 192 topics</span></div>
   </div>
 </div>
 
@@ -2402,6 +2398,8 @@ let searchReturnFocus = null;
 let searchPreview = false;
 let searchPreviewReturn = null;
 let searchPreviewSuspended = false;
+let searchRenderFrame = null;
+let searchDetailKey = null;
 
 const $ = id => document.getElementById(id);
 const QS = () => part.questions;
@@ -4967,13 +4965,16 @@ function buildSearchIndex(){
       const graded = recs.filter(r => r.s !== null && r.t > 0);
       const best = graded.length ? Math.max(...graded.map(r => r.s)) : null;
       const rev = wrongSetQids(p.key).length;
-      const paused = !!loadSession(p.key);
+      const sess = loadSession(p.key);
+      const paused = !!sess;
       const lastRec = recs.length ? recs[recs.length - 1] : null;
+      const lastStamp = [lastRec && lastRec.d, sess && sess.u].filter(Boolean).sort().pop() || "";
       topics.push({
         type:"topic", id:"topic:" + p.key, partKey:p.key, title:p.title,
-        areaName:area.name, areaKey:area.key, kind:p.kind,
+        titleLower:p.title.toLowerCase(), areaName:area.name, areaLower:area.name.toLowerCase(), areaKey:area.key, kind:p.kind,
         count:p.questions.length, done:doneByPart[p.key] || 0,
-        best, rev, paused, last:lastRec ? lastRec.d : "",
+        best, rev, paused, last:lastStamp,
+        lastRecord:lastRec ? {d:lastRec.d, w:(lastRec.w || []).slice(0, 3), q:(lastRec.q || []).slice(0, 3)} : null,
         search:[p.title, p.fullTitle, p.displayKey, area.name, p.key].filter(Boolean).join(" ").toLowerCase()
       });
 
@@ -4982,35 +4983,39 @@ function buildSearchIndex(){
       const lastUnanswered = new Set(lastRec && Array.isArray(lastRec.u) ? lastRec.u.map(Number) : []);
       const flagMap = readAnnotations(p.key, "flags") || {};
       const noteMap = readAnnotations(p.key, "scratchpad") || {};
+      const titleLower = p.title.toLowerCase();
+      const areaLower = area.name.toLowerCase();
 
       p.questions.forEach(q => {
         const year = questionYearLabel(q);
         const hasFlag = !!flagMap[q.n];
         const noteText = typeof noteMap[q.n] === "string" ? noteMap[q.n].trim() : "";
+        const stemLower = String(q.stem || "").toLowerCase();
+        const noteLower = noteText.toLowerCase();
         let status = "unseen";
         if(lastQ.has(q.n)){
           status = lastWrong.has(q.n) ? "wrong" : lastUnanswered.has(q.n) ? "unseen" : "correct";
         }
         const item = {
           type:"question", id:"question:" + p.key + ":" + q.n, partKey:p.key, qn:q.n,
-          title:p.title, areaName:area.name, areaKey:area.key, partTitle:p.title,
-          year, stem:q.stem, kind:p.kind, status,
-          note:noteText, flag:hasFlag,
+          title:p.title, titleLower, areaName:area.name, areaLower, areaKey:area.key, partTitle:p.title,
+          year, stem:q.stem, stemLower, kind:p.kind, status,
+          note:noteText, noteLower, flag:hasFlag,
           search:[p.title, area.name, q.stem, year, q.n, "q" + q.n, status, noteText, hasFlag ? "flagged" : ""].filter(Boolean).join(" ").toLowerCase()
         };
         questions.push(item);
         if(noteText){
           notes.push({
             type:"note", id:"note:" + p.key + ":" + q.n, partKey:p.key, qn:q.n,
-            title:p.title, areaName:area.name, partTitle:p.title, year, stem:q.stem,
-            note:noteText,
+            title:p.title, titleLower, areaName:area.name, areaLower, partTitle:p.title, year, stem:q.stem, stemLower,
+            note:noteText, noteLower,
             search:[noteText, p.title, area.name, year, q.n, "q" + q.n, "note"].join(" ").toLowerCase()
           });
         }
         if(hasFlag){
           flags.push({
             type:"flag", id:"flag:" + p.key + ":" + q.n, partKey:p.key, qn:q.n,
-            title:p.title, areaName:area.name, partTitle:p.title, year, stem:q.stem,
+            title:p.title, titleLower, areaName:area.name, areaLower, partTitle:p.title, year, stem:q.stem, stemLower,
             search:[p.title, area.name, q.stem, year, q.n, "q" + q.n, "flagged flag"].join(" ").toLowerCase()
           });
         }
@@ -5020,7 +5025,11 @@ function buildSearchIndex(){
 
   const questionMap = new Map();
   questions.forEach(item => questionMap.set(item.partKey + "#" + item.qn, item));
-  searchIndex = {topics, questions, notes, flags, questionMap, flagCount:flags.length, actions:[]};
+  searchIndex = {
+    topics, questions, notes, flags, questionMap,
+    flagCount:flags.length, actions:[],
+    all:[...topics, ...questions, ...notes, ...flags]
+  };
 }
 
 function buildSearchActions(){
@@ -5058,32 +5067,46 @@ function buildSearchActions(){
     type:"action", id:"guide", title:"Open user guide",
     description:"How the bank and revision sets work", action:"guide", search:"help guide instructions"
   });
+  actions.forEach(item => {
+    item.titleLower = item.title.toLowerCase();
+    item.areaLower = "";
+  });
   return actions;
 }
 
+function searchRecentActions(){
+  return searchIndex.actions.filter(action => action.action === "resume");
+}
+
 function searchRecentTopics(){
-  return searchIndex.topics.slice().sort((a, b) => {
-    if(a.paused !== b.paused) return a.paused ? -1 : 1;
-    return String(b.last || "").localeCompare(String(a.last || ""));
-  }).slice(0, 4);
+  return searchIndex.topics
+    .filter(topic => topic.last)
+    .sort((a, b) => String(b.last).localeCompare(String(a.last)))
+    .slice(0, 3);
 }
 
 function searchRecentQuestions(){
   const run = latestRun();
-  if(run && run.key !== MIXED_KEY && run.key !== FLAGGED_KEY && run.key !== MOCK_KEY && run.key !== MOCK_REVIEW_KEY){
-    const start = run.sess.i || 0;
-    const ids = (run.sess.q || []).slice(start, start + 3);
-    const items = ids.map(n => searchQuestionFor(run.key, n)).filter(Boolean);
-    if(items.length) return items;
-  }
   let latest = null;
   searchIndex.topics.forEach(topic => {
-    const recs = loadRecords(topic.partKey);
-    const rec = recs.length ? recs[recs.length - 1] : null;
-    if(rec && (!latest || String(rec.d) > String(latest.rec.d))) latest = {topic, rec};
+    if(topic.lastRecord && (!latest || String(topic.lastRecord.d) > String(latest.rec.d))){
+      latest = {topic, rec:topic.lastRecord};
+    }
   });
+
+  if(run && run.key !== MIXED_KEY && run.key !== FLAGGED_KEY && run.key !== MOCK_KEY && run.key !== MOCK_REVIEW_KEY){
+    const runTime = String(run.sess.u || "");
+    if(!latest || runTime >= String(latest.rec.d)){
+      const start = run.sess.i || 0;
+      const ids = (run.sess.q || []).slice(start, start + 3);
+      const items = ids.map(n => searchQuestionFor(run.key, n)).filter(Boolean);
+      if(items.length) return items;
+    }
+  }
+
   if(latest){
-    return (latest.rec.w || []).slice(0, 3).map(n => searchQuestionFor(latest.topic.partKey, n)).filter(Boolean);
+    const ids = latest.rec.w.length ? latest.rec.w : latest.rec.q;
+    return ids.slice(0, 3).map(n => searchQuestionFor(latest.topic.partKey, n)).filter(Boolean);
   }
   return [];
 }
@@ -5098,17 +5121,17 @@ function searchItemsByFilter(filter){
 }
 
 function searchScore(item, query){
-  const title = String(item.title || "").toLowerCase();
-  const search = String(item.search || "").toLowerCase();
+  const title = item.titleLower || "";
+  const search = item.search || "";
   if(item.type === "question" && (query === String(item.qn) || query === "q" + item.qn)) return 160;
   if(item.type === "flag" && query === "flagged") return 130;
   if(item.type === "note" && query === "note") return 130;
   if(title === query) return 150;
   if(title.startsWith(query)) return 130;
   if(title.includes(query)) return 110;
-  if(item.type === "note" && String(item.note || "").toLowerCase().includes(query)) return 100;
-  if(String(item.areaName || "").toLowerCase().includes(query)) return 70;
-  const stem = String(item.stem || "").toLowerCase();
+  if(item.type === "note" && (item.noteLower || "").includes(query)) return 100;
+  if((item.areaLower || "").includes(query)) return 70;
+  const stem = item.stemLower || "";
   const stemPosition = stem.indexOf(query);
   if(stemPosition >= 0) return 55 + Math.max(0, 20 - Math.floor(stemPosition / 30));
   if(search.includes(query)) return 40;
@@ -5125,7 +5148,8 @@ function searchGroups(){
       return items.length ? [{type:searchFilter, items:items.slice(0, 10), total:items.length, max:0}] : [];
     }
     const groups = [];
-    if(searchIndex.actions.length) groups.push({type:"action", items:searchIndex.actions, total:searchIndex.actions.length, max:0});
+    const actions = searchRecentActions();
+    if(actions.length) groups.push({type:"action", items:actions, total:actions.length, max:0});
     const topics = searchRecentTopics();
     if(topics.length) groups.push({type:"topic", items:topics, total:topics.length, max:0});
     const questions = searchRecentQuestions();
@@ -5133,7 +5157,7 @@ function searchGroups(){
     return groups;
   }
 
-  const pool = [...searchIndex.topics, ...searchIndex.questions, ...searchIndex.notes, ...searchIndex.flags, ...searchIndex.actions];
+  const pool = searchIndex.all;
   const buckets = new Map();
   pool.forEach(item => {
     if(searchFilter !== "all" && item.type !== searchFilter) return;
@@ -5194,6 +5218,14 @@ function searchResultHtml(item, index){
   </button>`;
 }
 
+function scheduleSearchRender(){
+  if(searchRenderFrame !== null) return;
+  searchRenderFrame = requestAnimationFrame(() => {
+    searchRenderFrame = null;
+    renderSearch();
+  });
+}
+
 function renderSearch(){
   const groups = searchGroups();
   const results = $("searchResults");
@@ -5242,7 +5274,9 @@ function renderSearch(){
 
   results.querySelectorAll(".search-result").forEach(button => {
     const select = () => {
-      searchSelected = Number(button.dataset.index);
+      const index = Number(button.dataset.index);
+      if(index === searchSelected && searchDetailActive) return;
+      searchSelected = index;
       searchDetailActive = true;
       updateSearchSelection();
     };
@@ -5268,31 +5302,12 @@ function updateSearchSelection(){
 
 function renderSearchDetail(item){
   const detail = $("searchDetail");
+  const detailKey = item ? item.type + ":" + item.id : "default";
+  if(detailKey === searchDetailKey) return;
+  searchDetailKey = detailKey;
   if(!item){
-    const totalQuestions = PARTS.reduce((sum, p) => sum + p.questions.length, 0);
-    detail.innerHTML = `<div class="search-kicker">Search the bank</div>
-      <h3>Find anything in the bank</h3>
-      <p class="search-detail-meta">Topics, question stems, your notes, flags and commands — searched locally.</p>
-      <div class="search-examples">
-        <button class="search-example" type="button" data-search-query="heart failure">heart failure</button>
-        <button class="search-example" type="button" data-search-query="ECG">ECG</button>
-        <button class="search-example" type="button" data-search-query="preeclampsia">preeclampsia</button>
-        <button class="search-example" type="button" data-search-query="fracture">fracture</button>
-      </div>
-      <div class="search-stats">
-        <div><b>${totalQuestions.toLocaleString()}</b><span>questions</span></div>
-        <div><b>${PARTS.length}</b><span>topics</span></div>
-        <div><b>${totalRevSet().toLocaleString()}</b><span>to revise</span></div>
-      </div>`;
-    detail.querySelectorAll("[data-search-query]").forEach(button => {
-      button.addEventListener("click", () => {
-        $("searchInput").value = button.dataset.searchQuery;
-        searchQuery = button.dataset.searchQuery;
-        searchDetailActive = true;
-        renderSearch();
-        $("searchInput").focus();
-      });
-    });
+    detail.innerHTML = `<h3>Find anything in the bank</h3>
+      <p class="search-detail-meta">Topics, question stems, your notes, flags and commands</p>`;
     return;
   }
 
@@ -5346,7 +5361,6 @@ function renderSearchDetail(item){
     detail.innerHTML = `<div class="search-kicker">Action</div>
       <h3>${searchEsc(item.title)}</h3>
       <p class="search-detail-meta">${searchEsc(item.description)}</p>
-      <p class="search-stem small">This runs the same action as the menu or the page it belongs to.</p>
       <div class="search-actions"><button class="search-btn" type="button" data-search-open>Run action</button></div>`;
   }
 
@@ -5508,6 +5522,8 @@ function openSearch(){
   searchFilter = "all";
   searchSelected = 0;
   searchDetailActive = false;
+  searchDetailKey = null;
+  if(searchRenderFrame !== null){ cancelAnimationFrame(searchRenderFrame); searchRenderFrame = null; }
   $("searchInput").value = "";
   setSearchFilter("all");
   $("searchBackdrop").classList.remove("hidden");
@@ -5516,6 +5532,7 @@ function openSearch(){
   $("btnSearch").setAttribute("aria-expanded", "true");
   buildSearchIndex();
   searchIndex.actions = buildSearchActions();
+  searchIndex.all = [...searchIndex.topics, ...searchIndex.questions, ...searchIndex.notes, ...searchIndex.flags, ...searchIndex.actions];
   renderSearch();
   requestAnimationFrame(() => $("searchInput").focus());
 }
@@ -5523,6 +5540,7 @@ function openSearch(){
 function closeSearch(restoreFocus = true){
   if(!searchOpen) return;
   searchOpen = false;
+  if(searchRenderFrame !== null){ cancelAnimationFrame(searchRenderFrame); searchRenderFrame = null; }
   $("searchBackdrop").classList.add("hidden");
   $("appShell").inert = false;
   document.body.classList.remove("search-open");
@@ -5541,11 +5559,12 @@ $("searchBackdrop").addEventListener("click", event => { if(event.target === $("
 $("searchInput").addEventListener("input", () => {
   searchQuery = $("searchInput").value;
   searchDetailActive = !!searchQuery.trim();
-  renderSearch();
+  scheduleSearchRender();
 });
 $("searchFilters").addEventListener("click", event => {
   const button = event.target.closest("[data-search-filter]");
   if(!button) return;
+  if(searchRenderFrame !== null){ cancelAnimationFrame(searchRenderFrame); searchRenderFrame = null; }
   setSearchFilter(button.dataset.searchFilter);
   searchDetailActive = searchFilter !== "all" || !!searchQuery.trim();
   renderSearch();
