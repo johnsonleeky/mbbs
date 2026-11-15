@@ -1606,6 +1606,35 @@ html:not([data-theme="cosmic"]) .hub-c .hub-ledger{
     radial-gradient(75% 150% at 0% 0%,color-mix(in srgb,var(--accent) 13%,transparent),transparent 62%),
     linear-gradient(90deg,color-mix(in srgb,var(--accent) 10%,#fff) 0%,color-mix(in srgb,var(--accent) 4%,#fff) 55%,#fff 100%);
 }
+
+/* Soft, fast sheen on the home primary actions */
+@keyframes actionSheen{
+  0%{transform:translateX(-180%) skewX(-18deg);opacity:0}
+  7%{opacity:.55}
+  28%{transform:translateX(180%) skewX(-18deg);opacity:0}
+  100%{transform:translateX(180%) skewX(-18deg);opacity:0}
+}
+.category-card-main .category-enter{position:relative;isolation:isolate;overflow:hidden}
+.category-card-main .category-enter::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(100deg,transparent 27%,rgba(255,255,255,.62) 50%,transparent 73%);
+  transform:translateX(-180%) skewX(-18deg);opacity:0;
+  animation:actionSheen 12s ease-in-out infinite;
+}
+.halo-row .category-card:nth-child(1) .category-enter::after{animation-delay:.1s}
+.halo-row .category-card:nth-child(2) .category-enter::after{animation-delay:.9s}
+.halo-row .category-card:nth-child(3) .category-enter::after{animation-delay:1.7s}
+.halo-row .category-card:nth-child(4) .category-enter::after{animation-delay:2.5s}
+#hubResume{position:relative;isolation:isolate;overflow:hidden}
+#hubResume::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(100deg,transparent 24%,color-mix(in srgb,var(--accent) 18%,transparent) 42%,rgba(255,255,255,.55) 52%,transparent 76%);
+  transform:translateX(-180%) skewX(-18deg);opacity:0;
+  animation:actionSheen 12s ease-in-out infinite;animation-delay:.35s;
+}
+@media (prefers-reduced-motion: reduce){
+  .category-card-main .category-enter::after,#hubResume::after{animation:none!important;opacity:0}
+}
 </style>
 </head>
 <body>
