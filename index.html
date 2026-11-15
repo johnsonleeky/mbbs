@@ -83,7 +83,6 @@ try{
     border-radius:999px; font-size:13px; font-weight:800; white-space:nowrap;
   }
   .masthead-search svg{width:16px; height:16px; flex:0 0 auto;}
-  .masthead-search + .masthead-home{margin-left:0;}
   @media (max-width:560px){
     .masthead-search{padding:8px 10px;}
     .masthead-search span{display:none;}
@@ -4992,6 +4991,8 @@ function buildSearchIndex(){
         const noteText = typeof noteMap[q.n] === "string" ? noteMap[q.n].trim() : "";
         const stemLower = String(q.stem || "").toLowerCase();
         const noteLower = noteText.toLowerCase();
+        const optionsText = (q.opts || []).map(option => option && option.t ? option.t : "").filter(Boolean).join(" ");
+        const optionsLower = optionsText.toLowerCase();
         let status = "unseen";
         if(lastQ.has(q.n)){
           status = lastWrong.has(q.n) ? "wrong" : lastUnanswered.has(q.n) ? "unseen" : "correct";
@@ -5001,7 +5002,8 @@ function buildSearchIndex(){
           title:p.title, titleLower, areaName:area.name, areaLower, areaKey:area.key, partTitle:p.title,
           year, stem:q.stem, stemLower, kind:p.kind, status,
           note:noteText, noteLower, flag:hasFlag,
-          search:[p.title, area.name, q.stem, year, q.n, "q" + q.n, status, noteText, hasFlag ? "flagged" : ""].filter(Boolean).join(" ").toLowerCase()
+          opts:q.opts || [], optionsLower,
+          search:[p.title, area.name, q.stem, optionsText, year, q.n, "q" + q.n, status, noteText, hasFlag ? "flagged" : ""].filter(Boolean).join(" ").toLowerCase()
         };
         questions.push(item);
         if(noteText){
@@ -5188,7 +5190,14 @@ function searchResultTitle(item){
 
 function searchResultMeta(item){
   if(item.type === "topic") return `${item.areaName} · ${searchKindLabel(item.kind)} · ${item.count} questions`;
-  if(item.type === "question") return `${item.areaName} · ${item.year} · ${searchTruncate(item.stem, 105)}`;
+  if(item.type === "question"){
+    const query = searchQuery.trim().toLowerCase();
+    if(query && (item.optionsLower || "").includes(query) && !(item.stemLower || "").includes(query)){
+      const option = (item.opts || []).find(choice => String(choice.t || "").toLowerCase().includes(query));
+      if(option) return `${item.areaName} · ${item.year} · Choice ${option.l}: ${searchTruncate(option.t, 85)}`;
+    }
+    return `${item.areaName} · ${item.year} · ${searchTruncate(item.stem, 105)}`;
+  }
   if(item.type === "note") return `Note · Q${item.qn} · ${item.areaName}`;
   if(item.type === "flag") return `Flagged · ${item.areaName} · ${item.year}`;
   return item.description || "Command";
