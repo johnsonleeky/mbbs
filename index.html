@@ -481,17 +481,17 @@ header.top{
 .category-review-line + .category-review-line{margin-top:4px;}
 .category-enter{white-space:nowrap; padding-top:20px;}
 @media (max-width:1100px){
-  .halo-row{grid-template-columns:repeat(3,1fr);}
+  .halo-row{grid-template-columns:repeat(3,minmax(0,1fr));}
   .category-stats-line{font-size:11px;}
   .category-stats-line b{font-size:14px;}
   .category-dot{margin:0 4px;}
 }
 @media (max-width:970px){
-  .halo-row{grid-template-columns:repeat(2,1fr);}
+  .halo-row{grid-template-columns:repeat(2,minmax(0,1fr));}
   .category-card .category-title{max-width:100%;}
 }
 @media (max-width:620px){
-  .halo-row{grid-template-columns:1fr;}
+  .halo-row{grid-template-columns:minmax(0,1fr);}
 }
 .flag-panel,.scratchpad-panel{
   background:rgba(255,255,255,.88); border:1px solid var(--glass-brd); box-shadow:var(--glass-shadow);
@@ -652,7 +652,7 @@ header.top{
 
 /* ================= home page: the halo band ================= */
 .halo{display:grid; gap:16px; margin:0 0 22px;}
-.halo-row{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+.halo-row{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px;}
 @media (min-width:971px){
   .category-card{min-height:360px;}
 }
@@ -697,12 +697,12 @@ header.top{
 .hub-actions .btn{white-space:nowrap; flex:0 0 auto;}
 .hub-last{font-size:12.5px; font-weight:700; color:var(--accent); white-space:normal; overflow:visible; text-overflow:clip; min-width:0; max-width:150px; line-height:1.2;}
 @media (max-width:970px){
-  .halo-row{grid-template-columns:repeat(2,1fr);}
+  .halo-row{grid-template-columns:repeat(2,minmax(0,1fr));}
   .hub-band{flex-wrap:wrap; gap:16px;}
   .hub-actions{margin-left:0; width:100%; flex-wrap:nowrap;}
 }
 @media (max-width:620px){
-  .halo-row{grid-template-columns:1fr;}
+  .halo-row{grid-template-columns:minmax(0,1fr);}
   .hub-band{justify-content:center; text-align:center;}
   .hub-figures{align-items:center;}
   .hub-chips{justify-content:center;}
@@ -1240,9 +1240,9 @@ html[data-theme] .quiz-menu-item.danger{color:var(--bad);}
 html[data-theme] .quiz-menu-item.danger:hover,html[data-theme] .quiz-menu-item.danger:focus-visible{background:var(--bad-soft);color:var(--bad);}
 
 /* --- per-specialty exam-year filter --- */
-.category-card{display:block; padding:0; cursor:default; min-height:0; overflow:visible; contain:none; position:relative;}
+.category-card{display:block; padding:0; cursor:default; min-height:0; min-width:0; overflow:visible; contain:none; position:relative;}
 .category-card-main{
-  display:flex; flex-direction:column; gap:0; width:100%; min-height:300px;
+  display:flex; flex-direction:column; gap:0; width:100%; min-width:0; min-height:300px;
   padding:22px 20px 20px; border:0; background:transparent; font:inherit; text-align:left;
   color:var(--ink); cursor:pointer; border-radius:inherit; position:relative;
   overflow:hidden; contain:layout paint;
@@ -5035,7 +5035,6 @@ function showCategories(){
       : area.key === "O&G" ? "Obstetrics &amp;<br>Gynecology"
       : esc(area.name);
     const titleClass = area.key === "Orthopaedics" ? " two-line"
-      : area.key === "FamilyMedicine" ? " one-line"
       : area.key === "O&G" ? " two-line" : "";
     return `<div class="category-card has-year-filter" data-card-area="${esc(area.key)}" style="--tone:${SPEC_TONE[area.key] || "#B12D63"}">
       <button class="category-card-main" data-category="${esc(area.key)}" type="button">
