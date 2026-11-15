@@ -78,6 +78,17 @@ try{
     margin-left:auto; border-radius:999px; padding:9px 14px;
     font-size:13px; font-weight:800; white-space:nowrap;
   }
+  .masthead-search{
+    margin-left:auto; display:inline-flex; align-items:center; gap:6px;
+    border-radius:999px; font-size:13px; font-weight:800; white-space:nowrap;
+  }
+  .masthead-search svg{width:16px; height:16px; flex:0 0 auto;}
+  .masthead-search + .masthead-home{margin-left:0;}
+  @media (max-width:560px){
+    .masthead-search{padding:8px 10px;}
+    .masthead-search span{display:none;}
+    .masthead-search svg{width:17px; height:17px;}
+  }
   .header-menu{
     position:absolute; top:calc(100% + 9px); left:20px; z-index:60;
     width:248px; max-width:calc(100vw - 28px); padding:7px;
@@ -313,6 +324,133 @@ html[data-theme] .section-empty{background:var(--card);border-color:var(--line)}
   .modal h3{font-size:17px; margin-bottom:6px;}
   .modal p{color:var(--muted); font-size:13.5px; margin-bottom:16px;}
   .modal .btn-row{justify-content:flex-end;}
+
+  /* ---------- global search ---------- */
+  .search-sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
+  body.search-open{overflow:hidden;}
+  .search-backdrop{
+    position:fixed; inset:0; z-index:90; display:grid; place-items:center;
+    padding:min(10vh,72px) 16px 20px; background:rgba(15,23,42,.44); backdrop-filter:blur(4px);
+  }
+  .search-palette{
+    width:min(900px,100%); height:min(660px,84vh); display:flex; flex-direction:column;
+    overflow:hidden; background:var(--card); border:1px solid var(--line); border-radius:20px;
+    box-shadow:0 34px 90px -36px rgba(0,0,0,.6);
+    animation:searchIn .15s ease both;
+  }
+  @keyframes searchIn{from{opacity:0; transform:translateY(-8px) scale(.988);} to{opacity:1; transform:none;}}
+  .search-head{display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid var(--line); flex:0 0 auto;}
+  .search-head > svg{width:19px; height:19px; color:var(--accent); flex:0 0 auto;}
+  .search-head input{
+    flex:1; min-width:0; border:0; outline:0; background:transparent; font:inherit;
+    font-size:16px; font-weight:600; color:var(--ink); padding:2px 0;
+  }
+  .search-head input::placeholder{color:var(--muted); font-weight:500;}
+  .search-head input::-webkit-search-cancel-button,
+  .search-head input::-webkit-search-decoration{-webkit-appearance:none; appearance:none;}
+  .search-close{
+    width:32px; height:32px; flex:0 0 auto; display:grid; place-items:center;
+    border:0; border-radius:50%; background:transparent; color:var(--muted); cursor:pointer;
+  }
+  .search-close:hover,.search-close:focus-visible{background:var(--accent-soft); color:var(--accent); outline:none;}
+  .search-close svg{width:18px; height:18px;}
+  .search-filters{display:flex; gap:4px; padding:8px 12px; border-bottom:1px solid var(--line); overflow-x:auto; scrollbar-width:none; flex:0 0 auto;}
+  .search-filters::-webkit-scrollbar{display:none;}
+  .search-filter{
+    border:0; background:transparent; color:var(--muted); font-size:12px; font-weight:800;
+    padding:6px 10px; border-radius:999px; white-space:nowrap; cursor:pointer;
+  }
+  .search-filter:hover{background:var(--accent-soft); color:var(--accent);}
+  .search-filter.active{background:var(--accent); color:var(--theme-btn-ink,#fff);}
+  .search-body{display:grid; grid-template-columns:minmax(0,1.3fr) minmax(260px,.7fr); flex:1; min-height:0;}
+  .search-results{overflow-y:auto; padding:8px 8px 12px; scrollbar-width:thin; scrollbar-color:var(--line) transparent;}
+  .search-results::-webkit-scrollbar{width:8px;}
+  .search-results::-webkit-scrollbar-thumb{background:var(--line); border-radius:9px; border:2px solid var(--card);}
+  .search-group{margin:5px 0 10px;}
+  .search-group-head{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:5px 10px 6px; font-size:10.5px; font-weight:900; letter-spacing:.13em; text-transform:uppercase; color:var(--muted);}
+  .search-group-head span:last-child{font-size:10px; letter-spacing:.06em; text-transform:none; font-weight:800; opacity:.8;}
+  .search-result{
+    width:100%; display:flex; align-items:center; gap:11px; padding:9px 10px; border:0;
+    background:transparent; border-radius:11px; text-align:left; cursor:pointer;
+  }
+  .search-result:hover{background:var(--accent-soft);}
+  .search-result.selected{background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent);}
+  .search-result-icon{
+    width:32px; height:32px; flex:0 0 auto; border-radius:9px; display:grid; place-items:center;
+    background:var(--accent-soft); color:var(--accent);
+  }
+  .search-result-icon svg{width:16px; height:16px;}
+  .search-result-icon.question{color:var(--theme-gold,var(--accent));}
+  .search-result-icon.note{color:var(--accent-2);}
+  .search-result-icon.flag{color:var(--warn);}
+  .search-result-icon.action{color:var(--theme-gold,var(--accent));}
+  .search-result-main{display:flex; flex-direction:column; min-width:0; flex:1; gap:1px;}
+  .search-result-title{display:block; font-size:13.5px; font-weight:800; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .search-result-meta{display:block; font-size:11.5px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .search-result mark{background:var(--theme-gold,#E8D3A1); color:#132019; border-radius:3px; padding:0 1px;}
+  .search-result-side{flex:0 0 auto; display:flex; align-items:center; gap:5px; margin-left:4px;}
+  .search-badge{display:inline-flex; align-items:center; font-size:10px; font-weight:900; border-radius:999px; padding:3px 7px; white-space:nowrap;}
+  .search-badge.wrong{background:var(--bad-soft); color:var(--bad);}
+  .search-badge.correct{background:var(--good-soft); color:var(--good);}
+  .search-badge.unseen{background:var(--accent-soft); color:var(--muted);}
+  .search-badge.note{background:var(--accent-soft); color:var(--accent);}
+  .search-badge.flag{background:var(--warn-soft); color:var(--warn);}
+  .search-badge.best{background:var(--accent-soft); color:var(--accent);}
+  .search-detail{
+    border-left:1px solid var(--line); padding:20px 20px 18px; overflow-y:auto; min-width:0;
+    background:var(--accent-soft);
+    background:color-mix(in srgb,var(--accent-soft) 42%,var(--card));
+  }
+  .search-kicker{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-weight:900;}
+  .search-detail h3{font-size:18px; line-height:1.2; letter-spacing:-.01em; margin:5px 0 4px; color:var(--navy);}
+  .search-detail-meta{font-size:12px; color:var(--muted); margin-bottom:14px;}
+  .search-stem{font-family:Georgia,"Times New Roman",serif; font-size:14px; line-height:1.58; color:var(--ink); margin:0 0 13px;}
+  .search-stem.small{font-size:13px; color:var(--muted);}
+  .search-badges{display:flex; gap:5px; flex-wrap:wrap; margin:0 0 13px;}
+  .search-stats{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin:10px 0 12px;}
+  .search-stats div{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:8px 9px;}
+  .search-stats b{display:block; font-size:17px; line-height:1.1; color:var(--navy);}
+  .search-stats span{display:block; font-size:10px; color:var(--muted); margin-top:2px;}
+  .search-progress{height:6px; border-radius:99px; background:var(--line); overflow:hidden; margin:8px 0 10px;}
+  .search-progress i{display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,var(--accent),var(--accent-2));}
+  .search-note-box{background:var(--card); border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:9px; padding:10px 11px; margin:0 0 13px;}
+  .search-note-box b{display:block; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-bottom:3px;}
+  .search-note-box p{font-size:12.5px; line-height:1.5; color:var(--ink);}
+  .search-note-box.flag{border-left-color:var(--warn);}
+  .search-note-box.flag b{color:var(--warn);}
+  .search-actions{display:flex; gap:7px; flex-wrap:wrap; margin-top:15px;}
+  .search-btn{
+    border:1px solid var(--accent); border-radius:9px; background:var(--accent); color:var(--theme-btn-ink,#fff);
+    font-size:12px; font-weight:800; padding:8px 11px; cursor:pointer;
+  }
+  .search-btn:hover{filter:brightness(1.06);}
+  .search-btn.ghost{background:transparent; color:var(--accent); border-color:var(--line);}
+  .search-btn.ghost:hover{background:var(--accent-soft);}
+  .search-examples{display:flex; gap:6px; flex-wrap:wrap; margin:12px 0 16px;}
+  .search-example{border:1px solid var(--line); background:var(--card); border-radius:999px; padding:6px 10px; font-size:11.5px; font-weight:800; color:var(--accent); cursor:pointer;}
+  .search-example:hover{background:var(--accent-soft);}
+  .search-empty{padding:44px 20px; text-align:center; color:var(--muted);}
+  .search-empty b{display:block; font-size:14px; color:var(--ink); margin-bottom:4px;}
+  .search-empty p{font-size:12.5px; line-height:1.5; max-width:320px; margin:0 auto 13px;}
+  .search-foot{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:9px 16px; border-top:1px solid var(--line); background:var(--card); font-size:11px; color:var(--muted); flex:0 0 auto;}
+  .search-foot span:last-child{opacity:.8;}
+  .hub-topic-row.search-hit{background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent);}
+  @media (max-width:680px){
+    .search-backdrop{padding:8px; align-items:stretch;}
+    .search-palette{height:calc(100vh - 16px); border-radius:18px;}
+    .search-head{padding:13px;}
+    .search-head input{font-size:15px;}
+    .search-body{grid-template-columns:minmax(0,1fr);}
+    .search-detail{display:none;}
+    .search-results{padding:6px 6px 10px;}
+    .search-result{padding:9px 8px; gap:9px;}
+    .search-result-icon{width:30px; height:30px;}
+    .search-result-title{font-size:13px;}
+    .search-foot{padding:8px 12px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .search-palette{animation:none;}
+  }
 
   .back-bar{display:flex; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap;}
   .footer-note{margin-top:26px; text-align:center; font-size:12px; color:#94a3b8;}
@@ -1673,6 +1811,10 @@ html[data-theme="teal"] #hubResume .hub-resume-text{--hub-base:var(--theme-menu-
     <button class="masthead-brand" id="btnBrandHome" type="button" title="Back to Specialties">
       <span class="brand-words"><strong>HKU MBBS</strong><span>Question Bank</span></span>
     </button>
+    <button class="btn ghost small masthead-search" id="btnSearch" type="button" aria-haspopup="dialog" aria-controls="searchBackdrop" title="Search the question bank">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.2"/><path d="m16 16 4.2 4.2"/></svg>
+      <span>Search</span>
+    </button>
     <button class="btn ghost small masthead-home" id="btnCategories" type="button">← Specialties</button>
     <div class="header-menu hidden" id="headerMenu" role="menu" aria-label="Quiz navigation">
       <button class="menu-item" id="btnAbout" role="menuitem" type="button" aria-haspopup="dialog">
@@ -1922,7 +2064,7 @@ html[data-theme="teal"] #hubResume .hub-resume-text{--hub-base:var(--theme-menu-
       <span class="score-so-far" id="scoreSoFar"></span>
       <span id="autosaveStatus" class="autosave-status">Autosave every 5 seconds</span>
     </div>
-    <div id="flagPreviewNote" class="flag-preview-note hidden">This flagged question is outside your saved run. Previewing it does not change that run or its score. <button id="btnReturnFlagRun" class="btn ghost small">Return to saved run</button></div><p id="annotationStatus" role="status"></p>
+    <div id="flagPreviewNote" class="flag-preview-note hidden"><span id="flagPreviewText">This flagged question is outside your saved run. Previewing it does not change that run or its score.</span> <button id="btnReturnFlagRun" class="btn ghost small">Return to saved run</button></div><p id="annotationStatus" role="status"></p>
 <div class="stem" id="qStem"></div>
       <div id="qImages"></div>
 <p id="writtenInfo" class="muted hidden">Write or think through your response, reveal the answer, then mark your own understanding.</p><textarea id="writtenResponse" class="written-response hidden" aria-label="Your written response" placeholder="Your response (optional; saved with this session)"></textarea>
@@ -2102,6 +2244,32 @@ html[data-theme="teal"] #hubResume .hub-resume-text{--hub-base:var(--theme-menu-
 </div>
 </div>
 
+<div id="searchBackdrop" class="search-backdrop hidden">
+  <div class="search-palette" role="dialog" aria-modal="true" aria-labelledby="searchTitle">
+    <div class="search-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.2"/><path d="m16 16 4.2 4.2"/></svg>
+      <h2 id="searchTitle" class="search-sr-only">Search the question bank</h2>
+      <input id="searchInput" type="text" inputmode="search" enterkeyhint="search" placeholder="Search topics, questions, notes, or actions…" autocomplete="off" spellcheck="false">
+      <button id="btnCloseSearch" class="search-close" type="button" aria-label="Close search" title="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-filters" id="searchFilters" role="group" aria-label="Filter search results">
+      <button class="search-filter active" type="button" data-search-filter="all" aria-pressed="true">All</button>
+      <button class="search-filter" type="button" data-search-filter="topic" aria-pressed="false">Topics</button>
+      <button class="search-filter" type="button" data-search-filter="question" aria-pressed="false">Questions</button>
+      <button class="search-filter" type="button" data-search-filter="note" aria-pressed="false">Notes</button>
+      <button class="search-filter" type="button" data-search-filter="flag" aria-pressed="false">Flags</button>
+      <button class="search-filter" type="button" data-search-filter="action" aria-pressed="false">Actions</button>
+    </div>
+    <div class="search-body">
+      <div class="search-results" id="searchResults" role="region" aria-label="Search results"></div>
+      <aside class="search-detail" id="searchDetail" aria-live="polite"></aside>
+    </div>
+    <div class="search-foot"><span id="searchFootLeft">7,126 questions · 192 topics</span><span>Local to this browser</span></div>
+  </div>
+</div>
+
 <div class="modal-back hidden" id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
   <div class="modal guide-modal about-modal">
     <div class="guide-head">
@@ -2219,6 +2387,21 @@ let checked = {};
 let revealed = {};
 let runFinished = false;
 let annotationTimer = null;
+
+/* Global search state. The index is built on first use, after the app data
+   has been parsed, so opening search never delays the initial page load. */
+let searchIndex = null;
+let searchOpen = false;
+let searchQuery = "";
+let searchFilter = "all";
+let searchSelected = 0;
+let searchFlat = [];
+let searchCurrent = null;
+let searchDetailActive = false;
+let searchReturnFocus = null;
+let searchPreview = false;
+let searchPreviewReturn = null;
+let searchPreviewSuspended = false;
 
 const $ = id => document.getElementById(id);
 const QS = () => part.questions;
@@ -3909,6 +4092,11 @@ function startReviewFrom(key, qids, m){
   renderQ();
 }
 
+function updateSearchAvailability(){
+  const home = !$("screen-categories").classList.contains("hidden");
+  $("btnSearch").classList.toggle("hidden", !home);
+  if(!home && searchOpen) closeSearch(false);
+}
 function hideAll(){
   closeScratchpad(false);
   closeFlags(false);
@@ -3922,6 +4110,7 @@ function hideAll(){
   clearResultHeavyDom();
   stopMockTimer();
   window.scrollTo(0,0);
+  updateSearchAvailability();
 }
 function clearResultHeavyDom(){
   ["wrongList","topicBars","adviceList"].forEach(id => { const el = $(id); if(el) el.innerHTML = ""; });
@@ -4731,6 +4920,641 @@ $("btnCloseThemes").addEventListener("click", closeThemes);
 $("themesModal").addEventListener("click", event => { if(event.target === $("themesModal")) closeThemes(); });
 document.addEventListener("keydown", event => { if(event.key === "Escape" && !$("themesModal").classList.contains("hidden")) closeThemes(); });
 renderThemeOptions();
+
+/* ---------- global search ---------- */
+const SEARCH_LABELS = {action:"Actions", topic:"Topics", question:"Questions", note:"Notes", flag:"Flags"};
+const SEARCH_ORDER = {action:0, topic:1, question:2, note:3, flag:4};
+const SEARCH_LIMITS = {action:4, topic:4, question:5, note:3, flag:3};
+const SEARCH_ICONS = {
+  topic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 5.5v16"/><path d="M8 7h8M8 11h6"/></svg>',
+  question:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1.1.9-1.1 1.7v.3"/><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/></svg>',
+  note:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>',
+  flag:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 2h2v2h12l-3 5 3 5H7v8H5V2zm2 4v6h8.5l-1.8-3 1.8-3H7z"/></svg>',
+  action:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/><path d="M4 12h11"/></svg>'
+};
+
+const searchEsc = value => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+const searchRegex = value => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const searchTruncate = (value, n) => String(value || "").length > n ? String(value).slice(0, n - 1).trimEnd() + "…" : String(value || "");
+function searchMark(value, query){
+  const safe = searchEsc(value);
+  if(!query) return safe;
+  try{
+    return safe.replace(new RegExp("(" + searchRegex(query) + ")", "ig"), "<mark>$1</mark>");
+  }catch(error){
+    return safe;
+  }
+}
+function searchKindLabel(kind){ return kind === "written" ? "SAQ" : "MCQ / EMQ"; }
+function searchQuestionFor(partKey, qn){
+  return searchIndex && searchIndex.questionMap.get(partKey + "#" + Number(qn));
+}
+
+function buildSearchIndex(){
+  const topics = [], questions = [], notes = [], flags = [];
+  const attempted = attemptedSet();
+  const doneByPart = Object.create(null);
+  attempted.forEach(entry => {
+    const cut = entry.lastIndexOf("#");
+    if(cut < 0) return;
+    const key = entry.slice(0, cut);
+    doneByPart[key] = (doneByPart[key] || 0) + 1;
+  });
+
+  AREAS.forEach(area => {
+    area.parts.forEach(p => {
+      const recs = loadRecords(p.key);
+      const graded = recs.filter(r => r.s !== null && r.t > 0);
+      const best = graded.length ? Math.max(...graded.map(r => r.s)) : null;
+      const rev = wrongSetQids(p.key).length;
+      const paused = !!loadSession(p.key);
+      const lastRec = recs.length ? recs[recs.length - 1] : null;
+      topics.push({
+        type:"topic", id:"topic:" + p.key, partKey:p.key, title:p.title,
+        areaName:area.name, areaKey:area.key, kind:p.kind,
+        count:p.questions.length, done:doneByPart[p.key] || 0,
+        best, rev, paused, last:lastRec ? lastRec.d : "",
+        search:[p.title, p.fullTitle, p.displayKey, area.name, p.key].filter(Boolean).join(" ").toLowerCase()
+      });
+
+      const lastQ = new Set(lastRec && Array.isArray(lastRec.q) ? lastRec.q.map(Number) : []);
+      const lastWrong = new Set(lastRec && Array.isArray(lastRec.w) ? lastRec.w.map(Number) : []);
+      const lastUnanswered = new Set(lastRec && Array.isArray(lastRec.u) ? lastRec.u.map(Number) : []);
+      const flagMap = readAnnotations(p.key, "flags") || {};
+      const noteMap = readAnnotations(p.key, "scratchpad") || {};
+
+      p.questions.forEach(q => {
+        const year = questionYearLabel(q);
+        const hasFlag = !!flagMap[q.n];
+        const noteText = typeof noteMap[q.n] === "string" ? noteMap[q.n].trim() : "";
+        let status = "unseen";
+        if(lastQ.has(q.n)){
+          status = lastWrong.has(q.n) ? "wrong" : lastUnanswered.has(q.n) ? "unseen" : "correct";
+        }
+        const item = {
+          type:"question", id:"question:" + p.key + ":" + q.n, partKey:p.key, qn:q.n,
+          title:p.title, areaName:area.name, areaKey:area.key, partTitle:p.title,
+          year, stem:q.stem, kind:p.kind, status,
+          note:noteText, flag:hasFlag,
+          search:[p.title, area.name, q.stem, year, q.n, "q" + q.n, status, noteText, hasFlag ? "flagged" : ""].filter(Boolean).join(" ").toLowerCase()
+        };
+        questions.push(item);
+        if(noteText){
+          notes.push({
+            type:"note", id:"note:" + p.key + ":" + q.n, partKey:p.key, qn:q.n,
+            title:p.title, areaName:area.name, partTitle:p.title, year, stem:q.stem,
+            note:noteText,
+            search:[noteText, p.title, area.name, year, q.n, "q" + q.n, "note"].join(" ").toLowerCase()
+          });
+        }
+        if(hasFlag){
+          flags.push({
+            type:"flag", id:"flag:" + p.key + ":" + q.n, partKey:p.key, qn:q.n,
+            title:p.title, areaName:area.name, partTitle:p.title, year, stem:q.stem,
+            search:[p.title, area.name, q.stem, year, q.n, "q" + q.n, "flagged flag"].join(" ").toLowerCase()
+          });
+        }
+      });
+    });
+  });
+
+  const questionMap = new Map();
+  questions.forEach(item => questionMap.set(item.partKey + "#" + item.qn, item));
+  searchIndex = {topics, questions, notes, flags, questionMap, flagCount:flags.length, actions:[]};
+}
+
+function buildSearchActions(){
+  const actions = [];
+  const run = latestRun();
+  if(run){
+    const total = (run.sess.q || []).length;
+    const current = Math.min((run.sess.i || 0) + 1, total);
+    let label = "Saved run";
+    if(run.key === MIXED_KEY) label = "Mixed review";
+    else if(run.key === FLAGGED_KEY) label = "Flagged review";
+    else if(run.key === MOCK_KEY || run.key === MOCK_REVIEW_KEY) label = "Mock exam";
+    else {
+      const p = findPart(run.key);
+      if(p) label = p.title;
+    }
+    actions.push({
+      type:"action", id:"resume", title:"Resume last run",
+      description:`${label} · Question ${current} of ${total}`,
+      action:"resume", search:"resume last run continue saved"
+    });
+  }
+  if(searchIndex && searchIndex.flagCount){
+    actions.push({
+      type:"action", id:"flagged", title:"Review flagged questions",
+      description:`${searchIndex.flagCount} flagged question${searchIndex.flagCount === 1 ? "" : "s"}`,
+      action:"flagged", search:"review flagged questions"
+    });
+  }
+  actions.push({
+    type:"action", id:"theme", title:"Change theme",
+    description:"Choose a colour theme", action:"theme", search:"change theme colour appearance"
+  });
+  actions.push({
+    type:"action", id:"guide", title:"Open user guide",
+    description:"How the bank and revision sets work", action:"guide", search:"help guide instructions"
+  });
+  return actions;
+}
+
+function searchRecentTopics(){
+  return searchIndex.topics.slice().sort((a, b) => {
+    if(a.paused !== b.paused) return a.paused ? -1 : 1;
+    return String(b.last || "").localeCompare(String(a.last || ""));
+  }).slice(0, 4);
+}
+
+function searchRecentQuestions(){
+  const run = latestRun();
+  if(run && run.key !== MIXED_KEY && run.key !== FLAGGED_KEY && run.key !== MOCK_KEY && run.key !== MOCK_REVIEW_KEY){
+    const start = run.sess.i || 0;
+    const ids = (run.sess.q || []).slice(start, start + 3);
+    const items = ids.map(n => searchQuestionFor(run.key, n)).filter(Boolean);
+    if(items.length) return items;
+  }
+  let latest = null;
+  searchIndex.topics.forEach(topic => {
+    const recs = loadRecords(topic.partKey);
+    const rec = recs.length ? recs[recs.length - 1] : null;
+    if(rec && (!latest || String(rec.d) > String(latest.rec.d))) latest = {topic, rec};
+  });
+  if(latest){
+    return (latest.rec.w || []).slice(0, 3).map(n => searchQuestionFor(latest.topic.partKey, n)).filter(Boolean);
+  }
+  return [];
+}
+
+function searchItemsByFilter(filter){
+  if(filter === "topic") return searchRecentTopics();
+  if(filter === "question") return searchRecentQuestions();
+  if(filter === "note") return searchIndex.notes;
+  if(filter === "flag") return searchIndex.flags;
+  if(filter === "action") return searchIndex.actions;
+  return [];
+}
+
+function searchScore(item, query){
+  const title = String(item.title || "").toLowerCase();
+  const search = String(item.search || "").toLowerCase();
+  if(item.type === "question" && (query === String(item.qn) || query === "q" + item.qn)) return 160;
+  if(item.type === "flag" && query === "flagged") return 130;
+  if(item.type === "note" && query === "note") return 130;
+  if(title === query) return 150;
+  if(title.startsWith(query)) return 130;
+  if(title.includes(query)) return 110;
+  if(item.type === "note" && String(item.note || "").toLowerCase().includes(query)) return 100;
+  if(String(item.areaName || "").toLowerCase().includes(query)) return 70;
+  const stem = String(item.stem || "").toLowerCase();
+  const stemPosition = stem.indexOf(query);
+  if(stemPosition >= 0) return 55 + Math.max(0, 20 - Math.floor(stemPosition / 30));
+  if(search.includes(query)) return 40;
+  const tokens = query.split(/\s+/).filter(Boolean);
+  if(tokens.length > 1 && tokens.every(token => search.includes(token))) return 25;
+  return 0;
+}
+
+function searchGroups(){
+  const query = searchQuery.trim().toLowerCase();
+  if(!query){
+    if(searchFilter !== "all"){
+      const items = searchItemsByFilter(searchFilter);
+      return items.length ? [{type:searchFilter, items:items.slice(0, 10), total:items.length, max:0}] : [];
+    }
+    const groups = [];
+    if(searchIndex.actions.length) groups.push({type:"action", items:searchIndex.actions, total:searchIndex.actions.length, max:0});
+    const topics = searchRecentTopics();
+    if(topics.length) groups.push({type:"topic", items:topics, total:topics.length, max:0});
+    const questions = searchRecentQuestions();
+    if(questions.length) groups.push({type:"question", items:questions, total:questions.length, max:0});
+    return groups;
+  }
+
+  const pool = [...searchIndex.topics, ...searchIndex.questions, ...searchIndex.notes, ...searchIndex.flags, ...searchIndex.actions];
+  const buckets = new Map();
+  pool.forEach(item => {
+    if(searchFilter !== "all" && item.type !== searchFilter) return;
+    const score = searchScore(item, query);
+    if(!score) return;
+    if(!buckets.has(item.type)) buckets.set(item.type, []);
+    buckets.get(item.type).push({item, score});
+  });
+  const groups = [];
+  buckets.forEach((entries, type) => {
+    entries.sort((a, b) => b.score - a.score || String(a.item.title).localeCompare(String(b.item.title)));
+    groups.push({
+      type,
+      items:entries.slice(0, SEARCH_LIMITS[type] || 4).map(entry => entry.item),
+      total:entries.length,
+      max:entries[0].score
+    });
+  });
+  groups.sort((a, b) => b.max - a.max || SEARCH_ORDER[a.type] - SEARCH_ORDER[b.type]);
+  return groups;
+}
+
+function searchResultTitle(item){
+  if(item.type === "question" || item.type === "flag") return `Q${item.qn} · ${item.title}`;
+  if(item.type === "note") return searchTruncate(item.note || item.title, 90);
+  return item.title;
+}
+
+function searchResultMeta(item){
+  if(item.type === "topic") return `${item.areaName} · ${searchKindLabel(item.kind)} · ${item.count} questions`;
+  if(item.type === "question") return `${item.areaName} · ${item.year} · ${searchTruncate(item.stem, 105)}`;
+  if(item.type === "note") return `Note · Q${item.qn} · ${item.areaName}`;
+  if(item.type === "flag") return `Flagged · ${item.areaName} · ${item.year}`;
+  return item.description || "Command";
+}
+
+function searchResultBadge(item){
+  if(item.type === "topic") return `<span class="search-badge best">${item.best === null ? "New" : "Best " + item.best + "%"}</span>`;
+  if(item.type === "question"){
+    if(item.status === "wrong") return '<span class="search-badge wrong">Wrong</span>';
+    if(item.status === "correct") return '<span class="search-badge correct">Correct</span>';
+    return '<span class="search-badge unseen">Unseen</span>';
+  }
+  if(item.type === "note") return '<span class="search-badge note">Note</span>';
+  if(item.type === "flag") return '<span class="search-badge flag">Flag</span>';
+  return "";
+}
+
+function searchResultHtml(item, index){
+  const query = searchQuery.trim();
+  return `<button class="search-result" type="button" data-index="${index}">
+    <span class="search-result-icon ${item.type}" aria-hidden="true">${SEARCH_ICONS[item.type]}</span>
+    <span class="search-result-main">
+      <span class="search-result-title">${searchMark(searchResultTitle(item), query)}</span>
+      <span class="search-result-meta">${searchMark(searchResultMeta(item), query)}</span>
+    </span>
+    <span class="search-result-side">${searchResultBadge(item)}</span>
+  </button>`;
+}
+
+function renderSearch(){
+  const groups = searchGroups();
+  const results = $("searchResults");
+  searchFlat = [];
+  searchSelected = 0;
+  searchCurrent = null;
+
+  if(!groups.length){
+    const emptyQuery = !searchQuery.trim();
+    results.innerHTML = `<div class="search-empty">
+      <b>${emptyQuery ? "Nothing here yet" : `No matches for “${searchEsc(searchQuery.trim())}”`}</b>
+      <p>${emptyQuery ? "Try a topic, a question number like Q165, or a word from your notes." : "Try a different word, a topic name, or a question number."}</p>
+      ${emptyQuery ? "" : '<button class="search-btn ghost" type="button" data-search-clear>Clear search</button>'}
+    </div>`;
+    const clear = results.querySelector("[data-search-clear]");
+    if(clear) clear.addEventListener("click", () => {
+      $("searchInput").value = "";
+      searchQuery = "";
+      searchDetailActive = false;
+      renderSearch();
+      $("searchInput").focus();
+    });
+    $("searchFootLeft").textContent = emptyQuery ? "Nothing here yet" : "No results";
+    renderSearchDetail(null);
+    return;
+  }
+
+  let index = 0;
+  let total = 0;
+  results.innerHTML = groups.map(group => {
+    total += group.total;
+    const countLabel = group.total > group.items.length
+      ? `Top ${group.items.length} of ${group.total}`
+      : `${group.total} result${group.total === 1 ? "" : "s"}`;
+    const rows = group.items.map(item => {
+      searchFlat.push(item);
+      const html = searchResultHtml(item, index);
+      index += 1;
+      return html;
+    }).join("");
+    return `<div class="search-group">
+      <div class="search-group-head"><span>${SEARCH_LABELS[group.type]}</span><span>${countLabel}</span></div>
+      ${rows}
+    </div>`;
+  }).join("");
+
+  results.querySelectorAll(".search-result").forEach(button => {
+    const select = () => {
+      searchSelected = Number(button.dataset.index);
+      searchDetailActive = true;
+      updateSearchSelection();
+    };
+    button.addEventListener("mouseenter", select);
+    button.addEventListener("focus", select);
+    button.addEventListener("click", () => openSearchItem(searchFlat[Number(button.dataset.index)]));
+  });
+
+  $("searchFootLeft").textContent = `${total} result${total === 1 ? "" : "s"}`;
+  updateSearchSelection();
+}
+
+function updateSearchSelection(){
+  const buttons = $("searchResults").querySelectorAll(".search-result");
+  buttons.forEach(button => {
+    button.classList.toggle("selected", Number(button.dataset.index) === searchSelected);
+  });
+  const item = searchFlat[searchSelected] || null;
+  searchCurrent = item;
+  if(!searchDetailActive && !searchQuery.trim() && searchFilter === "all") renderSearchDetail(null);
+  else renderSearchDetail(item);
+}
+
+function renderSearchDetail(item){
+  const detail = $("searchDetail");
+  if(!item){
+    const totalQuestions = PARTS.reduce((sum, p) => sum + p.questions.length, 0);
+    detail.innerHTML = `<div class="search-kicker">Search the bank</div>
+      <h3>Find anything in the bank</h3>
+      <p class="search-detail-meta">Topics, question stems, your notes, flags and commands — searched locally.</p>
+      <div class="search-examples">
+        <button class="search-example" type="button" data-search-query="heart failure">heart failure</button>
+        <button class="search-example" type="button" data-search-query="ECG">ECG</button>
+        <button class="search-example" type="button" data-search-query="preeclampsia">preeclampsia</button>
+        <button class="search-example" type="button" data-search-query="fracture">fracture</button>
+      </div>
+      <div class="search-stats">
+        <div><b>${totalQuestions.toLocaleString()}</b><span>questions</span></div>
+        <div><b>${PARTS.length}</b><span>topics</span></div>
+        <div><b>${totalRevSet().toLocaleString()}</b><span>to revise</span></div>
+      </div>`;
+    detail.querySelectorAll("[data-search-query]").forEach(button => {
+      button.addEventListener("click", () => {
+        $("searchInput").value = button.dataset.searchQuery;
+        searchQuery = button.dataset.searchQuery;
+        searchDetailActive = true;
+        renderSearch();
+        $("searchInput").focus();
+      });
+    });
+    return;
+  }
+
+  if(item.type === "topic"){
+    const pct = item.count ? Math.round(item.done / item.count * 100) : 0;
+    detail.innerHTML = `<div class="search-kicker">Topic</div>
+      <h3>${searchEsc(item.title)}</h3>
+      <p class="search-detail-meta">${searchEsc(item.areaName)} · ${searchKindLabel(item.kind)} · ${item.count} questions</p>
+      <div class="search-stats">
+        <div><b>${item.done}</b><span>attempted</span></div>
+        <div><b>${item.best === null ? "—" : item.best + "%"}</b><span>best score</span></div>
+        <div><b>${item.rev}</b><span>to revise</span></div>
+      </div>
+      <div class="search-progress"><i style="width:${pct}%"></i></div>
+      <p class="search-detail-meta">${pct}% of this topic covered${item.paused ? " · paused run" : ""}.</p>
+      <div class="search-actions">
+        <button class="search-btn" type="button" data-search-open>Open topic</button>
+        ${item.rev ? `<button class="search-btn ghost" type="button" data-search-review>Review incorrect (${item.rev})</button>` : ""}
+      </div>`;
+  } else if(item.type === "question"){
+    const noteText = item.note || "";
+    detail.innerHTML = `<div class="search-kicker">Question ${item.qn} · ${searchEsc(item.year)}</div>
+      <h3>${searchEsc(item.title)}</h3>
+      <p class="search-detail-meta">${searchEsc(item.areaName)} · ${searchKindLabel(item.kind)}</p>
+      <p class="search-stem">${searchEsc(item.stem)}</p>
+      <div class="search-badges">
+        ${item.status === "wrong" ? '<span class="search-badge wrong">Wrong last time</span>' : item.status === "correct" ? '<span class="search-badge correct">Correct last time</span>' : '<span class="search-badge unseen">Not attempted</span>'}
+        ${item.flag ? '<span class="search-badge flag">Flagged</span>' : ""}
+        ${noteText ? '<span class="search-badge note">Has note</span>' : ""}
+      </div>
+      ${noteText ? `<div class="search-note-box"><b>Your note</b><p>${searchEsc(noteText)}</p></div>` : ""}
+      <div class="search-actions">
+        <button class="search-btn" type="button" data-search-open>Open question</button>
+        <button class="search-btn ghost" type="button" data-search-topic>Open topic</button>
+      </div>`;
+  } else if(item.type === "note"){
+    detail.innerHTML = `<div class="search-kicker">Note · Q${item.qn}</div>
+      <h3>${searchEsc(item.title)}</h3>
+      <p class="search-detail-meta">${searchEsc(item.areaName)} · ${searchEsc(item.year)}</p>
+      <div class="search-note-box"><b>Saved note</b><p>${searchEsc(item.note)}</p></div>
+      <p class="search-stem small">${searchEsc(searchTruncate(item.stem, 220))}</p>
+      <div class="search-actions"><button class="search-btn" type="button" data-search-open>Open linked question</button></div>`;
+  } else if(item.type === "flag"){
+    detail.innerHTML = `<div class="search-kicker">Flag · Q${item.qn}</div>
+      <h3>${searchEsc(item.title)}</h3>
+      <p class="search-detail-meta">${searchEsc(item.areaName)} · ${searchEsc(item.year)}</p>
+      <div class="search-note-box flag"><b>Flagged for review</b><p>This question is in your flagged list.</p></div>
+      <p class="search-stem small">${searchEsc(searchTruncate(item.stem, 220))}</p>
+      <div class="search-actions"><button class="search-btn" type="button" data-search-open>Open flagged question</button></div>`;
+  } else {
+    detail.innerHTML = `<div class="search-kicker">Action</div>
+      <h3>${searchEsc(item.title)}</h3>
+      <p class="search-detail-meta">${searchEsc(item.description)}</p>
+      <p class="search-stem small">This runs the same action as the menu or the page it belongs to.</p>
+      <div class="search-actions"><button class="search-btn" type="button" data-search-open>Run action</button></div>`;
+  }
+
+  detail.querySelectorAll("[data-search-open]").forEach(button => button.addEventListener("click", () => openSearchItem(item)));
+  detail.querySelectorAll("[data-search-review]").forEach(button => button.addEventListener("click", () => reviewSearchTopic(item)));
+  detail.querySelectorAll("[data-search-topic]").forEach(button => button.addEventListener("click", () => openTopicFromSearch(item.partKey)));
+}
+
+function reviewSearchTopic(item){
+  const qids = wrongSetQids(item.partKey);
+  if(!qids.length) return;
+  closeSearch(false);
+  if(searchPreview) closeSearchPreview();
+  if(!$("screen-quiz").classList.contains("hidden") && mode !== "preview") saveQuizProgress();
+  startReviewFrom(item.partKey, qids, "review");
+  $("qNum").focus();
+}
+
+function captureSearchRun(){
+  return {
+    part, activeArea, mode, queue:queue.slice(), idx,
+    answers:{...answers}, checked:{...checked}, revealed:{...revealed},
+    drafts:{...drafts}, runFinished
+  };
+}
+
+function currentSearchScreen(){
+  return ["screen-categories","screen-hub","screen-mixed","screen-quiz","screen-result","screen-logs","screen-review-summary"]
+    .find(id => !$(id).classList.contains("hidden")) || "screen-categories";
+}
+
+function openTopicFromSearch(partKey){
+  const p = findPart(partKey);
+  if(!p) return;
+  if(searchOpen) closeSearch(false);
+  if(searchPreview) closeSearchPreview();
+  if(!$("screen-quiz").classList.contains("hidden") && mode !== "preview") saveQuizProgress();
+  activeArea = subjectForPart(p);
+  if(!activeArea){ showCategories(); return; }
+  specialtyTabs[activeArea.key] = p.kind;
+  resetSectionFinder();
+  showHub();
+  requestAnimationFrame(() => {
+    const target = [...document.querySelectorAll("[data-start]")].find(button => button.dataset.start === partKey);
+    const row = target && target.closest(".hub-topic-row");
+    if(row){
+      row.scrollIntoView({block:"center", behavior:"smooth"});
+      row.classList.add("search-hit");
+      setTimeout(() => row.classList.remove("search-hit"), 1800);
+    }
+    const focusTarget = target || $("btnCategories");
+    if(focusTarget) focusTarget.focus({preventScroll:true});
+  });
+}
+
+function openQuestionFromSearch(partKey, qn){
+  const p = findPart(partKey);
+  if(!p) return;
+  closeSearch(false);
+  if(searchPreview) closeSearchPreview();
+  if(!$("screen-quiz").classList.contains("hidden") && mode === "preview") returnFromFlagPreview();
+
+  if(!$("screen-quiz").classList.contains("hidden") && part && part.key === partKey && mode !== "preview"){
+    const position = queue.findIndex(i => QS()[i].n === Number(qn));
+    if(position >= 0){ moveTo(position); $("qNum").focus(); return; }
+  }
+
+  const screen = currentSearchScreen();
+  if(screen === "screen-categories"){
+    searchPreviewReturn = {kind:"categories"};
+  }else if(screen === "screen-hub"){
+    searchPreviewReturn = {kind:"hub", areaKey:activeArea && activeArea.key};
+  }else if(screen === "screen-quiz" && mode !== "preview"){
+    if(!saveQuizProgress()) return;
+    if(!suspendedFlagRun){
+      suspendedFlagRun = captureSearchRun();
+      searchPreviewSuspended = true;
+    }
+    searchPreviewReturn = {kind:"quiz"};
+  }else{
+    searchPreviewReturn = {kind:"back"};
+  }
+
+  searchPreview = true;
+  startReviewFrom(partKey, [Number(qn)], "preview");
+  window.scrollTo(0, 0);
+  $("qNum").focus();
+}
+
+function closeSearchPreview(){
+  searchPreview = false;
+  const returnState = searchPreviewReturn;
+  searchPreviewReturn = null;
+  if(suspendedFlagRun){
+    const saved = suspendedFlagRun;
+    suspendedFlagRun = null;
+    searchPreviewSuspended = false;
+    restoreRunState(saved);
+    $("btnSearch").focus({preventScroll:true});
+    return;
+  }
+  searchPreviewSuspended = false;
+  hideAll();
+  if(returnState && returnState.kind === "categories"){
+    activeArea = null;
+    showCategories();
+  }else if(returnState && returnState.kind === "hub"){
+    activeArea = AREAS.find(area => area.key === returnState.areaKey) || null;
+    showHub();
+  }else{
+    backToHub();
+  }
+  $("btnSearch").focus({preventScroll:true});
+}
+
+function openSearchItem(item){
+  if(!item) return;
+  if(item.type === "action"){
+    closeSearch(false);
+    if(item.action === "resume"){
+      if(searchPreview) closeSearchPreview();
+      if(!$("screen-quiz").classList.contains("hidden") && mode !== "preview") saveQuizProgress();
+      resumeLatestRun();
+      return;
+    }
+    if(item.action === "flagged"){
+      if(searchPreview) closeSearchPreview();
+      if(!$("screen-quiz").classList.contains("hidden") && mode !== "preview") saveQuizProgress();
+      enterMixed("flagged");
+      return;
+    }
+    if(item.action === "theme"){ openThemes(); return; }
+    if(item.action === "guide"){ openGuide(); return; }
+    return;
+  }
+  if(item.type === "topic"){
+    closeSearch(false);
+    openTopicFromSearch(item.partKey);
+    return;
+  }
+  closeSearch(false);
+  openQuestionFromSearch(item.partKey, item.qn);
+}
+
+function setSearchFilter(filter){
+  searchFilter = filter;
+  document.querySelectorAll("#searchFilters [data-search-filter]").forEach(button => {
+    const active = button.dataset.searchFilter === filter;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+}
+
+function openSearch(){
+  if(!unlocked || searchOpen || $("screen-categories").classList.contains("hidden")) return;
+  searchOpen = true;
+  searchReturnFocus = $("btnSearch");
+  searchQuery = "";
+  searchFilter = "all";
+  searchSelected = 0;
+  searchDetailActive = false;
+  $("searchInput").value = "";
+  setSearchFilter("all");
+  $("searchBackdrop").classList.remove("hidden");
+  $("appShell").inert = true;
+  document.body.classList.add("search-open");
+  $("btnSearch").setAttribute("aria-expanded", "true");
+  buildSearchIndex();
+  searchIndex.actions = buildSearchActions();
+  renderSearch();
+  requestAnimationFrame(() => $("searchInput").focus());
+}
+
+function closeSearch(restoreFocus = true){
+  if(!searchOpen) return;
+  searchOpen = false;
+  $("searchBackdrop").classList.add("hidden");
+  $("appShell").inert = false;
+  document.body.classList.remove("search-open");
+  $("btnSearch").setAttribute("aria-expanded", "false");
+  if(restoreFocus){
+    const target = searchReturnFocus && searchReturnFocus.isConnected && searchReturnFocus !== document.body
+      ? searchReturnFocus
+      : $("btnSearch");
+    if(target) target.focus({preventScroll:true});
+  }
+}
+
+$("btnSearch").addEventListener("click", openSearch);
+$("btnCloseSearch").addEventListener("click", () => closeSearch());
+$("searchBackdrop").addEventListener("click", event => { if(event.target === $("searchBackdrop")) closeSearch(); });
+$("searchInput").addEventListener("input", () => {
+  searchQuery = $("searchInput").value;
+  searchDetailActive = !!searchQuery.trim();
+  renderSearch();
+});
+$("searchFilters").addEventListener("click", event => {
+  const button = event.target.closest("[data-search-filter]");
+  if(!button) return;
+  setSearchFilter(button.dataset.searchFilter);
+  searchDetailActive = searchFilter !== "all" || !!searchQuery.trim();
+  renderSearch();
+  $("searchInput").focus();
+});
+document.addEventListener("keydown", event => {
+  if(event.key === "Escape" && searchOpen) closeSearch();
+});
+
 /* ---------- compact quiz overflow menu ---------- */
 function quizMoreOpen(){ return !$("quizMoreMenu").classList.contains("hidden"); }
 function openQuizMore(){
@@ -5118,6 +5942,7 @@ function showCategories(){
       showHub();
     });
   });
+  updateSearchAvailability();
 }
 
 function subjectForPart(partObj){
@@ -5481,15 +6306,7 @@ function jumpToFlagged(key, number){
     moveTo(queue.findIndex(i => QS()[i].n === number));
   }
 }
-function returnFromFlagPreview(){
-  if(!suspendedFlagRun) return;
-  const saved = suspendedFlagRun;
-  suspendedFlagRun = null;
-  if(saved.hubArea){
-    activeArea = saved.hubArea;
-    showHub();
-    return;
-  }
+function restoreRunState(saved){
   part = saved.part;
   activeArea = saved.activeArea;
   mode = saved.mode;
@@ -5504,6 +6321,18 @@ function returnFromFlagPreview(){
   setFullTitleText($("quizPartName"), part.title);
   $("screen-quiz").classList.remove("hidden");
   renderQ();
+}
+function returnFromFlagPreview(){
+  if(searchPreview){ closeSearchPreview(); return; }
+  if(!suspendedFlagRun) return;
+  const saved = suspendedFlagRun;
+  suspendedFlagRun = null;
+  if(saved.hubArea){
+    activeArea = saved.hubArea;
+    showHub();
+    return;
+  }
+  restoreRunState(saved);
 }
 function highlightFields(){
   const fields = { stem:$("qStem") };
@@ -5571,9 +6400,18 @@ function refreshAnnotations(){
   $("jumpForm").classList.toggle("hidden", preview);
   $("btnFinishRun").classList.toggle("hidden", preview);
   $("btnSkip").classList.toggle("hidden", preview || !!checked[QS()[queue[idx]].n]);
+  $("btnSaveQuit").classList.toggle("hidden", preview);
+  $("btnQuit").classList.toggle("hidden", preview);
   if(preview){
-    $("btnNext").textContent = "Return to saved run";
-    $("autosaveStatus").textContent = "Flag preview only — your original run is preserved. Flags and highlights save immediately.";
+    const isSearch = searchPreview;
+    $("flagPreviewText").textContent = isSearch
+      ? "Question preview — this does not change your saved runs."
+      : "This flagged question is outside your saved run. Previewing it does not change that run or its score.";
+    $("btnReturnFlagRun").textContent = isSearch ? "Close preview" : "Return to saved run";
+    $("btnNext").textContent = isSearch ? "Close preview" : "Return to saved run";
+    $("autosaveStatus").textContent = isSearch
+      ? "Question preview — nothing is saved from this view."
+      : "Flag preview only — your original run is preserved. Flags and highlights save immediately.";
   }
 }
 function dismissHighlightPopup(){
