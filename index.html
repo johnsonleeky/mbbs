@@ -1458,6 +1458,128 @@ html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--lin
   .hub-ledger-record,.hub-ledger-record:nth-child(3){padding-left:0;border-left:0}
   .hub-ledger-record+.hub-ledger-record{margin-top:10px;padding-top:10px;border-top:1px solid color-mix(in srgb,var(--line) 84%,var(--accent))}
 }
+
+/* ---------- C control rail preview ---------- */
+.hub-c .hub-workspace{display:grid;grid-template-columns:300px minmax(0,1fr);gap:18px;align-items:start;margin-bottom:18px}
+.hub-c .hub-ledger{position:sticky;top:18px;margin:0;padding:20px;border-radius:18px;background:radial-gradient(78% 170% at 0% 0%,color-mix(in srgb,var(--accent) 10%,transparent),transparent 64%),var(--card);backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 1px 3px rgba(70,20,42,.05),0 10px 24px -24px rgba(70,20,42,.3)}
+.hub-c .hub-ledger-head{display:block}
+.hub-c .hub-ledger-eyebrow{font-size:12px;font-weight:800;letter-spacing:.1em;line-height:1.3;color:var(--accent)}
+.hub-c .hub-ledger-head h2{margin-top:9px}
+.hub-c .hub-type-wrap{flex-direction:column;align-items:stretch;gap:5px;margin-top:14px}
+.hub-c .hub-type-label{text-align:left}
+.hub-c .hub-type-tabs{width:100%}
+.hub-c .hub-type-tab{flex:1;justify-content:center;padding:6px 7px}
+.hub-c .hub-ledger-body{display:block;margin-top:19px}
+.hub-c .hub-ledger-number b{font-size:34px;line-height:.88}
+.hub-c .hub-ledger-number>span{font-size:10px}
+.hub-c .hub-ledger-sections{margin-top:6px;font-size:9px}
+.hub-c .hub-ledger-records{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px;margin-top:15px;padding:13px 0 0;border-top:1px solid color-mix(in srgb,var(--line) 84%,var(--accent));max-width:none}
+.hub-c .hub-ledger-record{padding:0;border-left:0}
+.hub-c .hub-ledger-record:nth-child(n+3){padding-top:0;border-top:0}
+.hub-c .hub-ledger-record b{font-size:16px}
+.hub-c .hub-ledger-record span{font-size:8.5px;margin-top:3px;line-height:1.3}
+.hub-c .hub-section-finder{display:block;margin-top:15px;padding-top:12px}
+.hub-c .hub-section-finder .section-search{display:flex;max-width:none;min-width:0;flex-basis:100%;margin-bottom:8px}
+.hub-c .hub-section-finder .section-search input{height:34px;font-size:11px}
+.hub-c .hub-section-finder .section-filter-chips{display:flex;flex-direction:column;align-items:stretch;gap:2px}
+.hub-c .hub-section-finder .section-filter-chips button{width:100%;justify-content:space-between;border-color:transparent;border-radius:7px;background:transparent;padding:6px 7px;font-size:9.5px;color:var(--muted)}
+.hub-c .hub-section-finder .section-filter-chips button span{font-size:9px}
+.hub-c .hub-section-finder .section-filter-chips button:hover{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.hub-c .hub-section-finder .section-filter-chips button[aria-pressed="true"]{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+.hub-c .hub-section-finder .section-filter-chips button[aria-pressed="true"] span{color:var(--accent)}
+.hub-c .hub-ledger-clear{order:0;margin:12px 0 0;border:0;background:transparent;padding:2px 0;color:var(--muted);font-size:9px;text-decoration:underline;text-underline-offset:2px}
+.hub-c .hub-ledger-clear svg{display:none}
+.hub-c .hub-ledger-clear:hover,.hub-c .hub-ledger-clear:focus-visible{color:var(--bad);background:transparent;border:0}
+html[data-theme] .hub-c .hub-section-finder .section-filter-chips button:not([aria-pressed="true"]){background:transparent;border-color:transparent;color:var(--muted)}
+html[data-theme] .hub-c .hub-section-finder .section-filter-chips button[aria-pressed="true"]{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+html[data-theme] .hub-c .hub-ledger-clear{background:transparent;border:0}
+.hub-c .hub-topics{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 1px 3px rgba(70,20,42,.05),0 10px 24px -24px rgba(70,20,42,.3)}
+.hub-c .hub-topics-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.hub-c .hub-topics-head h2{margin:0;font-size:16px;line-height:1.2;letter-spacing:-.02em;color:var(--navy)}
+.hub-c .hub-topics-count{font-size:9.5px;color:var(--muted)}
+.hub-c .hub-topics-count b{color:var(--navy);font-weight:800}
+.hub-c .hub-sort{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:9px;color:var(--muted)}
+.hub-c .hub-sort select{border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--muted);font:inherit;font-size:9.5px;font-weight:700;padding:5px 7px;cursor:pointer}
+.hub-c .hub-year-filter{margin:0 0 12px;padding:8px 10px;font-size:10px;line-height:1.4}
+.hub-c .area-block{margin:0}
+.hub-c .hub-topic-list{display:flex;flex-direction:column}
+.hub-c .hub-topic-list .section-empty{margin-top:16px}
+.hub-c .section-empty .btn{border-color:color-mix(in srgb,var(--accent) 30%,var(--line));background:color-mix(in srgb,var(--accent) 4%,var(--card));color:var(--accent)}
+.hub-c .hub-topic-head,.hub-c .hub-topic-row{display:grid;grid-template-columns:34px minmax(0,1fr) 64px 122px 46px 90px;align-items:center;gap:8px}
+.hub-c .hub-topic-head{padding:0 4px 8px;border-bottom:1px solid var(--line);font-size:8px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.hub-c .hub-topic-head span:first-child{grid-column:1/3}
+.hub-c .hub-topic-head span:nth-child(4){text-align:right}
+.hub-c .hub-topic-row{padding:10px 4px;border-bottom:1px solid var(--line);transition:background .14s}
+.hub-c .hub-topic-row:last-child{border-bottom:0}
+.hub-c .hub-topic-row:hover{background:color-mix(in srgb,var(--accent-soft) 58%,transparent)}
+.hub-c .hub-topic-num{display:inline-grid;place-items:center;width:26px;height:22px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:8.5px;font-weight:800;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.hub-c .hub-topic-main{min-width:0}
+.hub-c .hub-topic-main.is-truncated{position:relative;cursor:help}
+.hub-c .hub-topic-main.is-truncated:hover::after,.hub-c .hub-topic-main.is-truncated:focus-visible::after{content:attr(data-full-title);position:absolute;left:0;top:calc(100% + 6px);z-index:12;width:max-content;max-width:300px;padding:7px 9px;border-radius:7px;background:var(--navy);color:var(--card);font-size:10px;font-weight:600;line-height:1.35;box-shadow:0 10px 22px -14px rgba(0,0,0,.55);white-space:normal;pointer-events:none}
+.hub-c .hub-topic-main.is-truncated:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+.hub-c .hub-topic-main b{display:block;font-size:12.5px;line-height:1.25;font-weight:800;color:var(--navy);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hub-c .hub-topic-main span{display:block;margin-top:2px;font-size:9px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hub-c .hub-topic-count{font-size:9px;color:var(--muted);white-space:nowrap}
+.hub-c .hub-topic-progress{display:flex;align-items:center;gap:7px}
+.hub-c .hub-topic-progress .bar{display:block;width:64px;height:4px;border-radius:99px;background:color-mix(in srgb,var(--accent) 14%,var(--card));overflow:hidden}
+.hub-c .hub-topic-progress .bar i{display:block;height:100%;border-radius:inherit;background:var(--accent)}
+.hub-c .hub-topic-progress .bar.empty{background:color-mix(in srgb,var(--line) 70%,var(--card))}
+.hub-c .hub-topic-progress .pct{font-size:9px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:23px}
+.hub-c .hub-topic-best{font-size:10.5px;font-weight:800;color:var(--navy);text-align:right;font-variant-numeric:tabular-nums}
+.hub-c .hub-topic-best.muted{color:var(--muted);font-weight:600}
+.hub-c .hub-topic-actions{display:flex;align-items:center;justify-content:flex-end;gap:3px;position:relative}
+.hub-c .hub-topic-start{appearance:none;border:1px solid transparent;border-radius:7px;padding:6px 9px;background:var(--accent);color:#fff;font:inherit;font-size:9.5px;font-weight:800;cursor:pointer;white-space:nowrap;line-height:1.1;min-width:64px;text-align:center;justify-content:center}
+.hub-c .hub-topic-start.ghost{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 24%,var(--line));color:var(--accent)}
+.hub-c .hub-topic-start:hover{filter:brightness(1.04)}
+.hub-c .hub-topic-start:disabled{opacity:.4;cursor:default}
+.hub-c .hub-topic-more{appearance:none;border:0;background:transparent;color:var(--muted);font-size:15px;line-height:1;padding:4px;border-radius:6px;cursor:pointer}
+.hub-c .hub-topic-more:hover{background:var(--accent-soft);color:var(--accent)}
+.hub-c .hub-topic-menu{position:absolute;right:0;top:calc(100% + 5px);z-index:8;min-width:172px;padding:5px;border:1px solid var(--line);border-radius:9px;background:var(--card);box-shadow:0 12px 26px -16px rgba(70,20,42,.5)}
+.hub-c .hub-topic-menu button{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;border:0;border-radius:6px;background:transparent;padding:6px 7px;color:var(--muted);font:inherit;font-size:9.5px;font-weight:700;text-align:left;cursor:pointer;white-space:nowrap}
+.hub-c .hub-topic-menu button:hover{background:var(--accent-soft);color:var(--accent)}
+.hub-c .hub-topic-menu button:disabled{opacity:.4;cursor:default}
+.hub-c .hub-topic-menu button span{color:var(--navy);font-size:9px;font-weight:800}
+.hub-c .hub-rail-footer{display:flex;justify-content:flex-end;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.hub-c .hub-clear-danger{appearance:none;display:inline-flex;align-items:center;gap:5px;border:1px solid #B91C1C;border-radius:8px;background:#FEF2F2;padding:7px 10px;color:#B91C1C;font:inherit;font-size:9.5px;font-weight:800;line-height:1.1;cursor:pointer;white-space:nowrap;transition:background .14s,border-color .14s}
+.hub-c .hub-clear-danger svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.hub-c .hub-clear-danger:hover,.hub-c .hub-clear-danger:focus-visible{background:#FEE2E2;border-color:#B91C1C;outline:none}
+html[data-theme] .hub-c .hub-topic-start{background:var(--accent);color:var(--theme-btn-ink)}
+html[data-theme] .hub-c .hub-topic-start.ghost{background:var(--accent-soft);color:var(--accent)}
+html[data-theme] .hub-c .hub-topic-menu{background:var(--card);border-color:var(--line)}
+html[data-theme] .hub-c .hub-topics{background:var(--card);border-color:var(--line)}
+html[data-theme] .hub-c .hub-ledger{background:radial-gradient(78% 170% at 0% 0%,color-mix(in srgb,var(--accent) 10%,transparent),transparent 64%),var(--card);backdrop-filter:none;-webkit-backdrop-filter:none}
+@media(max-width:860px){
+  .hub-c .hub-workspace{grid-template-columns:1fr}
+  .hub-c .hub-ledger{position:static}
+  .hub-c .hub-section-finder .section-filter-chips{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+  .hub-c .hub-section-finder .section-filter-chips button{width:100%}
+}
+@media(max-width:620px){
+  .hub-c .hub-ledger{padding:17px 16px 14px}
+  .hub-c .hub-topics{padding:16px}
+  .hub-c .hub-topics-head{align-items:flex-start}
+  .hub-c .hub-sort{margin-left:0;width:100%}
+  .hub-c .hub-sort select{flex:1}
+  .hub-c .hub-topic-head{display:none}
+  .hub-c .hub-topic-row{grid-template-columns:30px minmax(0,1fr) auto;grid-template-areas:"num main main" ". count count" ". progress best" ". action action";gap:5px 8px;padding:11px 3px}
+  .hub-c .hub-topic-num{grid-area:num}
+  .hub-c .hub-topic-main{grid-area:main}
+  .hub-c .hub-topic-count{grid-area:count}
+  .hub-c .hub-topic-progress{grid-area:progress}
+  .hub-c .hub-topic-progress .bar{width:64px}
+  .hub-c .hub-topic-best{grid-area:best;justify-self:end}
+  .hub-c .hub-topic-actions{grid-area:action;justify-content:flex-start;margin-top:2px}
+  .hub-c .hub-topic-more{margin-left:auto}
+  .hub-c .hub-topic-menu{left:0;right:auto}
+  .hub-c .hub-ledger-records{grid-template-columns:1fr 1fr;gap:11px 10px}
+  .hub-c .hub-ledger-record b{font-size:15px}
+}
+
+/* Light alternate themes: white surfaces only, keeping theme text, borders and highlights. */
+html[data-theme]:not([data-theme="cosmic"]) .hub-c .hub-topics{background:#fff}
+html[data-theme]:not([data-theme="cosmic"]) #screen-quiz.card{background:#fff}
+html[data-theme]:not([data-theme="cosmic"]) #screen-quiz .opt:not(.selected):not(.correct):not(.wrong){background:#fff}
+html[data-theme]:not([data-theme="cosmic"]) #screen-quiz .expl-box{background:#fff}
 </style>
 </head>
 <body>
@@ -1516,8 +1638,9 @@ html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--lin
   <section id="screen-categories" class="hidden">
 <div id="categoryCards" class="halo"></div>
 <div class="disclaimer" role="note"><b>Disclaimer:</b> Questions, answers, and explanations (either recalled by students or AI-generated) may contain errors and are not guaranteed to be accurate. Use this as a revision aid and verify important points against reliable, current sources.</div></section>
-<section id="screen-hub" class="hidden">
-    <section class="hub-ledger" aria-labelledby="hubProgressTitle">
+<section id="screen-hub" class="hidden hub-c">
+    <div class="hub-workspace">
+    <aside class="hub-ledger" aria-labelledby="hubProgressTitle">
       <div class="hub-ledger-head">
         <div>
           <span class="hub-ledger-eyebrow" id="hubAreaName">Specialty</span>
@@ -1554,16 +1677,30 @@ html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--lin
           <button type="button" data-section-filter="active" aria-pressed="false">In progress <span id="sectionCountActive">0</span></button>
           <button type="button" data-section-filter="paused" aria-pressed="false">Paused <span id="sectionCountPaused">0</span></button>
         </div>
-        <button class="hub-ledger-clear" id="btnClearHist" type="button" aria-label="Clear history for this specialty's recorded attempts and revision sets">
+      </div>
+      <div class="hub-rail-footer">
+        <button class="hub-clear-danger" id="btnClearHist" type="button" aria-label="Clear history for this specialty's recorded attempts and revision sets" title="Delete this specialty's recorded attempts, session logs and revision sets">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg>
           Clear history
         </button>
       </div>
+    </aside>
+
+    <section class="hub-topics" aria-labelledby="hubTopicsTitle">
+      <div class="hub-topics-head">
+        <div><h2 id="hubTopicsTitle">Topics</h2></div>
+        <label class="hub-sort"><span>Sort</span>
+          <select id="hubTopicSort">
+            <option value="active">In progress first</option>
+            <option value="order">Topic order</option>
+          </select>
+        </label>
+      </div>
+      <p class="hub-year-filter hidden" id="hubYearFilter"></p>
+      <div class="hub-topic-head" aria-hidden="true"><span>Topic</span><span>Questions</span><span>Progress</span><span>Best</span><span></span></div>
+      <div id="areaBlocks" role="tabpanel" aria-labelledby="tabChoice" tabindex="0"></div>
     </section>
-
-    <p class="hub-year-filter hidden" id="hubYearFilter"></p>
-    <div id="areaBlocks" role="tabpanel" aria-labelledby="tabChoice" tabindex="0"></div>
-
+    </div>
   </section>
 
   <!-- ============ REVIEW: SHUFFLE / BY YEAR ============ -->
@@ -2309,13 +2446,26 @@ function renderHub(){
       </div>
       ${allInTab.length && filtersOn ? '<button class="btn ghost small" type="button" data-clear-section-filters>Clear search and filters</button>' : ""}
     </div>`;
+    const rank = p => { const st = sectionPartState(p); return st === "paused" ? 0 : st === "active" ? 1 : 2; };
+    const sortedParts = hubSort === "active" ? [...areaParts].sort((a,b)=>rank(a)-rank(b)) : areaParts;
     return `
     <div class="area-block">
-      <div class="area-name">${bloomSvg(13)}${esc(activeArea ? "Topics" : area.name)}</div>
-      <div class="part-grid">${areaParts.map(partCard).join("") || emptyHtml}</div>
+      ${activeArea ? "" : `<div class="area-name">${bloomSvg(13)}${esc(area.name)}</div>`}
+      <div class="hub-topic-list">${sortedParts.map(partRow).join("") || emptyHtml}</div>
     </div>`;
   }).join("");
   bindCards();
+  markTruncatedTitles();
+}
+function markTruncatedTitles(){
+  document.querySelectorAll(".hub-topic-main b").forEach(b => {
+    const main = b.closest(".hub-topic-main");
+    if(!main) return;
+    const truncated = b.scrollWidth > b.clientWidth + 1;
+    main.classList.toggle("is-truncated", truncated);
+    if(truncated){ main.dataset.fullTitle = b.textContent; main.tabIndex = 0; }
+    else { delete main.dataset.fullTitle; main.removeAttribute("tabindex"); }
+  });
 }
 function partCard(p){
   const s = partStats(p.key);
@@ -2362,6 +2512,45 @@ function partCard(p){
       </div>
     </div>`;
 }
+function partRow(p){
+  const s = partStats(p.key);
+  const best = s.best === null ? "—" : s.best + "%";
+  const flagged = flaggedQuestions(p.key).length;
+  const lastRec = s.recs.length ? s.recs[s.recs.length-1] : null;
+  const runTotal = s.sess
+    ? (Array.isArray(s.sess.q) ? s.sess.q.length : 0)
+    : (lastRec ? (Array.isArray(lastRec.q) ? lastRec.q.length : (Number(lastRec.t) || 0)) : 0);
+  const runDone = s.sess
+    ? Math.min((s.sess.i || 0) + 1, runTotal)
+    : (lastRec ? Math.max(0, runTotal - (Array.isArray(lastRec.u) ? lastRec.u.length : 0)) : 0);
+  const runPct = runTotal ? Math.round(runDone / runTotal * 100) : 0;
+  const runStatus = s.sess ? "Paused" : (lastRec ? "Last run" : "Not started");
+  const runStatusCls = s.sess ? "paused" : (lastRec ? "active" : "new");
+  const statusText = runTotal ? `${runStatus} · ${runPct}% complete` : "Not started";
+  const available = filteredQuestionsForPart(p);
+  const availableCount = available.length;
+  const noAvailable = !availableCount && !s.sess;
+  const startLabel = s.sess ? "Resume" : "Start";
+  const countLabel = availableCount === p.questions.length ? String(p.questions.length) : `${availableCount} of ${p.questions.length}`;
+  const rawNum = String(p.displayKey || p.key.toUpperCase());
+  const numLabel = /^\d$/.test(rawNum) ? "0" + rawNum : rawNum;
+  return `<div class="hub-topic-row" data-status="${runStatusCls}">
+      <span class="hub-topic-num">${esc(numLabel)}</span>
+      <div class="hub-topic-main"><b>${esc(p.title)}</b><span>${statusText}</span></div>
+      <span class="hub-topic-count">${countLabel} ${p.kind === "written" ? "cases" : "questions"}</span>
+      <div class="hub-topic-progress">${runTotal ? `<span class="bar"><i style="width:${runPct}%"></i></span><span class="pct">${runPct}%</span>` : '<span class="bar empty"></span><span class="pct">—</span>'}</div>
+      <span class="hub-topic-best${s.best === null ? " muted" : ""}">${best}</span>
+      <div class="hub-topic-actions">
+        <button class="hub-topic-start${(s.sess || lastRec) ? "" : " ghost"}" type="button" data-start="${p.key}" ${noAvailable ? "disabled" : ""} title="${noAvailable ? "No questions match the current year filter" : "Start or resume this topic"}">${startLabel}</button>
+        <button class="hub-topic-more" type="button" data-topic-menu aria-expanded="false" aria-haspopup="menu" aria-label="More actions for ${esc(p.title)}">⋯</button>
+        <div class="hub-topic-menu" role="menu" hidden>
+          <button type="button" role="menuitem" data-review="${p.key}" ${s.rev ? "" : "disabled"} aria-label="Review ${s.rev} incorrect question${s.rev === 1 ? "" : "s"}">Review incorrect <span>${s.rev}</span></button>
+          <button type="button" role="menuitem" data-flags="${p.key}" aria-label="${flagged} flagged questions in ${esc(p.title)}" aria-haspopup="dialog">Flagged <span>${flagged}</span></button>
+          <button type="button" role="menuitem" data-logs="${p.key}" aria-label="Session logs for ${esc(p.title)}">Session logs</button>
+        </div>
+      </div>
+    </div>`;
+}
 function bindCards(){
   document.querySelectorAll("[data-flags]").forEach(button => button.addEventListener("click", () => openFlags(button.dataset.flags, button)));
   document.querySelectorAll("[data-start]").forEach(b=>b.addEventListener("click", ()=>startPart(b.dataset.start)));
@@ -2376,7 +2565,31 @@ function bindCards(){
     const input = $("sectionSearch");
     if(input) input.focus();
   }));
+  document.querySelectorAll("[data-topic-menu]").forEach(button => button.addEventListener("click", event => {
+    event.stopPropagation();
+    const menu = button.parentElement.querySelector(".hub-topic-menu");
+    if(!menu) return;
+    const open = menu.hidden;
+    document.querySelectorAll(".hub-topic-menu").forEach(m => { m.hidden = true; });
+    document.querySelectorAll("[data-topic-menu]").forEach(b => b.setAttribute("aria-expanded", "false"));
+    if(open){ menu.hidden = false; button.setAttribute("aria-expanded", "true"); }
+  }));
+  document.querySelectorAll(".hub-topic-menu button").forEach(button => button.addEventListener("click", () => {
+    const menu = button.closest(".hub-topic-menu");
+    if(menu) menu.hidden = true;
+    const toggle = menu ? menu.parentElement.querySelector("[data-topic-menu]") : null;
+    if(toggle) toggle.setAttribute("aria-expanded", "false");
+  }));
 }
+
+document.addEventListener("click", event => {
+  if(event.target.closest(".hub-topic-actions")) return;
+  document.querySelectorAll(".hub-topic-menu").forEach(menu => { menu.hidden = true; });
+  document.querySelectorAll("[data-topic-menu]").forEach(button => button.setAttribute("aria-expanded", "false"));
+});
+window.addEventListener("resize", () => {
+  if(!$("screen-hub").classList.contains("hidden")) markTruncatedTitles();
+});
 
 /* ================= mixed review ================= */
 const MIXED_KEY = "MixedReview";
@@ -4380,7 +4593,7 @@ document.addEventListener("keydown", event => {
   if(event.key === "Escape" && headerMenuOpen()) closeHeaderMenu(true);
 });
 $("btnBrandHome").addEventListener("click", () => { closeHeaderMenu(false); showCategories(); });
-function updateMastheadScroll(){ $("masthead").classList.toggle("scrolled", window.scrollY > 8); }
+function updateMastheadScroll(){ const on = window.scrollY > 8; const el = $("masthead"); if(el.classList.contains("scrolled") !== on) el.classList.toggle("scrolled", on); }
 window.addEventListener("scroll", updateMastheadScroll, { passive: true });
 updateMastheadScroll();
 
@@ -4724,6 +4937,7 @@ wireYearFilterEvents();
 /* ---- section finder ---- */
 let sectionQuery = "";
 let sectionFilter = "all";
+let hubSort = "active";
 function sectionPartState(p){
   const s = partStats(p.key);
   if(s.sess) return "paused";
@@ -4778,6 +4992,8 @@ function wireSectionFinder(){
   });
 }
 wireSectionFinder();
+const hubSortSelect = $("hubTopicSort");
+if(hubSortSelect) hubSortSelect.addEventListener("change", () => { hubSort = hubSortSelect.value; renderHub(); });
 
 function showCategories(){
   if(!$("screen-quiz").classList.contains("hidden") && part){
@@ -5286,7 +5502,9 @@ function refreshAnnotations(){
   }
 }
 function dismissHighlightPopup(){
-  $("highlightPopup").classList.add("hidden");
+  const popup = $("highlightPopup");
+  if(!highlightTarget && popup.classList.contains("hidden")) return;
+  popup.classList.add("hidden");
   highlightTarget = null;
 }
 function showHighlightPopup(root, field, from, to, rect){
