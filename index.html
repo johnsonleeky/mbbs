@@ -162,34 +162,42 @@ try{
   .pause-chip{display:inline-flex; align-items:center; gap:5px; background:var(--warn-soft); color:#b45309; font-size:11px; font-weight:700; padding:2px 9px; border-radius:999px;}
   .part-card.pc-runline{padding:18px; gap:0; border-radius:16px;}
   .pc-run-head{display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:9px; align-items:start; min-height:48px;}
-  .pc-run-num{padding:3px 8px; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-size:8.5px; font-weight:800; letter-spacing:.1em; line-height:1.55;}
+  .pc-run-num{padding:3px 8px; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-size:9.5px; font-weight:800; letter-spacing:.1em; line-height:1.55;}
   .pc-runline .pc-title{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.5em; font-size:15px; line-height:1.25; font-weight:800; color:var(--navy); letter-spacing:-.01em;}
-  .pc-run-count{font-size:9px; font-weight:700; color:var(--muted); white-space:nowrap; padding-top:2px;}
+  .pc-run-count{font-size:10px; font-weight:700; color:var(--muted); white-space:nowrap; padding-top:2px;}
   .pc-runline-row{display:flex; align-items:baseline; gap:7px; margin-top:16px; min-height:24px;}
   .pc-runline-row .grow{flex:1;}
   .pc-runfrac{display:inline-flex; align-items:baseline; gap:4px; white-space:nowrap;}
   .pc-runfrac b{font-size:16px; font-weight:800; line-height:1; color:var(--navy); font-variant-numeric:tabular-nums; letter-spacing:-.02em;}
   .pc-runfrac span{font-size:10px; color:var(--muted); font-weight:600;}
-  .pc-runfrac small{font-size:8px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);}
-  .pc-runfrac.empty{font-size:9px; font-weight:700; color:var(--muted);}
-  .pc-run-status{display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:999px; font-size:8.5px; font-weight:800; white-space:nowrap;}
+  .pc-runfrac small{font-size:9px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);}
+  .pc-runfrac.empty{font-size:10px; font-weight:700; color:var(--muted);}
+  .pc-run-status{display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:999px; font-size:9.5px; font-weight:800; white-space:nowrap;}
   .pc-run-status.active{background:var(--accent-soft); color:var(--accent);}
   .pc-run-status.paused{background:var(--warn-soft); color:#b45309;}
   .pc-run-status.new{background:#F7E4EC; color:var(--muted);}
   .pc-runline .pc-bar{height:5px; margin-top:9px;}
-  .pc-bestline{margin-top:7px; font-size:8.5px; font-weight:600; color:var(--muted);}
+  .pc-bestline{margin-top:7px; font-size:9.5px; font-weight:600; color:var(--muted);}
   .pc-bestline b{font-weight:800; color:var(--navy);}
   .pc-run-actions{display:flex; align-items:center; gap:6px; margin-top:auto; padding-top:13px; border-top:1px solid #F8E5EE;}
   .pc-run-actions .grow{flex:1;}
   .pc-run-icons{display:flex; align-items:center; gap:5px;}
-  .pc-run-start{display:inline-flex; align-items:center; justify-content:center; gap:5px; border:1px solid transparent; background:linear-gradient(135deg,var(--accent),#6F1F43); color:#fff; border-radius:8px; padding:8px 12px; font:inherit; font-size:10.5px; font-weight:800; line-height:1; cursor:pointer; box-shadow:0 9px 18px -15px rgba(177,45,99,.95); white-space:nowrap;}
+  .pc-run-start{display:inline-flex; align-items:center; justify-content:center; gap:5px; border:1px solid transparent; background:linear-gradient(135deg,var(--accent),#6F1F43); color:#fff; border-radius:8px; padding:8px 12px; font:inherit; font-size:11px; font-weight:800; line-height:1; cursor:pointer; box-shadow:0 9px 18px -15px rgba(177,45,99,.95); white-space:nowrap;}
   .pc-run-start:hover{filter:brightness(1.05);}
-  .pc-icon-btn{display:inline-flex; align-items:center; justify-content:center; gap:3px; border:1px solid var(--line); background:#fff; color:var(--muted); border-radius:8px; padding:7px; font:inherit; font-size:10px; font-weight:800; line-height:1; cursor:pointer; white-space:nowrap;}
+  .pc-icon-btn{display:inline-flex; align-items:center; justify-content:center; gap:3px; border:1px solid var(--line); background:#fff; color:var(--muted); border-radius:8px; padding:7px; font:inherit; font-size:10.5px; font-weight:800; line-height:1; cursor:pointer; white-space:nowrap;}
   .pc-icon-btn:hover{color:var(--accent); border-color:#F0BFD3; background:var(--accent-soft);}
   .pc-icon-btn:disabled{opacity:.38; cursor:default; background:#fff;}
   .pc-mini-ico{width:13px; height:13px; display:inline-block; flex:0 0 auto;}
   .pc-icon-btn .flag-icon{width:13px; height:13px;}
   .empty{color:var(--muted); font-size:14px; padding:10px 0;}
+.section-empty{grid-column:1/-1;display:flex;align-items:center;gap:13px;padding:16px 18px;border:1px dashed color-mix(in srgb,var(--accent) 24%,var(--line));border-radius:14px;background:rgba(255,255,255,.4)}
+.section-empty-mark{display:grid;place-items:center;flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:var(--accent-soft);color:var(--accent)}
+.section-empty-mark svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.section-empty-copy b{display:block;font-size:13px;font-weight:800;color:var(--navy);line-height:1.25}
+.section-empty-copy p{margin-top:3px;font-size:11.5px;line-height:1.4;color:var(--muted)}
+.section-empty .btn{margin-left:auto;flex:0 0 auto}
+html[data-theme] .section-empty{background:var(--card);border-color:var(--line)}
+@media(max-width:620px){.section-empty{align-items:flex-start;flex-wrap:wrap}.section-empty-copy{flex:1 1 180px}.section-empty .btn{margin-left:47px}}
   .danger-zone{margin-top:14px; padding-top:14px; border-top:1px dashed var(--line);}
 
   /* ---------- quiz ---------- */
@@ -1297,11 +1305,11 @@ html[data-theme] .year-filter-menu{background:var(--card); border-color:var(--li
 .section-search input::placeholder{color:var(--muted)}
 .section-search input:focus{outline:3px solid var(--accent-soft);border-color:var(--accent)}
 .section-filter-chips{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-.section-filter-chips button{appearance:none;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.4);padding:5px 9px;color:var(--muted);font:inherit;font-size:10px;font-weight:700;line-height:1.35;cursor:pointer;white-space:nowrap}
-.section-filter-chips button span{font-variant-numeric:tabular-nums;color:var(--navy);font-weight:800;font-size:9px}
+.section-filter-chips button{appearance:none;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.4);padding:5px 9px;color:var(--muted);font:inherit;font-size:10.5px;font-weight:700;line-height:1.35;cursor:pointer;white-space:nowrap}
+.section-filter-chips button span{font-variant-numeric:tabular-nums;color:var(--navy);font-weight:800;font-size:10px}
 .section-filter-chips button:hover{border-color:var(--accent);color:var(--accent)}
 .section-filter-chips button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
-.section-filter-chips button[aria-pressed="true"] span{color:inherit;opacity:.78}
+.section-filter-chips button[aria-pressed="true"] span{color:inherit;opacity:1}
 .section-filter-chips button:focus-visible{outline:3px solid var(--accent-soft);outline-offset:2px}
 html[data-theme] .section-finder{background:var(--glass-sheen)}
 html[data-theme] .section-search input,html[data-theme] .section-filter-chips button{background:var(--card);color:var(--muted);border-color:var(--line)}
@@ -1313,7 +1321,7 @@ html[data-theme] .section-filter-chips button[aria-pressed="true"]{background:va
 }
 @media(max-width:560px){
   .section-finder{padding:9px 10px;border-radius:11px}
-  .section-filter-chips button{font-size:9.5px;padding:5px 8px}
+  .section-filter-chips button{font-size:10px;padding:5px 8px}
 }
 
 /* ---------- question map ---------- */
@@ -1383,37 +1391,38 @@ html[data-theme] .question-map-panel{background:var(--card);border-color:var(--l
   backdrop-filter:blur(12px) saturate(150%);-webkit-backdrop-filter:blur(12px) saturate(150%);
 }
 .hub-ledger-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;position:relative;z-index:1}
-.hub-ledger-eyebrow{display:block;color:var(--muted);font-size:9.5px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;line-height:1.2}
+.hub-ledger-eyebrow{display:block;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;line-height:1.2}
 .hub-ledger-head h2{margin:4px 0 0;color:var(--navy);font-size:15px;font-weight:800;letter-spacing:-.015em;line-height:1.2}
 .hub-type-wrap{display:flex;flex-direction:row;align-items:center;gap:8px;flex:0 0 auto}
-.hub-type-label{font-size:8.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);line-height:1}
+.hub-type-label{font-size:9.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);line-height:1}
 .hub-type-tabs{display:inline-flex;align-items:stretch;gap:3px;padding:4px;border:1px solid color-mix(in srgb,var(--accent) 18%,transparent);border-radius:999px;background:rgba(255,255,255,.7);box-shadow:inset 0 1px 2px rgba(70,20,42,.04),0 7px 18px -18px rgba(70,20,42,.55)}
-.hub-type-tab{appearance:none;border:0;background:transparent;border-radius:999px;display:inline-flex;align-items:center;gap:7px;padding:7px 10px;color:var(--muted);font:inherit;font-size:10px;font-weight:800;line-height:1.1;cursor:pointer;white-space:nowrap;transition:background .14s,color .14s,box-shadow .14s}
-.hub-type-tab span{border-radius:999px;background:rgba(70,20,42,.055);padding:2px 5px;color:var(--muted);font-size:8.5px;font-weight:800;line-height:1;letter-spacing:0;font-variant-numeric:tabular-nums}
+.hub-type-tab{appearance:none;border:0;background:transparent;border-radius:999px;display:inline-flex;align-items:center;gap:7px;padding:7px 10px;color:var(--muted);font:inherit;font-size:10.5px;font-weight:800;line-height:1.1;cursor:pointer;white-space:nowrap;transition:background .14s,color .14s,box-shadow .14s}
+.hub-type-tab span{border-radius:999px;background:rgba(70,20,42,.055);padding:2px 5px;color:var(--muted);font-size:9.5px;font-weight:800;line-height:1;letter-spacing:0;font-variant-numeric:tabular-nums}
 .hub-type-tab:hover{background:var(--accent-soft);color:var(--accent)}
 .hub-type-tab[aria-selected="true"]{background:var(--accent);color:var(--theme-btn-ink,#fff);box-shadow:0 6px 14px -10px var(--accent)}
-.hub-type-tab[aria-selected="true"] span{background:rgba(255,255,255,.18);color:inherit}
+.hub-type-tab[aria-selected="true"] span{background:transparent;color:inherit}
 .hub-type-tab:focus-visible{outline:3px solid var(--accent-soft);outline-offset:2px}
 .hub-ledger-body{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;margin-top:18px;position:relative;z-index:1}
 .hub-ledger-lead{min-width:0}
 .hub-ledger-number{display:flex;align-items:baseline;gap:11px;min-width:0}
 .hub-ledger-number b{font-size:46px;line-height:.84;font-weight:800;color:var(--accent);letter-spacing:-.065em;font-variant-numeric:tabular-nums}
-.hub-ledger-number>span{color:var(--muted);font-size:10.5px;line-height:1.4}
-.hub-ledger-sections{display:flex;align-items:baseline;gap:5px;margin-top:8px;color:var(--muted);font-size:9.5px}
+.hub-ledger-number>span{color:var(--muted);font-size:11px;line-height:1.4}
+.hub-ledger-sections{display:flex;align-items:baseline;gap:5px;margin-top:8px;color:var(--muted);font-size:10px}
 .hub-ledger-sections b{color:var(--navy);font-size:12px;font-weight:800;font-variant-numeric:tabular-nums}
 .hub-ledger-records{display:grid;grid-template-columns:repeat(4,minmax(86px,1fr));gap:0;flex:1;max-width:600px;padding-bottom:2px}
 .hub-ledger-record{padding:0 18px;border-left:1px solid color-mix(in srgb,var(--line) 84%,var(--accent))}
 .hub-ledger-record:first-child{padding-left:0;border-left:0}
 .hub-ledger-record b{display:block;color:var(--navy);font-size:20px;font-weight:800;line-height:1;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
-.hub-ledger-record span{display:block;margin-top:5px;color:var(--muted);font-size:9px;line-height:1.3}
+.hub-ledger-record span{display:block;margin-top:5px;color:var(--muted);font-size:10px;line-height:1.3}
 .hub-ledger-record.best b{color:var(--good)}
+#statBest.is-empty{color:var(--muted);font-weight:700;font-size:18px}
 .hub-ledger-record.paused b{color:var(--warn)}
 .hub-section-finder{margin:14px 0 0;padding:12px 0 0;border:0;border-top:1px solid color-mix(in srgb,var(--line) 84%,var(--accent));border-radius:0;background:transparent}
 .hub-section-finder .section-search input{border-color:color-mix(in srgb,var(--line) 82%,var(--accent));background:rgba(255,255,255,.68)}
 .hub-section-finder .section-filter-chips button{border-color:color-mix(in srgb,var(--line) 88%,var(--accent));background:rgba(255,255,255,.5)}
 .hub-section-finder .section-filter-chips button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--theme-btn-ink,#fff)}
 .hub-section-finder .section-filter-chips button[aria-pressed="true"] span{color:inherit}
-.hub-ledger-clear{appearance:none;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:7px;background:rgba(255,255,255,.54);padding:5px 8px;color:var(--muted);font:inherit;font-size:9px;font-weight:800;cursor:pointer;transition:border-color .14s,color .14s,background .14s;order:3;margin-left:auto;flex:0 0 auto}
+.hub-ledger-clear{appearance:none;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:7px;background:rgba(255,255,255,.54);padding:5px 8px;color:var(--muted);font:inherit;font-size:10px;font-weight:800;cursor:pointer;transition:border-color .14s,color .14s,background .14s;order:3;margin-left:auto;flex:0 0 auto}
 .hub-ledger-clear svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .hub-ledger-clear:hover,.hub-ledger-clear:focus-visible{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 36%,var(--line));background:color-mix(in srgb,var(--bad) 5%,var(--card));outline:none}
 html[data-theme] .hub-ledger{background:radial-gradient(78% 170% at 0% 0%,color-mix(in srgb,var(--accent) 13%,transparent),transparent 64%),var(--glass-sheen);border-color:var(--glass-brd)}
@@ -1424,6 +1433,7 @@ html[data-theme] .hub-section-finder .section-filter-chips button[aria-pressed="
 html[data-theme] .hub-section-finder .section-filter-chips button[aria-pressed="true"] span{color:inherit}
 html[data-theme] .hub-type-tabs{background:var(--card);border-color:var(--line)}
 html[data-theme] .hub-type-tab span{background:color-mix(in srgb,var(--ink) 8%,transparent)}
+html[data-theme] .hub-type-tab[aria-selected="true"] span{background:transparent;color:inherit}
 html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--line)}
 @media(max-width:850px){
   .hub-ledger-body{align-items:flex-start;flex-direction:column;gap:24px}
@@ -1499,7 +1509,7 @@ html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--lin
   </div>
 </div>
 
-<div class="wrap">
+<main class="wrap">
   <div id="storageNotice" role="alert" class="banner bad hidden">Browser storage is unavailable or full. Progress may not be saved. Download session logs to keep a copy.</div>
 
   <!-- ============ HUB ============ -->
@@ -1524,7 +1534,7 @@ html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--lin
       <div class="hub-ledger-body">
         <div class="hub-ledger-lead">
           <div class="hub-ledger-number"><b id="statCount">0</b><span id="statCountWord">questions</span></div>
-          <div class="hub-ledger-sections"><b id="statParts">0</b> <span id="statPartsWord">sections</span></div>
+          <div class="hub-ledger-sections"><b id="statParts">0</b> <span id="statPartsWord">topics</span></div>
         </div>
         <div class="hub-ledger-records">
           <div class="hub-ledger-record"><b id="statAttempts">0</b><span>Attempts recorded</span></div>
@@ -1536,15 +1546,15 @@ html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--lin
       <div class="section-finder hub-section-finder" id="sectionFinder">
         <label class="section-search" for="sectionSearch">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.2"/><path d="m16 16 4.2 4.2"/></svg>
-          <input id="sectionSearch" type="search" placeholder="Find a section" autocomplete="off" aria-label="Find a section">
+          <input id="sectionSearch" type="search" placeholder="Find a topic" autocomplete="off" aria-label="Find a topic">
         </label>
-        <div class="section-filter-chips" id="sectionFilterChips" role="group" aria-label="Filter sections">
+        <div class="section-filter-chips" id="sectionFilterChips" role="group" aria-label="Filter topics">
           <button type="button" data-section-filter="all" aria-pressed="true">All <span id="sectionCountAll">0</span></button>
           <button type="button" data-section-filter="new" aria-pressed="false">Not started <span id="sectionCountNew">0</span></button>
           <button type="button" data-section-filter="active" aria-pressed="false">In progress <span id="sectionCountActive">0</span></button>
           <button type="button" data-section-filter="paused" aria-pressed="false">Paused <span id="sectionCountPaused">0</span></button>
         </div>
-        <button class="hub-ledger-clear" id="btnClearHist" type="button" aria-label="Clear this specialty's history and revision sets">
+        <button class="hub-ledger-clear" id="btnClearHist" type="button" aria-label="Clear history for this specialty's recorded attempts and revision sets">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg>
           Clear history
         </button>
@@ -1823,7 +1833,7 @@ html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--lin
     </div>
   </section>
 
-</div>
+</main>
 
 <div class="modal-back hidden" id="incompleteModal" role="dialog" aria-modal="true" aria-labelledby="incompleteTitle" aria-describedby="incompleteText">
   <div class="modal">
@@ -1861,7 +1871,7 @@ html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--lin
     </div>
     <div class="guide-body">
       <h4>Getting around</h4>
-      <p>Use the menu for <b>About</b>, <b>User Guide</b>, <b>Select Theme</b> and <b>Lock Quiz</b>. On the Specialties home, choose a specialty card or <b>Review</b>. Use <b>Save &amp; Quit</b> to pause a run; <b>Resume last run</b> reopens the newest paused run. On a specialty page, use <b>Find a section</b> and the status chips to narrow a long section list.</p>
+      <p>Use the menu for <b>About</b>, <b>User Guide</b>, <b>Select Theme</b> and <b>Lock Quiz</b>. On the Specialties home, choose a specialty card or <b>Review</b>. Use <b>Save &amp; Quit</b> to pause a run; <b>Resume last run</b> reopens the newest paused run. On a specialty page, use <b>Find a topic</b> and the status chips to narrow a long topic list.</p>
 
       <h4>Year filter</h4>
       <p>Each specialty card has a <b>Filter</b> menu. Tick exam years to leave them out of that specialty's questions: 2026 down to 2020, or <b>Older</b> for 2019 and earlier. The choice applies only to that specialty and is remembered in this browser. Mixed review respects each specialty's filter; <b>Review by year</b> keeps its own year picker.</p>
@@ -1878,7 +1888,7 @@ html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--lin
       <h4>Review</h4>
       <p><b>Review by shuffle</b> draws unseen questions first, then repeats when necessary. Choose the specialty, question type and run length. Wrong answers join the revision set of the specialty they came from.</p>
       <p><b>Review by flagged</b> collects every flagged question from the specialty you choose. Reviewing a flagged question does not remove its flag; flags stay until you unflag them.</p>
-      <p><b>Review by year</b> builds a full paper for the selected exam year and specialty. Answers stay hidden until you submit; mock scores are kept separately from section best scores.</p>
+      <p><b>Review by year</b> builds a full paper for the selected exam year and specialty. Answers stay hidden until you submit; mock scores are kept separately from topic best scores.</p>
 
       <h4>Session logs</h4>
       <p>Completed sessions keep a per-question log with your answer, the correct answer and the topic. Copy or download the log if you want a permanent record.</p>
@@ -2261,7 +2271,7 @@ function renderHub(){
     .reduce((sum,p) => sum + filteredQuestionsForPart(p).length, 0);
   $("hubAreaName").textContent = activeArea ? activeArea.name : "All specialties";
   $("statParts").textContent = visibleParts.length.toLocaleString();
-  $("statPartsWord").textContent = visibleParts.length === 1 ? "section" : "sections";
+  $("statPartsWord").textContent = visibleParts.length === 1 ? "topic" : "topics";
   $("statCount").textContent = hubCount.toLocaleString();
   $("statCountWord").textContent = tabKind === "written" ? "cases" : "questions";
   $("tabChoiceCount").textContent = countForKind("choice").toLocaleString();
@@ -2280,6 +2290,7 @@ function renderHub(){
   $("statRevSet").textContent = revSet.toLocaleString();
   $("statPaused").textContent = paused.toLocaleString();
   $("statBest").textContent = bests.length ? Math.max(...bests) + "%" : "—";
+  $("statBest").classList.toggle("is-empty", !bests.length);
 
   const sectionStates = new Map(visibleParts.map(p => [p.key, sectionPartState(p)]));
   const shownParts = visibleParts.filter(p => sectionMatches(p, sectionStates.get(p.key)));
@@ -2289,13 +2300,19 @@ function renderHub(){
   $("areaBlocks").innerHTML = (activeArea ? [activeArea] : AREAS).map(area => {
     const allInTab = area.parts.filter(p => p.kind === tabKind);
     const areaParts = allInTab.filter(p => shownKeys.has(p.key));
-    const emptyMessage = allInTab.length
-      ? "No sections match your search or filter."
-      : "No " + (tabKind === "written" ? "SAQ" : "MCQ / EMQ") + " questions are available for this specialty.";
+    const filtersOn = !!sectionQuery.trim() || sectionFilter !== "all";
+    const emptyHtml = `<div class="section-empty">
+      <span class="section-empty-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.2"/><path d="m16 16 4.2 4.2"/></svg></span>
+      <div class="section-empty-copy">
+        <b>${allInTab.length ? "No topics match" : "Nothing available"}</b>
+        <p>${allInTab.length ? "Try a different search or clear the active filter." : "No " + (tabKind === "written" ? "SAQ" : "MCQ / EMQ") + " questions are available for this specialty."}</p>
+      </div>
+      ${allInTab.length && filtersOn ? '<button class="btn ghost small" type="button" data-clear-section-filters>Clear search and filters</button>' : ""}
+    </div>`;
     return `
     <div class="area-block">
-      <div class="area-name">${bloomSvg(13)}${esc(area.name)}</div>
-      <div class="part-grid">${areaParts.map(partCard).join("") || '<p class="empty">' + emptyMessage + '</p>'}</div>
+      <div class="area-name">${bloomSvg(13)}${esc(activeArea ? "Topics" : area.name)}</div>
+      <div class="part-grid">${areaParts.map(partCard).join("") || emptyHtml}</div>
     </div>`;
   }).join("");
   bindCards();
@@ -2353,6 +2370,12 @@ function bindCards(){
     if(qids.length) startReviewFrom(b.dataset.review, qids, "review");
   }));
   document.querySelectorAll("[data-logs]").forEach(b=>b.addEventListener("click", ()=>openLogs(b.dataset.logs)));
+  document.querySelectorAll("[data-clear-section-filters]").forEach(button => button.addEventListener("click", () => {
+    resetSectionFinder();
+    renderHub();
+    const input = $("sectionSearch");
+    if(input) input.focus();
+  }));
 }
 
 /* ================= mixed review ================= */
@@ -3263,7 +3286,7 @@ function clearMockHistory(){
   const recs = loadRecords(MOCK_KEY);
   if(!recs.length) return;
   const paused = loadSession(MOCK_KEY) ? " Your paused mock is not affected." : "";
-  if(!confirm("Delete all " + recs.length + " submitted mock exam" + (recs.length === 1 ? "" : "s") + " and " + (recs.length === 1 ? "its" : "their") + " logs?\n\nThis cannot be undone. Mock records do not change section revision sets." + paused)) return;
+  if(!confirm("Delete all " + recs.length + " submitted mock exam" + (recs.length === 1 ? "" : "s") + " and " + (recs.length === 1 ? "its" : "their") + " logs?\n\nThis cannot be undone. Mock records do not change topic revision sets." + paused)) return;
   saveRecords(MOCK_KEY, []);
   renderMock();
 }
@@ -4032,10 +4055,10 @@ function showResults(correct, total, pct, wrong, remaining){
   $("ringFg").style.strokeDasharray = circ;
   requestAnimationFrame(()=>{ $("ringFg").style.strokeDashoffset = circ*(1-pct/100); });
   $("ringFg").setAttribute("stroke", pct>=80 ? "var(--good)" : pct>=50 ? "var(--warn)" : "var(--bad)");
-  const v = pct>=85 ? ["Excellent — you are well prepared for this section.","Keep this up — a quick refresh of the weaker topics below will make it bulletproof."]
+  const v = pct>=85 ? ["Excellent — you are well prepared for this topic.","Keep this up — a quick refresh of the weaker topics below will make it bulletproof."]
           : pct>=70 ? ["Good — solid grasp of the essentials.","A few gaps remain; work through the revision suggestions below."]
           : pct>=50 ? ["Fair — the core ideas are there, but there are real gaps.","Focus on the topics flagged below — they are where marks are lost."]
-          : ["This section needs significant review.","Go through the explanations again (they are shown with each question) and target the weakest topics below."];
+          : ["This topic needs significant review.","Go through the explanations again (they are shown with each question) and target the weakest topics below."];
   const writtenCount = queue.filter(i => QS()[i].written).length;
   $("verdict").textContent = isMock
     ? (total
@@ -4086,7 +4109,7 @@ function showResults(correct, total, pct, wrong, remaining){
   $("btnRestart").innerHTML = isMock ? "↻ &nbsp;Restart mock exam" : "↻ &nbsp;Restart (this part)";
   $("btnViewLogs").innerHTML = isMock ? "📋 &nbsp;Mock history" : "📋 &nbsp;Session log &amp; history";
   $("savedNote").textContent = isMock
-    ? "✓ Mock exam recorded. Mistakes stay in mock history and are not added to section revision sets."
+    ? "✓ Mock exam recorded. Mistakes stay in mock history and are not added to topic revision sets."
     : "✓ This attempt has been recorded. Wrong questions are saved to this part's revision set.";
 
   // Session logs are built only when the reader asks for them. A full mock
@@ -4157,7 +4180,7 @@ function showReviewSummary(correct, total, pct, remaining){
     $("revSumTitle").textContent = "Mock exam review complete";
     $("revSumText").innerHTML = `You scored <b>${correct}/${total} (${total ? pct + "%" : "N/A"})</b> on the ${total} scorable question${total===1?"":"s"} reviewed. ` +
       (uncheckedQids().length ? `${uncheckedQids().length} question(s) were not checked; scorable unanswered questions count as incorrect. ` : "") +
-      `This review does not change section revision sets or the submitted mock record.`;
+      `This review does not change topic revision sets or the submitted mock record.`;
     return;
   }
   $("revSumTitle").textContent = `Incorrect-set review complete — ${part.title}`;
@@ -4241,7 +4264,7 @@ function deleteAttempt(index){
   if(!recs[index]){ renderLogsScreen(); return; }
   const r = recs[index];
   const what = part.mock ? "mock exam" : part.mixed ? "mixed run" : "attempt";
-  if(!confirm("Delete the " + what + " recorded on " + fmtDate(r.d) + " (" + scoreLabel(r) + ") and its session log?\n\nThis cannot be undone." + (part.mock ? " Section revision sets are not affected." : " Any question that no other recorded attempt got wrong is removed from the revision set too."))) return;
+  if(!confirm("Delete the " + what + " recorded on " + fmtDate(r.d) + " (" + scoreLabel(r) + ") and its session log?\n\nThis cannot be undone." + (part.mock ? " Topic revision sets are not affected." : " Any question that no other recorded attempt got wrong is removed from the revision set too."))) return;
   const removed = recs.splice(index, 1);
   saveRecords(part.key, recs);
   if(part.mixed) pruneMixedRevisionSets(removed); else if(!part.mock) pruneRevisionSet(part.key, removed);
@@ -4253,7 +4276,7 @@ function deleteAllAttempts(){
   if(!recs.length) return;
   const paused = loadSession(part.key) ? " Your paused run is not affected." : "";
   if(!confirm(part.mock
-    ? "Delete all " + recs.length + " submitted mock exam" + (recs.length === 1 ? "" : "s") + " and " + (recs.length === 1 ? "its" : "their") + " logs?\n\nThis cannot be undone. Section revision sets are not affected." + paused
+    ? "Delete all " + recs.length + " submitted mock exam" + (recs.length === 1 ? "" : "s") + " and " + (recs.length === 1 ? "its" : "their") + " logs?\n\nThis cannot be undone. Topic revision sets are not affected." + paused
     : part.mixed
       ? "Delete all " + recs.length + " recorded mixed run" + (recs.length === 1 ? "" : "s") + " and " + (recs.length === 1 ? "its" : "their") + " session logs?\n\nThis cannot be undone. Questions that no other recorded attempt got wrong are removed from the revision sets of the specialties they came from." + paused
       : "Delete all " + recs.length + " recorded attempt" + (recs.length === 1 ? "" : "s") + " and " + (recs.length === 1 ? "its" : "their") + " session logs for \"" + part.title + "\"?\n\nThis cannot be undone. This also empties the revision set for this part." + paused)) return;
@@ -4771,7 +4794,7 @@ function showCategories(){
     const paused = area.parts.filter(p => loadSession(p.key)).length;
     const available = filteredQuestionsForArea(area);
     const active = yearFilterSet(area.key).size > 0;
-    const sectionWord = area.parts.length === 1 ? "section" : "sections";
+    const topicWord = area.parts.length === 1 ? "topic" : "topics";
     const attemptWord = attempts === 1 ? "attempt" : "attempts";
     const title = area.key === "Orthopaedics" ? "Orthopedics &amp;<br>Traumatology" : esc(area.name);
     const titleClass = area.key === "Orthopaedics" ? " two-line" : area.key === "FamilyMedicine" ? " one-line" : "";
@@ -4780,7 +4803,7 @@ function showCategories(){
         ${cardArt(area)}
         <span class="category-title${titleClass}">${title}</span>
         <span class="category-stats-line" data-card-counts="${esc(area.key)}">${cardCountHtml(area, available)}</span>
-        <span class="category-stats-line"><b>${area.parts.length}</b> ${sectionWord}<span class="category-dot">·</span><b>${attempts}</b> ${attemptWord}${paused ? `<span class="category-dot">·</span><span class="category-paused"><b>${paused}</b> paused</span>` : ""}</span>
+        <span class="category-stats-line"><b>${area.parts.length}</b> ${topicWord}<span class="category-dot">·</span><b>${attempts}</b> ${attemptWord}${paused ? `<span class="category-dot">·</span><span class="category-paused"><b>${paused}</b> paused</span>` : ""}</span>
         <span class="category-filter-line${active ? " on" : ""}" data-card-filter="${esc(area.key)}">${yearFilterSummary(area.key)}</span>
         <span class="category-hairline" aria-hidden="true"></span>
         <span class="category-enter">Enter specialty →</span>
