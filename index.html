@@ -1514,9 +1514,6 @@ html[data-theme] .hub-c .hub-ledger-clear{background:transparent;border:0}
 .hub-c .hub-topic-row:hover{background:color-mix(in srgb,var(--accent-soft) 58%,transparent)}
 .hub-c .hub-topic-num{display:inline-grid;place-items:center;width:26px;height:22px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:8.5px;font-weight:800;letter-spacing:.06em;font-variant-numeric:tabular-nums}
 .hub-c .hub-topic-main{min-width:0}
-.hub-c .hub-topic-main.is-truncated{position:relative;cursor:help}
-.hub-c .hub-topic-main.is-truncated:hover::after,.hub-c .hub-topic-main.is-truncated:focus-visible::after{content:attr(data-full-title);position:absolute;left:0;top:calc(100% + 6px);z-index:12;width:max-content;max-width:300px;padding:7px 9px;border-radius:7px;background:var(--navy);color:var(--card);font-size:10px;font-weight:600;line-height:1.35;box-shadow:0 10px 22px -14px rgba(0,0,0,.55);white-space:normal;pointer-events:none}
-.hub-c .hub-topic-main.is-truncated:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
 .hub-c .hub-topic-main b{display:block;font-size:12.5px;line-height:1.25;font-weight:800;color:var(--navy);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hub-c .hub-topic-main span{display:block;margin-top:2px;font-size:9px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hub-c .hub-topic-count{font-size:9px;color:var(--muted);white-space:nowrap}
@@ -2485,17 +2482,6 @@ function renderHub(){
     </div>`;
   }).join("");
   bindCards();
-  markTruncatedTitles();
-}
-function markTruncatedTitles(){
-  document.querySelectorAll(".hub-topic-main b").forEach(b => {
-    const main = b.closest(".hub-topic-main");
-    if(!main) return;
-    const truncated = b.scrollWidth > b.clientWidth + 1;
-    main.classList.toggle("is-truncated", truncated);
-    if(truncated){ main.dataset.fullTitle = b.textContent; main.tabIndex = 0; }
-    else { delete main.dataset.fullTitle; main.removeAttribute("tabindex"); }
-  });
 }
 function partCard(p){
   const s = partStats(p.key);
@@ -2566,7 +2552,7 @@ function partRow(p){
   const numLabel = /^\d$/.test(rawNum) ? "0" + rawNum : rawNum;
   return `<div class="hub-topic-row" data-status="${runStatusCls}">
       <span class="hub-topic-num">${esc(numLabel)}</span>
-      <div class="hub-topic-main"><b>${esc(p.title)}</b><span>${statusText}</span></div>
+      <div class="hub-topic-main"><b title="${esc(p.title)}">${esc(p.title)}</b><span>${statusText}</span></div>
       <span class="hub-topic-count">${countLabel} ${p.kind === "written" ? "cases" : "questions"}</span>
       <div class="hub-topic-progress">${runTotal ? `<span class="bar"><i style="width:${runPct}%"></i></span><span class="pct">${runPct}%</span>` : '<span class="bar empty"></span><span class="pct">—</span>'}</div>
       <span class="hub-topic-best${s.best === null ? " muted" : ""}">${best}</span>
@@ -2616,9 +2602,6 @@ document.addEventListener("click", event => {
   if(event.target.closest(".hub-topic-actions")) return;
   document.querySelectorAll(".hub-topic-menu").forEach(menu => { menu.hidden = true; });
   document.querySelectorAll("[data-topic-menu]").forEach(button => button.setAttribute("aria-expanded", "false"));
-});
-window.addEventListener("resize", () => {
-  if(!$("screen-hub").classList.contains("hidden")) markTruncatedTitles();
 });
 
 /* ================= mixed review ================= */
