@@ -547,6 +547,12 @@ html[data-theme] .section-empty{background:var(--card);border-color:var(--line)}
 .flag-current{background:var(--accent-soft);}
 .flag-panel button:focus-visible{outline:3px solid var(--accent);}
 .saved-highlight{background:#ffe58a; color:inherit; border-radius:2px; cursor:pointer;}
+html[data-theme="cosmic"] .saved-highlight{
+  background:rgba(201,178,124,.28);
+  background:color-mix(in srgb,var(--theme-gold) 28%,transparent);
+  color:var(--ink);
+  box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--theme-gold) 62%,transparent);
+}
 .highlight-popup{position:fixed; z-index:80; display:flex; gap:6px; flex-wrap:wrap; max-width:calc(100vw - 16px); padding:8px; background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow);}
 .highlight-popup .btn{font-size:12px; padding:7px 10px;}
 #annotationStatus{font-size:12px; color:var(--muted); margin:8px 0;}
