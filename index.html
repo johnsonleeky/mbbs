@@ -268,7 +268,9 @@ html[data-theme] .section-empty{background:var(--card);border-color:var(--line)}
     .figure-lightbox-close{top:10px; right:10px;}
   }
   .quiz-actions{margin-top:18px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;}
-  .kbd-hint{font-size:12px; color:var(--muted); margin-top:10px;}
+  .kbd-hint{font-size:10px; color:var(--muted); margin-top:10px; line-height:1.8; opacity:.86;}
+  .kbd-hint kbd{display:inline-grid; place-items:center; min-width:16px; height:16px; padding:0 4px; margin:0 1px; border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; background:transparent; color:var(--muted); font-family:inherit; font-size:8.5px; font-weight:700; line-height:1; vertical-align:middle;}
+  .kbd-hint .kbd-sep{color:var(--muted); opacity:.55; margin:0 3px;}
 
   /* ---------- results ---------- */
   #screen-result > .card:nth-child(n+3){content-visibility:auto; contain-intrinsic-size:420px;}
@@ -2070,7 +2072,7 @@ html[data-theme="teal"] #hubResume .hub-resume-text{--hub-base:var(--theme-menu-
 
   <!-- ============ QUIZ ============ -->
   <section id="screen-quiz" class="card hidden">
-    <div class="back-bar"><button class="btn ghost small" id="btnHubFromQuiz">← &nbsp;All parts</button><span class="muted" id="quizPartName"></span></div>
+    <div class="back-bar"><button class="btn ghost small" id="btnHubFromQuiz">← &nbsp;All topics</button><span class="muted" id="quizPartName"></span></div>
     <div class="quiz-toolbar">
       <div class="quiz-toolbar-main">
         <span class="qnum" id="qNum" tabindex="-1"></span>
@@ -2119,7 +2121,7 @@ html[data-theme="teal"] #hubResume .hub-resume-text{--hub-base:var(--theme-menu-
     <div class="quiz-actions">
       <div class="quiz-nav-actions">
         <button class="btn ghost small" id="btnBack" type="button">← Back</button>
-        <button class="btn ghost small" id="btnSkip" type="button">Skip →</button>
+        <button class="btn ghost small" id="btnSkip" type="button">Next →</button>
       </div>
       <button class="dock-flag" id="btnDockFlag" type="button" aria-pressed="false" aria-label="Flag question" title="Flag question">
         <svg class="flag-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2h2v2h12l-3 5 3 5H7v8H5V2zm2 4v6h8.5l-1.8-3 1.8-3H7z"/></svg>
@@ -2136,7 +2138,7 @@ html[data-theme="teal"] #hubResume .hub-resume-text{--hub-base:var(--theme-menu-
   <!-- ============ RESULT ============ -->
   <section id="screen-result" class="hidden">
     <div class="card">
-      <div class="back-bar"><button class="btn ghost small" id="btnHubFromRes">← &nbsp;All parts</button><span class="muted" id="resPartName"></span></div>
+      <div class="back-bar"><button class="btn ghost small" id="btnHubFromRes">← &nbsp;All topics</button><span class="muted" id="resPartName"></span></div>
       <div class="result-head">
         <div class="ring">
           <svg width="130" height="130" viewBox="0 0 130 130">
@@ -2193,7 +2195,7 @@ html[data-theme="teal"] #hubResume .hub-resume-text{--hub-base:var(--theme-menu-
   <!-- ============ LOGS / HISTORY ============ -->
   <section id="screen-logs" class="hidden">
     <div class="card">
-      <div class="back-bar"><button class="btn ghost small" id="btnHubFromLogs">← &nbsp;All parts</button><span class="muted" id="logsPartName"></span></div>
+      <div class="back-bar"><button class="btn ghost small" id="btnHubFromLogs">← &nbsp;All topics</button><span class="muted" id="logsPartName"></span></div>
       <h2>Attempt history &amp; session logs <span class="sub">— click a session to view / copy its full log</span></h2>
       <div id="logsList"><div class="empty">No finished sessions yet for this part.</div></div>
       <div class="btn-row" id="logsDeleteRow" style="margin-top:14px;"></div>
@@ -4202,7 +4204,7 @@ function updateNavigation(){
   $("jumpInput").setAttribute("aria-label", `Jump to question, from 1 to ${queue.length}`);
   $("jumpError").textContent = "";
   $("btnSkip").classList.toggle("hidden", mock || !!checked[QS()[queue[idx]].n]);
-  if(!mock) $("btnSkip").textContent = idx === queue.length - 1 ? "Skip & finish…" : "Skip →";
+  if(!mock) $("btnSkip").textContent = idx === queue.length - 1 ? "Next & finish…" : "Next →";
   const dockProgress = $("dockProgress");
   if(dockProgress) dockProgress.textContent = `${idx + 1} / ${queue.length}`;
 }
@@ -4245,19 +4247,19 @@ function renderQ(){
     $("btnSkip").classList.add("hidden");
     $("btnFinishRun").textContent = "Submit mock exam";
     $("writtenInfo").textContent = "Write your response. Answers are revealed after you submit the mock exam.";
-    $("kbdHint").textContent = q.written
-      ? "Keyboard: write your response · Space for next question"
+    $("kbdHint").innerHTML = q.written
+      ? `Press <kbd>Space</kbd> for next question`
       : q.opts.length > 5
-        ? `Keyboard: letters A–${lastLetter} to choose · Space for next question`
-        : `Keyboard: press 1–${q.opts.length} (or A–${lastLetter}) to choose · Space for next question`;
+        ? `Press <kbd>A</kbd>–<kbd>${lastLetter}</kbd> to choose <span class="kbd-sep">·</span> <kbd>Space</kbd> for next question`
+        : `Press <kbd>1</kbd>–<kbd>${q.opts.length}</kbd> (or <kbd>A</kbd>–<kbd>${lastLetter}</kbd>) to choose <span class="kbd-sep">·</span> <kbd>Space</kbd> for next question`;
   }else{
     $("btnSubmit").classList.remove("hidden");
     $("btnNext").classList.add("hidden");
     $("btnFinishRun").textContent = "Finish run";
     $("writtenInfo").textContent = "Write or think through your response, reveal the answer, then mark your own understanding.";
-    $("kbdHint").textContent = q.opts.length > 5
-      ? `Keyboard: letters A–${lastLetter} to choose · Space to check / next`
-      : `Keyboard: press 1–${q.opts.length} (or A–${lastLetter}) to choose · Space to check / next`;
+    $("kbdHint").innerHTML = q.opts.length > 5
+      ? `Press <kbd>A</kbd>–<kbd>${lastLetter}</kbd> to choose <span class="kbd-sep">·</span> <kbd>Space</kbd> to check / next`
+      : `Press <kbd>1</kbd>–<kbd>${q.opts.length}</kbd> (or <kbd>A</kbd>–<kbd>${lastLetter}</kbd>) to choose <span class="kbd-sep">·</span> <kbd>Space</kbd> to check / next`;
     if(checked[q.n]){
       renderCheckedFeedback(q);
     }else if(q.written && revealed[q.n]){
@@ -4584,7 +4586,7 @@ function finishMock(force=false){
 function showResults(correct, total, pct, wrong, remaining){
   hideAll();
   const isMock = !!part.mock;
-  $("btnHubFromRes").innerHTML = isMock ? "← &nbsp;Review by year" : part.flagged ? "← &nbsp;Review by flagged" : part.mixed ? "← &nbsp;Review by shuffle" : "← &nbsp;All parts";
+  $("btnHubFromRes").innerHTML = isMock ? "← &nbsp;Review by year" : part.flagged ? "← &nbsp;Review by flagged" : part.mixed ? "← &nbsp;Review by shuffle" : "← &nbsp;All topics";
   $("screen-result").classList.remove("hidden");
   setFullTitleText($("resPartName"), part.title);
   $("scorePct").textContent = total ? pct + "%" : "N/A";
@@ -4713,7 +4715,7 @@ function toggleResultLog(){
 function showReviewSummary(correct, total, pct, remaining){
   hideAll();
   $("screen-review-summary").classList.remove("hidden");
-  $("btnHubFromRev").innerHTML = part.mockReview ? "← &nbsp;Review by year" : part.flagged ? "← &nbsp;Review by flagged" : part.mixed ? "← &nbsp;Review by shuffle" : "← &nbsp;All parts";
+  $("btnHubFromRev").innerHTML = part.mockReview ? "← &nbsp;Review by year" : part.flagged ? "← &nbsp;Review by flagged" : part.mixed ? "← &nbsp;Review by shuffle" : "← &nbsp;All topics";
   if(part.mockReview){
     setFullTitleText($("revSumTitle"), "Mock exam review complete");
     $("revSumText").innerHTML = `You scored <b>${correct}/${total} (${total ? pct + "%" : "N/A"})</b> on the ${total} scorable question${total===1?"":"s"} reviewed. ` +
@@ -4746,7 +4748,7 @@ function openLogs(key){
   specialtyTabs[activeArea.key] = part.kind;
   hideAll();
   $("screen-logs").classList.remove("hidden");
-  $("btnHubFromLogs").innerHTML = part.mock ? "← &nbsp;Review by year" : part.mixed ? "← &nbsp;Review by shuffle" : "← &nbsp;All parts";
+  $("btnHubFromLogs").innerHTML = part.mock ? "← &nbsp;Review by year" : part.mixed ? "← &nbsp;Review by shuffle" : "← &nbsp;All topics";
   setFullTitleText($("logsPartName"), part.mock ? "Mock exam history" : part.title);
   renderLogsScreen();
 }
