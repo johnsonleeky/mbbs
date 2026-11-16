@@ -626,6 +626,10 @@ header.top{
 .category-stats-line{display:block; margin-top:12px; font-size:10.5px; font-weight:600; color:var(--muted); line-height:1.65;}
 .category-stats-line + .category-stats-line{margin-top:2px;}
 .category-stats-line b{font-size:13px; font-weight:800; color:var(--navy); font-variant-numeric:tabular-nums; letter-spacing:-.01em; margin-right:3px;}
+.category-stats-line .card-type{font-weight:700;}
+.category-stats-line .card-type.mcq{color:var(--accent-2);}
+.category-stats-line .card-type.saq{color:var(--theme-gold,#A57B32);}
+.category-stats-line .card-type b{color:var(--navy);}
 .category-stats-line .category-paused,
 .category-stats-line .category-paused b{color:var(--warn);}
 .category-dot{color:#D9B7C6; margin:0 2px;}
@@ -1625,20 +1629,19 @@ html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--lin
 .hub-c .hub-type-tabs{width:100%}
 .hub-c .hub-type-tab{flex:1;justify-content:center;padding:6px 7px}
 .hub-c .hub-ledger-body{display:block;margin-top:19px}
-.hub-year-filter-wrap{margin-top:14px;position:relative;z-index:1}
-.hub-year-filter{border:1px solid var(--line);border-radius:11px;background:var(--card);overflow:hidden}
-.hub-year-filter summary{display:flex;align-items:center;gap:9px;padding:9px 10px;list-style:none;cursor:pointer;user-select:none}
+.hub-year-filter-wrap{position:relative;z-index:12;margin-right:auto}
+.hub-year-filter{position:relative}
+.hub-year-filter summary{display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border:1px solid color-mix(in srgb,var(--accent) 32%,var(--line));border-radius:8px;background:var(--card);color:var(--accent);font-size:9.5px;font-weight:800;cursor:pointer;white-space:nowrap;list-style:none;line-height:1.1;user-select:none}
 .hub-year-filter summary::-webkit-details-marker{display:none}
-.hub-year-icon{width:28px;height:28px;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:0 0 auto}
-.hub-year-icon svg{width:15px;height:15px}
-.hub-year-summary{display:flex;flex-direction:column;min-width:0;flex:1;gap:1px}
-.hub-year-summary b{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--navy);line-height:1.2}
-.hub-year-summary small{font-size:9.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
-.hub-year-chevron{font-size:10px;color:var(--muted);transition:transform .14s ease}
+.hub-year-filter summary svg{width:12px;height:12px;flex:0 0 auto}
+.hub-year-filter summary:hover,.hub-year-filter[open] summary,.hub-year-filter.has-selection summary{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.hub-year-count{min-width:14px;height:14px;padding:0 4px;border-radius:999px;background:var(--accent);color:var(--theme-btn-ink,#fff);font-size:8px;line-height:14px;text-align:center;font-weight:800}
+.hub-year-chevron{font-size:9px;color:currentColor;margin-left:1px;transition:transform .14s ease}
 .hub-year-filter[open] .hub-year-chevron{transform:rotate(180deg)}
-.hub-year-filter[open] summary{border-bottom:1px solid var(--line)}
-.hub-year-filter.has-selection .hub-year-summary small{color:var(--accent);font-weight:700}
-.hub-year-body{padding:9px 10px 10px}
+.hub-year-pop{position:absolute;bottom:calc(100% + 8px);left:0;z-index:40;width:252px;padding:9px;border:1px solid var(--line);border-radius:12px;background:var(--card);box-shadow:0 22px 44px -24px rgba(0,0,0,.4)}
+.hub-year-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:1px 2px 7px}
+.hub-year-head b{font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.hub-year-head span{font-size:8px;color:var(--muted)}
 .hub-year-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
 .hub-year-option{display:flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:7px;padding:6px;font-size:9.5px;font-weight:700;color:var(--ink);cursor:pointer;min-width:0}
 .hub-year-option input{accent-color:var(--accent);width:12px;height:12px;margin:0;flex:0 0 auto}
@@ -1649,6 +1652,7 @@ html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--lin
 .hub-year-actions{display:flex;align-items:center;gap:8px;padding-top:8px;margin-top:8px;border-top:1px solid var(--line)}
 .hub-year-actions button{appearance:none;border:0;background:none;font:inherit;font-size:9px;font-weight:800;cursor:pointer;padding:2px 0;color:var(--muted)}
 .hub-year-actions [data-hub-year-done]{color:var(--accent);margin-left:auto}
+@media(max-width:620px){.hub-year-pop{width:min(252px,calc(100vw - 40px));}}
 .hub-c .hub-ledger-number b{font-size:34px;line-height:.88}
 .hub-c .hub-ledger-number>span{font-size:10px}
 .hub-c .hub-ledger-sections{margin-top:6px;font-size:9px}
@@ -1715,7 +1719,7 @@ html[data-theme] .hub-c .hub-ledger-clear{background:transparent;border:0}
 .hub-c .hub-topic-menu button:hover{background:var(--accent-soft);color:var(--accent)}
 .hub-c .hub-topic-menu button:disabled{opacity:.4;cursor:default}
 .hub-c .hub-topic-menu button span{color:var(--navy);font-size:9px;font-weight:800}
-.hub-c .hub-rail-footer{display:flex;justify-content:flex-end;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.hub-c .hub-rail-footer{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
 .hub-c .hub-clear-danger{appearance:none;display:inline-flex;align-items:center;gap:5px;border:1px solid #B91C1C;border-radius:8px;background:#FEF2F2;padding:7px 10px;color:#B91C1C;font:inherit;font-size:9.5px;font-weight:800;line-height:1.1;cursor:pointer;white-space:nowrap;transition:background .14s,border-color .14s}
 .hub-c .hub-clear-danger svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .hub-c .hub-clear-danger:hover,.hub-c .hub-clear-danger:focus-visible{background:#FEE2E2;border-color:#B91C1C;outline:none}
@@ -1903,7 +1907,6 @@ html[data-theme="teal"] #hubResume .hub-resume-text{--hub-base:var(--theme-menu-
           <div class="hub-ledger-record paused"><b id="statPaused">0</b><span>Paused sessions</span></div>
         </div>
       </div>
-      <div id="hubYearFilterControl" class="hub-year-filter-wrap"></div>
       <div class="section-finder hub-section-finder" id="sectionFinder">
         <label class="section-search" for="sectionSearch">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.2"/><path d="m16 16 4.2 4.2"/></svg>
@@ -1917,6 +1920,7 @@ html[data-theme="teal"] #hubResume .hub-resume-text{--hub-base:var(--theme-menu-
         </div>
       </div>
       <div class="hub-rail-footer">
+        <div id="hubYearFilterControl" class="hub-year-filter-wrap"></div>
         <button class="hub-clear-danger" id="btnClearHist" type="button" aria-label="Clear history for this specialty's recorded attempts and revision sets" title="Delete this specialty's recorded attempts, session logs and revision sets">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg>
           Clear history
@@ -5905,12 +5909,14 @@ function hubYearFilterHtml(area){
   const rows = YEAR_FILTER_YEARS.map(y => row(y, y, counts[y])).join("") + row("older", "Older", counts.older);
   const n = set.size;
   return `<details class="hub-year-filter${n ? " has-selection" : ""}" data-year-filter="${esc(area.key)}">
-    <summary aria-label="Filter exam years for ${esc(area.name)}">
-      <span class="hub-year-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg></span>
-      <span class="hub-year-summary"><b>Exam years</b><small>${yearFilterSummary(area.key)}</small></span>
+    <summary aria-label="Filter exam years for ${esc(area.name)}" title="${esc(yearFilterSummary(area.key))}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+      <span>Filter years</span>
+      ${n ? `<b class="hub-year-count">${n}</b>` : ""}
       <span class="hub-year-chevron" aria-hidden="true">⌄</span>
     </summary>
-    <div class="hub-year-body">
+    <div class="hub-year-pop">
+      <div class="hub-year-head"><b>Exclude exam years</b><span>multi-select</span></div>
       <div class="hub-year-grid">${rows}</div>
       <div class="hub-year-actions"><button type="button" data-hub-year-clear>Clear</button><button type="button" data-hub-year-done>Done</button></div>
     </div>
@@ -5919,7 +5925,7 @@ function hubYearFilterHtml(area){
 function cardCountHtml(area, questions){
   const written = questions.filter(q => q.written).length;
   const mcq = questions.length - written;
-  return `<b>${mcq.toLocaleString()}</b> MCQ / EMQ${written ? `<span class="category-dot">·</span><b>${written.toLocaleString()}</b> SAQ` : ""}`;
+  return `<span class="card-type mcq"><b>${mcq.toLocaleString()}</b> MCQ / EMQ</span>${written ? `<span class="category-dot">·</span><span class="card-type saq"><b>${written.toLocaleString()}</b> SAQ</span>` : ""}`;
 }
 function updateCardFilterUI(areaKey){
   const area = AREAS.find(a => a.key === areaKey);
@@ -6015,6 +6021,14 @@ function wireHubYearFilter(){
     }
     const done = event.target.closest("[data-hub-year-done]");
     if(done) done.closest("details.hub-year-filter").open = false;
+  });
+  document.addEventListener("click", event => {
+    if(event.target.closest("#hubYearFilterControl")) return;
+    host.querySelectorAll("details.hub-year-filter[open]").forEach(details => { details.open = false; });
+  });
+  document.addEventListener("keydown", event => {
+    if(event.key !== "Escape") return;
+    host.querySelectorAll("details.hub-year-filter[open]").forEach(details => { details.open = false; });
   });
 }
 wireHubYearFilter();
