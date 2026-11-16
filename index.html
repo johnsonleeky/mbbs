@@ -437,9 +437,20 @@ html[data-theme] .section-empty{background:var(--card);border-color:var(--line)}
   .search-empty b{display:block; font-size:14px; color:var(--ink); margin-bottom:4px;}
   .search-empty p{font-size:12.5px; line-height:1.5; max-width:320px; margin:0 auto 13px;}
   .search-foot{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:9px 16px; border-top:1px solid var(--line); background:var(--card); font-size:11px; color:var(--muted); flex:0 0 auto;}
-  .search-hotkey{display:flex; align-items:center; gap:4px; white-space:nowrap; font-size:10.5px; color:var(--muted);}
-  .search-hotkey kbd{font-size:9.5px; font-weight:800; color:var(--muted); background:#F1F5ED; border:1px solid var(--line); border-radius:5px; padding:2px 5px;}
-  .search-hotkey span{margin-left:3px;}
+  .search-hotkey{
+    display:inline-flex; align-items:center; gap:7px; padding:3px 8px 3px 3px;
+    border:1px solid color-mix(in srgb,var(--accent) 20%,var(--line)); border-radius:999px;
+    background:color-mix(in srgb,var(--accent-soft) 58%,var(--card));
+    color:var(--muted); font-size:10.5px; line-height:1; white-space:nowrap;
+  }
+  .search-keys{display:inline-flex; align-items:center; gap:3px;}
+  .search-hotkey kbd{
+    display:grid; place-items:center; min-width:18px; height:18px; padding:0 4px;
+    border:1px solid color-mix(in srgb,var(--accent) 72%,#000); border-bottom-width:2px;
+    border-radius:5px; background:var(--accent); color:var(--theme-btn-ink,#fff);
+    font-size:9.5px; font-weight:800; line-height:1;
+  }
+  .search-hotkey-label{font-weight:700; letter-spacing:.01em;}
   @media (max-width:680px){.search-hotkey{display:none;}}
   .hub-topic-row.search-hit{background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent);}
   @media (max-width:680px){
@@ -5676,7 +5687,7 @@ $("searchFilters").addEventListener("click", event => {
 const searchHotkeyHint = $("searchHotkeyHint");
 if(searchHotkeyHint){
   const mac = /Mac|iPhone|iPad|iPod/.test(navigator.platform || "");
-  searchHotkeyHint.innerHTML = (mac ? "<kbd>⌘</kbd><kbd>K</kbd>" : "<kbd>Ctrl</kbd><kbd>K</kbd>") + "<span>Search anywhere</span>";
+  searchHotkeyHint.innerHTML = `<span class="search-keys">${mac ? "<kbd>⌘</kbd><kbd>K</kbd>" : "<kbd>Ctrl</kbd><kbd>K</kbd>"}</span><span class="search-hotkey-label">Search anywhere</span>`;
 }
 document.addEventListener("keydown", event => {
   if((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k"){
