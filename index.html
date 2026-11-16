@@ -436,7 +436,11 @@ html[data-theme] .section-empty{background:var(--card);border-color:var(--line)}
   .search-empty{padding:44px 20px; text-align:center; color:var(--muted);}
   .search-empty b{display:block; font-size:14px; color:var(--ink); margin-bottom:4px;}
   .search-empty p{font-size:12.5px; line-height:1.5; max-width:320px; margin:0 auto 13px;}
-  .search-foot{display:flex; align-items:center; padding:9px 16px; border-top:1px solid var(--line); background:var(--card); font-size:11px; color:var(--muted); flex:0 0 auto;}
+  .search-foot{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:9px 16px; border-top:1px solid var(--line); background:var(--card); font-size:11px; color:var(--muted); flex:0 0 auto;}
+  .search-hotkey{display:flex; align-items:center; gap:4px; white-space:nowrap; font-size:10.5px; color:var(--muted);}
+  .search-hotkey kbd{font-size:9.5px; font-weight:800; color:var(--muted); background:#F1F5ED; border:1px solid var(--line); border-radius:5px; padding:2px 5px;}
+  .search-hotkey span{margin-left:3px;}
+  @media (max-width:680px){.search-hotkey{display:none;}}
   .hub-topic-row.search-hit{background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent);}
   @media (max-width:680px){
     .search-backdrop{padding:8px; align-items:stretch;}
@@ -630,7 +634,7 @@ header.top{
 .category-review-line{font-size:12.5px; font-weight:600; color:var(--muted); line-height:1.55;}
 .category-review-line b{font-weight:800; color:var(--navy);}
 .category-review-line + .category-review-line{margin-top:4px;}
-.category-enter{white-space:nowrap; padding-top:20px;}
+.category-enter{white-space:nowrap; padding-top:20px; align-self:flex-end;}
 @media (max-width:1100px){
   .halo-row{grid-template-columns:repeat(3,minmax(0,1fr));}
   .category-stats-line{font-size:11px;}
@@ -1399,23 +1403,23 @@ html[data-theme] .quiz-menu-item.danger:hover,html[data-theme] .quiz-menu-item.d
   overflow:hidden; contain:layout paint;
 }
 .category-card-main:focus-visible{outline:3px solid var(--accent); outline-offset:-3px;}
-.category-card.has-year-filter .category-title{padding-right:64px;}
 .category-filter-line{display:block; margin-top:10px; font-size:10.5px; line-height:1.45; color:var(--muted); min-height:15px; max-width:100%;}
 .category-filter-line.on{color:var(--accent); font-weight:700;}
-.year-filter{position:absolute; top:12px; right:12px; z-index:8;}
+.year-filter{position:absolute; left:20px; bottom:18px; z-index:8;}
 .year-filter summary{
-  list-style:none; appearance:none; cursor:pointer; display:inline-flex; align-items:center; gap:4px;
-  padding:4px 7px; border-radius:999px; border:1px solid var(--line);
-  background:rgba(255,255,255,.82); color:var(--muted);
-  font:inherit; font-size:9px; font-weight:800; letter-spacing:.04em; user-select:none;
+  list-style:none; appearance:none; cursor:pointer; display:inline-flex; align-items:center; gap:5px;
+  padding:0; border:0; border-radius:4px; background:transparent; color:var(--muted);
+  font:inherit; font-size:11.5px; font-weight:800; letter-spacing:0; user-select:none;
 }
+.year-filter summary svg{width:14px; height:14px; flex:0 0 auto;}
+.year-filter summary:hover{color:var(--accent);}
 .year-filter summary::-webkit-details-marker{display:none;}
 .year-filter summary::after{content:"⌄"; font-size:9px; line-height:1; color:var(--muted);}
-.year-filter[open] summary,.year-filter.has-selection summary{background:var(--accent-soft); border-color:var(--accent); color:var(--accent);}
-.year-filter summary:focus-visible{outline:3px solid var(--accent-soft); outline-offset:2px;}
+.year-filter[open] summary,.year-filter.has-selection summary{background:transparent; border-color:transparent; color:var(--accent);}
+.year-filter summary:focus-visible{outline:2px solid var(--accent-soft); outline-offset:4px; border-radius:4px;}
 .year-filter-badge{display:none; min-width:14px; height:14px; padding:0 4px; border-radius:999px; background:var(--accent); color:#fff; font-size:8px; line-height:14px; text-align:center;}
 .year-filter.has-selection .year-filter-badge{display:inline-block;}
-.year-filter-menu{position:absolute; top:calc(100% + 7px); right:0; z-index:40; width:232px; padding:9px; border:1px solid var(--line); border-radius:14px; background:var(--card); box-shadow:0 22px 44px -24px rgba(0,0,0,.38);}
+.year-filter-menu{position:absolute; top:auto; bottom:calc(100% + 8px); left:0; right:auto; z-index:40; width:232px; padding:9px; border:1px solid var(--line); border-radius:14px; background:var(--card); box-shadow:0 22px 44px -24px rgba(0,0,0,.38);}
 .year-filter-head{display:flex; justify-content:space-between; align-items:center; gap:8px; padding:1px 3px 7px;}
 .year-filter-head b{font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);}
 .year-filter-head span{font-size:8px; color:var(--muted);}
@@ -1435,8 +1439,8 @@ html[data-theme] .quiz-menu-item.danger:hover,html[data-theme] .quiz-menu-item.d
 .year-filter-actions [data-year-clear]{color:var(--muted);}
 .year-filter-actions [data-year-done]{color:var(--accent); margin-left:auto;}
 .category-card.filter-open{z-index:30;}
-html[data-theme] .year-filter summary{background:var(--card); border-color:var(--line); color:var(--muted);}
-html[data-theme] .year-filter[open] summary,html[data-theme] .year-filter.has-selection summary{background:var(--accent-soft); border-color:var(--accent); color:var(--accent);}
+html[data-theme] .year-filter summary{background:transparent; border-color:transparent; color:var(--muted);}
+html[data-theme] .year-filter[open] summary,html[data-theme] .year-filter.has-selection summary{background:transparent; border-color:transparent; color:var(--accent);}
 html[data-theme] .year-filter-menu{background:var(--card); border-color:var(--line);}
 @media (max-width:620px){
   .year-filter-menu{width:min(232px,calc(100vw - 52px));}
@@ -1621,6 +1625,30 @@ html[data-theme] .hub-ledger-clear{background:var(--card);border-color:var(--lin
 .hub-c .hub-type-tabs{width:100%}
 .hub-c .hub-type-tab{flex:1;justify-content:center;padding:6px 7px}
 .hub-c .hub-ledger-body{display:block;margin-top:19px}
+.hub-year-filter-wrap{margin-top:14px;position:relative;z-index:1}
+.hub-year-filter{border:1px solid var(--line);border-radius:11px;background:var(--card);overflow:hidden}
+.hub-year-filter summary{display:flex;align-items:center;gap:9px;padding:9px 10px;list-style:none;cursor:pointer;user-select:none}
+.hub-year-filter summary::-webkit-details-marker{display:none}
+.hub-year-icon{width:28px;height:28px;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:0 0 auto}
+.hub-year-icon svg{width:15px;height:15px}
+.hub-year-summary{display:flex;flex-direction:column;min-width:0;flex:1;gap:1px}
+.hub-year-summary b{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--navy);line-height:1.2}
+.hub-year-summary small{font-size:9.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.hub-year-chevron{font-size:10px;color:var(--muted);transition:transform .14s ease}
+.hub-year-filter[open] .hub-year-chevron{transform:rotate(180deg)}
+.hub-year-filter[open] summary{border-bottom:1px solid var(--line)}
+.hub-year-filter.has-selection .hub-year-summary small{color:var(--accent);font-weight:700}
+.hub-year-body{padding:9px 10px 10px}
+.hub-year-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+.hub-year-option{display:flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:7px;padding:6px;font-size:9.5px;font-weight:700;color:var(--ink);cursor:pointer;min-width:0}
+.hub-year-option input{accent-color:var(--accent);width:12px;height:12px;margin:0;flex:0 0 auto}
+.hub-year-option span{white-space:nowrap}
+.hub-year-option em{margin-left:auto;font-style:normal;font-size:8.5px;color:var(--muted);font-weight:600}
+.hub-year-option:has(input:checked){background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 24%,var(--line));color:var(--accent)}
+.hub-year-option.empty{opacity:.4;cursor:default}
+.hub-year-actions{display:flex;align-items:center;gap:8px;padding-top:8px;margin-top:8px;border-top:1px solid var(--line)}
+.hub-year-actions button{appearance:none;border:0;background:none;font:inherit;font-size:9px;font-weight:800;cursor:pointer;padding:2px 0;color:var(--muted)}
+.hub-year-actions [data-hub-year-done]{color:var(--accent);margin-left:auto}
 .hub-c .hub-ledger-number b{font-size:34px;line-height:.88}
 .hub-c .hub-ledger-number>span{font-size:10px}
 .hub-c .hub-ledger-sections{margin-top:6px;font-size:9px}
@@ -1875,6 +1903,7 @@ html[data-theme="teal"] #hubResume .hub-resume-text{--hub-base:var(--theme-menu-
           <div class="hub-ledger-record paused"><b id="statPaused">0</b><span>Paused sessions</span></div>
         </div>
       </div>
+      <div id="hubYearFilterControl" class="hub-year-filter-wrap"></div>
       <div class="section-finder hub-section-finder" id="sectionFinder">
         <label class="section-search" for="sectionSearch">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.2"/><path d="m16 16 4.2 4.2"/></svg>
@@ -1905,7 +1934,6 @@ html[data-theme="teal"] #hubResume .hub-resume-text{--hub-base:var(--theme-menu-
           </select>
         </label>
       </div>
-      <p class="hub-year-filter hidden" id="hubYearFilter"></p>
       <div class="hub-topic-head" aria-hidden="true"><span>Topic</span><span>Questions</span><span>Progress</span><span>Best</span><span></span></div>
       <div id="areaBlocks" role="tabpanel" aria-labelledby="tabChoice" tabindex="0"></div>
     </section>
@@ -2269,7 +2297,7 @@ html[data-theme="teal"] #hubResume .hub-resume-text{--hub-base:var(--theme-menu-
       <div class="search-results" id="searchResults" role="region" aria-label="Search results"></div>
       <aside class="search-detail" id="searchDetail" aria-live="polite"></aside>
     </div>
-    <div class="search-foot"><span id="searchFootLeft">7,126 questions · 192 topics</span></div>
+    <div class="search-foot"><span id="searchFootLeft">7,126 questions · 192 topics</span><span class="search-hotkey" id="searchHotkeyHint"></span></div>
   </div>
 </div>
 
@@ -2682,14 +2710,6 @@ function renderHub(){
   $("statCountWord").textContent = tabKind === "written" ? "cases" : "questions";
   $("tabChoiceCount").textContent = countForKind("choice").toLocaleString();
   $("tabWrittenCount").textContent = countForKind("written").toLocaleString();
-  const yearNote = $("hubYearFilter");
-  if(yearNote){
-    const activeYears = activeArea ? yearFilterSet(activeArea.key) : new Set();
-    yearNote.classList.toggle("hidden", !activeYears.size);
-    yearNote.innerHTML = activeYears.size
-      ? `Year filter: <b>${yearFilterSummary(activeArea.key)}</b>. Change it from the Specialties home.`
-      : "";
-  }
   let attempts = 0, revSet = 0, paused = 0; const bests = [];
   visibleParts.forEach(p => { const s = partStats(p.key); attempts += s.recs.length; revSet += s.rev; if(s.sess) paused++; if(s.best !== null) bests.push(s.best); });
   $("statAttempts").textContent = attempts.toLocaleString();
@@ -2697,6 +2717,8 @@ function renderHub(){
   $("statPaused").textContent = paused.toLocaleString();
   $("statBest").textContent = bests.length ? Math.max(...bests) + "%" : "—";
   $("statBest").classList.toggle("is-empty", !bests.length);
+  const filterHost = $("hubYearFilterControl");
+  if(filterHost) filterHost.innerHTML = activeArea ? hubYearFilterHtml(activeArea) : "";
 
   const sectionStates = new Map(visibleParts.map(p => [p.key, sectionPartState(p)]));
   const shownParts = visibleParts.filter(p => sectionMatches(p, sectionStates.get(p.key)));
@@ -3419,7 +3441,6 @@ function renderMixed(){
   }
 }
 function mixedCardHtml(){
-  const active = AREAS.some(a => yearFilterSet(a.key).size > 0);
   return `<div class="category-card review-card" data-card-area="${MIXED_KEY}" style="--tone:${SPEC_TONE[MIXED_KEY]}">
       <button class="category-card-main" data-category="${MIXED_KEY}" type="button">
         ${cardArt(MIXED_AREA)}
@@ -3427,7 +3448,6 @@ function mixedCardHtml(){
         <span class="category-stats-line category-review-line">Questions by <b>shuffle</b></span>
         <span class="category-stats-line category-review-line">Questions by <b>flagged</b></span>
         <span class="category-stats-line category-review-line">Questions by <b>year</b></span>
-        <span class="category-filter-line${active ? " on" : ""}" data-review-filter>${allActiveYearFilterSummary()}</span>
         <span class="category-hairline" aria-hidden="true"></span>
         <span class="category-enter">Enter review →</span>
       </button>
@@ -4243,6 +4263,26 @@ function select(letter){
   $("qOpts").querySelectorAll(".opt").forEach(b => b.classList.toggle("selected", b.dataset.l === letter));
   $("btnSubmit").disabled = false;
   if(mode === "mock" && part && part.mock) updateNavigation();
+}
+
+function moveChoice(direction){
+  if(runFinished) return false;
+  const q = QS()[queue[idx]];
+  if(!q || checked[q.n] || q.written) return false;
+  const options = q.opts.filter(option => !isUnavailableChoice(q, option));
+  if(!options.length) return false;
+  const current = options.findIndex(option => option.l === answers[q.n]);
+  const next = current < 0
+    ? (direction > 0 ? 0 : options.length - 1)
+    : (current + direction + options.length) % options.length;
+  const letter = options[next].l;
+  select(letter);
+  const button = $("qOpts").querySelector(`.opt[data-l="${letter}"]`);
+  if(button){
+    button.focus({preventScroll:true});
+    button.scrollIntoView({block:"nearest"});
+  }
+  return true;
 }
 
 function renderCheckedFeedback(q){
@@ -5561,9 +5601,19 @@ function setSearchFilter(filter){
 }
 
 function openSearch(){
-  if(!unlocked || searchOpen || $("screen-categories").classList.contains("hidden")) return;
+  if(!unlocked || searchOpen) return;
+  const fallback = !$("screen-quiz").classList.contains("hidden") ? $("qNum")
+    : (!$("screen-categories").classList.contains("hidden") ? $("btnSearch") : $("btnCategories"));
+  closeHeaderMenu(false);
+  closeQuizMore(false);
+  closeScratchpad(false);
+  closeFlags(false);
+  closeQuestionMap(false);
+  if(!$("aboutModal").classList.contains("hidden")) closeAbout();
+  if(!$("guideModal").classList.contains("hidden")) closeGuide();
+  if(!$("themesModal").classList.contains("hidden")) closeThemes();
   searchOpen = true;
-  searchReturnFocus = $("btnSearch");
+  searchReturnFocus = fallback;
   searchQuery = "";
   searchFilter = "all";
   searchSelected = 0;
@@ -5619,6 +5669,42 @@ $("searchFilters").addEventListener("click", event => {
   renderSearch();
   $("searchInput").focus();
 });
+const searchHotkeyHint = $("searchHotkeyHint");
+if(searchHotkeyHint){
+  const mac = /Mac|iPhone|iPad|iPod/.test(navigator.platform || "");
+  searchHotkeyHint.innerHTML = (mac ? "<kbd>⌘</kbd><kbd>K</kbd>" : "<kbd>Ctrl</kbd><kbd>K</kbd>") + "<span>Search anywhere</span>";
+}
+document.addEventListener("keydown", event => {
+  if((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k"){
+    if(!unlocked || event.repeat) return;
+    event.preventDefault();
+    if(searchOpen) closeSearch(); else openSearch();
+    return;
+  }
+  if(!searchOpen) return;
+  if(event.key === "ArrowDown" || event.key === "ArrowUp"){
+    if(!searchFlat.length) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const direction = event.key === "ArrowDown" ? 1 : -1;
+    searchSelected = (searchSelected + direction + searchFlat.length) % searchFlat.length;
+    searchDetailActive = true;
+    updateSearchSelection();
+    const button = $("searchResults").querySelector(`.search-result[data-index="${searchSelected}"]`);
+    if(button) button.scrollIntoView({block:"nearest"});
+    return;
+  }
+  if(event.key === "Enter"){
+    const target = event.target;
+    if(target === $("searchInput") || target.closest(".search-result")){
+      if(searchCurrent){
+        event.preventDefault();
+        event.stopPropagation();
+        openSearchItem(searchCurrent);
+      }
+    }
+  }
+});
 document.addEventListener("keydown", event => {
   if(event.key === "Escape" && searchOpen) closeSearch();
 });
@@ -5653,6 +5739,7 @@ document.addEventListener("keydown", event => {
 });
 
 document.addEventListener("keydown", e=>{
+  if(searchOpen) return;
   if(e.target.closest("#scratchpadPanel")) return;
   if(!$("headerMenu").classList.contains("hidden")) return;
   if(!unlocked || e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
@@ -5664,6 +5751,12 @@ document.addEventListener("keydown", e=>{
     const q = QS()[queue[idx]];
     const notAnswered = q && !checked[q.n];
     if(q && notAnswered){
+      if(e.key === "ArrowDown" || e.key === "ArrowUp"){
+        if(moveChoice(e.key === "ArrowDown" ? 1 : -1)){
+          e.preventDefault();
+          return;
+        }
+      }
       // 1–5 → A–E, but ONLY for plain MCQs (5 options or fewer). EMQ questions (6+ shared
       // options) are letter-only so a stray number can't pick the wrong option.
       if(/^[1-5]$/.test(e.key) && q.opts.length <= 5){
@@ -5801,22 +5894,25 @@ function allActiveYearFilterSummary(){
   const active = AREAS.filter(a => yearFilterSet(a.key).size);
   return active.length ? `${active.length} specialty year filter${active.length === 1 ? "" : "s"} active` : "All specialty years included";
 }
-function yearFilterHtml(area){
+function hubYearFilterHtml(area){
   const set = yearFilterSet(area.key);
   const counts = yearCountsForArea(area);
   const row = (token, label, count) => `
-    <label class="year-filter-option${count ? "" : " empty"}">
+    <label class="hub-year-option${count ? "" : " empty"}">
       <input type="checkbox" data-filter-year="${token}" ${set.has(token) ? "checked" : ""} ${count ? "" : "disabled"}>
-      <span>${label}</span><em>${count} question${count === 1 ? "" : "s"}</em>
+      <span>${label}</span><em>${count}</em>
     </label>`;
-  const rows = YEAR_FILTER_YEARS.map(y => row(y, y, counts[y])).join("") + row("older", "Older <small>≤2019</small>", counts.older);
+  const rows = YEAR_FILTER_YEARS.map(y => row(y, y, counts[y])).join("") + row("older", "Older", counts.older);
   const n = set.size;
-  return `<details class="year-filter${n ? " has-selection" : ""}" data-year-filter="${esc(area.key)}">
-    <summary aria-label="Filter exam years for ${esc(area.name)}"><span>Filter</span><b class="year-filter-badge">${n || ""}</b></summary>
-    <div class="year-filter-menu">
-      <div class="year-filter-head"><b>Exclude exam years</b><span>multi-select</span></div>
-      <div class="year-filter-list">${rows}</div>
-      <div class="year-filter-actions"><button type="button" data-year-clear>Clear</button><button type="button" data-year-done>Done</button></div>
+  return `<details class="hub-year-filter${n ? " has-selection" : ""}" data-year-filter="${esc(area.key)}">
+    <summary aria-label="Filter exam years for ${esc(area.name)}">
+      <span class="hub-year-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg></span>
+      <span class="hub-year-summary"><b>Exam years</b><small>${yearFilterSummary(area.key)}</small></span>
+      <span class="hub-year-chevron" aria-hidden="true">⌄</span>
+    </summary>
+    <div class="hub-year-body">
+      <div class="hub-year-grid">${rows}</div>
+      <div class="hub-year-actions"><button type="button" data-hub-year-clear>Clear</button><button type="button" data-hub-year-done>Done</button></div>
     </div>
   </details>`;
 }
@@ -5833,24 +5929,13 @@ function updateCardFilterUI(areaKey){
     const questions = filteredQuestionsForArea(area);
     const counts = card.querySelector("[data-card-counts]");
     if(counts) counts.innerHTML = cardCountHtml(area, questions);
-    const line = card.querySelector("[data-card-filter]");
-    if(line){
-      const active = yearFilterSet(areaKey).size > 0;
-      line.textContent = yearFilterSummary(areaKey);
-      line.classList.toggle("on", active);
-    }
     const details = card.querySelector("details.year-filter");
     if(details){
       const n = yearFilterSet(areaKey).size;
       details.classList.toggle("has-selection", n > 0);
-      const badge = details.querySelector(".year-filter-badge");
-      if(badge) badge.textContent = n || "";
+      const label = details.querySelector(".year-filter-label");
+      if(label) label.textContent = n ? `Years: ${n} excluded` : "Years: All";
     }
-  }
-  const reviewLine = document.querySelector("[data-review-filter]");
-  if(reviewLine){
-    reviewLine.textContent = allActiveYearFilterSummary();
-    reviewLine.classList.toggle("on", AREAS.some(a => yearFilterSet(a.key).size));
   }
 }
 function wireYearFilterEvents(){
@@ -5897,6 +5982,42 @@ function wireYearFilterEvents(){
   });
 }
 wireYearFilterEvents();
+
+function wireHubYearFilter(){
+  const host = $("hubYearFilterControl");
+  if(!host || host.dataset.wired) return;
+  host.dataset.wired = "1";
+  host.addEventListener("change", event => {
+    const input = event.target.closest("input[data-filter-year]");
+    if(!input) return;
+    const details = input.closest("details.hub-year-filter");
+    if(!details) return;
+    const areaKey = details.dataset.yearFilter;
+    const token = input.dataset.filterYear === "older" ? "older" : Number(input.dataset.filterYear);
+    const set = yearFilterSet(areaKey);
+    if(input.checked) set.add(token); else set.delete(token);
+    setYearFilterTokens(areaKey, set);
+    const wasOpen = details.open;
+    renderHub();
+    const next = document.querySelector("#hubYearFilterControl details.hub-year-filter");
+    if(next && wasOpen) next.open = true;
+  });
+  host.addEventListener("click", event => {
+    const clear = event.target.closest("[data-hub-year-clear]");
+    if(clear){
+      const details = clear.closest("details.hub-year-filter");
+      const areaKey = details.dataset.yearFilter;
+      setYearFilterTokens(areaKey, new Set());
+      renderHub();
+      const next = document.querySelector("#hubYearFilterControl details.hub-year-filter");
+      if(next) next.open = true;
+      return;
+    }
+    const done = event.target.closest("[data-hub-year-done]");
+    if(done) done.closest("details.hub-year-filter").open = false;
+  });
+}
+wireHubYearFilter();
 
 /* ---- section finder ---- */
 let sectionQuery = "";
@@ -5970,28 +6091,20 @@ function showCategories(){
   $("btnCategories").classList.add("hidden");
   $("btnBrandHome").title = "Specialties home";
   const cardOf = area => {
-    const attempts = area.parts.reduce((sum, p) => sum + loadRecords(p.key).length, 0);
-    const paused = area.parts.filter(p => loadSession(p.key)).length;
     const available = filteredQuestionsForArea(area);
-    const active = yearFilterSet(area.key).size > 0;
-    const topicWord = area.parts.length === 1 ? "topic" : "topics";
-    const attemptWord = attempts === 1 ? "attempt" : "attempts";
     const title = area.key === "Orthopaedics" ? "Orthopedics &amp;<br>Traumatology"
       : area.key === "O&G" ? "Obstetrics &amp;<br>Gynecology"
       : esc(area.name);
     const titleClass = area.key === "Orthopaedics" ? " two-line"
       : area.key === "O&G" ? " two-line" : "";
-    return `<div class="category-card has-year-filter" data-card-area="${esc(area.key)}" style="--tone:${SPEC_TONE[area.key] || "#B12D63"}">
+    return `<div class="category-card" data-card-area="${esc(area.key)}" style="--tone:${SPEC_TONE[area.key] || "#B12D63"}">
       <button class="category-card-main" data-category="${esc(area.key)}" type="button">
         ${cardArt(area)}
         <span class="category-title${titleClass}">${title}</span>
         <span class="category-stats-line" data-card-counts="${esc(area.key)}">${cardCountHtml(area, available)}</span>
-        <span class="category-stats-line"><b>${area.parts.length}</b> ${topicWord}<span class="category-dot">·</span><b>${attempts}</b> ${attemptWord}${paused ? `<span class="category-dot">·</span><span class="category-paused"><b>${paused}</b> paused</span>` : ""}</span>
-        <span class="category-filter-line${active ? " on" : ""}" data-card-filter="${esc(area.key)}">${yearFilterSummary(area.key)}</span>
         <span class="category-hairline" aria-hidden="true"></span>
         <span class="category-enter">Enter specialty →</span>
       </button>
-      ${yearFilterHtml(area)}
     </div>`;
   };
   const order = HOME_ORDER.filter(k => k === MIXED_KEY || AREAS.some(a => a.key === k));
