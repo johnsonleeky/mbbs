@@ -1734,9 +1734,9 @@ html[data-theme] .hub-c .hub-ledger-clear{background:transparent;border:0}
 .hub-c .hub-topic-menu button:disabled{opacity:.4;cursor:default}
 .hub-c .hub-topic-menu button span{color:var(--navy);font-size:9px;font-weight:800}
 .hub-c .hub-rail-footer{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
-.hub-c .hub-clear-danger{appearance:none;display:inline-flex;align-items:center;gap:5px;border:1px solid #B91C1C;border-radius:8px;background:#FEF2F2;padding:7px 10px;color:#B91C1C;font:inherit;font-size:9.5px;font-weight:800;line-height:1.1;cursor:pointer;white-space:nowrap;transition:background .14s,border-color .14s}
+.hub-c .hub-clear-danger{appearance:none;display:inline-flex;align-items:center;gap:5px;border:1px solid color-mix(in srgb,var(--accent) 28%,var(--line));border-radius:8px;background:var(--card);padding:7px 10px;color:var(--accent);font:inherit;font-size:9.5px;font-weight:800;line-height:1.1;cursor:pointer;white-space:nowrap;transition:background .14s,border-color .14s,color .14s}
 .hub-c .hub-clear-danger svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.hub-c .hub-clear-danger:hover,.hub-c .hub-clear-danger:focus-visible{background:#FEE2E2;border-color:#B91C1C;outline:none}
+.hub-c .hub-clear-danger:hover,.hub-c .hub-clear-danger:focus-visible{background:var(--bad-soft);border-color:var(--bad);color:var(--bad);outline:none}
 html[data-theme] .hub-c .hub-topic-start{background:var(--accent);color:var(--theme-btn-ink)}
 html[data-theme] .hub-c .hub-topic-start.ghost{background:var(--accent-soft);color:var(--accent)}
 html[data-theme] .hub-c .hub-topic-menu{background:var(--card);border-color:var(--line)}
@@ -1790,9 +1790,6 @@ html:not([data-theme="cosmic"]) #screen-quiz .opt.correct .letter{background:#16
 html:not([data-theme="cosmic"]) #screen-quiz .opt.wrong .letter{background:#DC2626;border-color:#DC2626;color:#fff}
 html:not([data-theme="cosmic"]) #screen-quiz .banner.good{background:#DCFCE7;border-color:#86EFAC;color:#14532D}
 html:not([data-theme="cosmic"]) #screen-quiz .banner.bad{background:#FEE2E2;border-color:#FCA5A5;color:#7F1D1D}
-html[data-theme="cosmic"] .hub-c .hub-clear-danger{border-color:var(--warn);background:var(--warn-soft);color:var(--warn)}
-html[data-theme="cosmic"] .hub-c .hub-clear-danger:hover,
-html[data-theme="cosmic"] .hub-c .hub-clear-danger:focus-visible{background:color-mix(in srgb,var(--warn) 16%,var(--card));border-color:var(--warn);color:var(--warn)}
 
 html:not([data-theme="cosmic"]) #screen-quiz .dock-flag{color:var(--accent)}
 html:not([data-theme="cosmic"]) #screen-quiz .dock-flag[aria-pressed="true"]{background:#F0E8EC;border-color:color-mix(in srgb,var(--ink) 32%,var(--line));color:var(--accent)}
