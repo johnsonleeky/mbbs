@@ -1883,8 +1883,8 @@ html #passwordGate .password-card .password-field input:focus{outline:3px solid 
 #passwordGate .bee-antenna{fill:none;stroke:#33231A;stroke-width:.9;stroke-linecap:round;}
 #passwordGate .bee-wing{fill:#FFF9E9;stroke:#C7A15A;stroke-width:.5;opacity:.72;}
 
-#passwordGate .bee-path-left{animation:beePathLeft var(--dur,24s) var(--delay,0s) ease-in-out infinite;}
-#passwordGate .bee-path-right{animation:beePathRight var(--dur,27s) var(--delay,0s) ease-in-out infinite;}
+#passwordGate .bee-path-left{animation:beePathLeft var(--dur,72s) var(--delay,0s) ease-in-out infinite;}
+#passwordGate .bee-path-right{animation:beePathRight var(--dur,72s) var(--delay,0s) ease-in-out infinite;}
 #passwordGate .bee-path-bottom{animation:beePathBottom var(--dur,21s) var(--delay,0s) ease-in-out infinite;}
 #passwordGate .bee-path-cross{animation:beePathCross var(--dur,60s) var(--delay,0s) ease-in-out infinite;}
 #passwordGate .bee-path-top{animation:beePathTop var(--dur,36s) var(--delay,0s) ease-in-out infinite;}
@@ -1892,26 +1892,35 @@ html #passwordGate .password-card .password-field input:focus{outline:3px solid 
 /* Each route pauses at a bloom, then travels to the next one. */
 @keyframes beePathLeft{
 0%{transform:translate(58px,438px) rotate(-30deg);}
-8%{transform:translate(58px,438px) rotate(-30deg);}
+4%{transform:translate(58px,438px) rotate(-30deg);}
+16%{transform:translate(150px,352px) rotate(-45deg);}
 24%{transform:translate(150px,352px) rotate(-45deg);}
-32%{transform:translate(150px,352px) rotate(-45deg);}
-46%{transform:translate(186px,292px) rotate(-55deg);}
-54%{transform:translate(186px,292px) rotate(-55deg);}
-68%{transform:translate(92px,318px) rotate(150deg);}
-76%{transform:translate(92px,318px) rotate(150deg);}
-90%{transform:translate(34px,382px) rotate(120deg);}
+34%{transform:translate(186px,292px) rotate(-60deg);}
+42%{transform:translate(186px,292px) rotate(-60deg);}
+52%{transform:translate(92px,318px) rotate(150deg);}
+60%{transform:translate(92px,318px) rotate(150deg);}
+70%{transform:translate(34px,382px) rotate(120deg);}
+78%{transform:translate(34px,382px) rotate(120deg);}
+84%{transform:translate(116px,426px) rotate(70deg);}
+88%{transform:translate(280px,450px) rotate(-10deg);}
+92%{transform:translate(362px,486px) rotate(10deg);}
+96%{transform:translate(200px,460px) rotate(170deg);}
 100%{transform:translate(58px,438px) rotate(-30deg);}
 }
 @keyframes beePathRight{
 0%{transform:translate(610px,126px) rotate(20deg);}
-8%{transform:translate(610px,126px) rotate(20deg);}
+4%{transform:translate(610px,126px) rotate(20deg);}
+16%{transform:translate(684px,186px) rotate(35deg);}
 24%{transform:translate(684px,186px) rotate(35deg);}
-32%{transform:translate(684px,186px) rotate(35deg);}
-46%{transform:translate(650px,286px) rotate(90deg);}
-54%{transform:translate(650px,286px) rotate(90deg);}
-68%{transform:translate(575px,232px) rotate(180deg);}
-76%{transform:translate(575px,232px) rotate(180deg);}
-90%{transform:translate(592px,158px) rotate(-90deg);}
+34%{transform:translate(650px,286px) rotate(90deg);}
+42%{transform:translate(650px,286px) rotate(90deg);}
+52%{transform:translate(575px,232px) rotate(180deg);}
+60%{transform:translate(575px,232px) rotate(180deg);}
+70%{transform:translate(640px,300px) rotate(90deg);}
+78%{transform:translate(640px,300px) rotate(90deg);}
+84%{transform:translate(592px,158px) rotate(-100deg);}
+88%{transform:translate(520px,74px) rotate(-120deg);}
+92%{transform:translate(626px,132px) rotate(35deg);}
 100%{transform:translate(610px,126px) rotate(20deg);}
 }
 @keyframes beePathBottom{
@@ -7321,11 +7330,8 @@ $("passwordInput").focus();
 <path class="bee-antenna" d="M27.2 12.2 C 28.6 9.4 30.6 8.5 31.8 9.3"/>
 <circle class="bee-eye" cx="27" cy="14" r=".45"/>`;
   const bees = [
-    {path:'left',  dur:24, delay:-2,  w:26, h:19, wing:.11, wingDelay:-.02},
-    {path:'right', dur:27, delay:-7,  w:24, h:17, wing:.12, wingDelay:-.05},
-    {path:'bottom',dur:21, delay:-4,  w:27, h:20, wing:.1,  wingDelay:-.01},
-    {path:'cross', dur:60, delay:-10, w:22, h:16, wing:.12, wingDelay:-.04},
-    {path:'top',   dur:36, delay:-13, w:23, h:17, wing:.13, wingDelay:-.06}
+    {path:'left',  dur:72, delay:0, w:26, h:19, wing:.11, wingDelay:-.02},
+    {path:'right', dur:72, delay:0, w:24, h:17, wing:.12, wingDelay:-.05}
   ];
   layer.innerHTML = bees.map(b => `<g class="bee bee-path-${b.path}" style="--dur:${b.dur}s;--delay:${b.delay}s;--wing-dur:${b.wing}s;--wing-delay:${b.wingDelay}s"><rect x="-4" y="-4" width="44" height="34" fill="none" aria-hidden="true"/><svg x="0" y="0" width="${b.w}" height="${b.h}" viewBox="0 0 36 26" fill="none" aria-hidden="true">${ART}</svg></g>`).join('');
 })();
