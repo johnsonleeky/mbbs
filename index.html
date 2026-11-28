@@ -1973,6 +1973,53 @@ html #passwordGate .password-card .password-field input:focus{outline:3px solid 
 @media (prefers-reduced-motion: reduce){
   #passwordGate .bee-layer{display:none!important;}
 }
+
+/* ---------- Text Settings ---------- */
+html{--reading-scale:1;--reading-leading:1.62;}
+html[data-reading-size="s"]{--reading-scale:.9;}
+html[data-reading-size="m"]{--reading-scale:1;}
+html[data-reading-size="l"]{--reading-scale:1.1;}
+html[data-reading-size="xl"]{--reading-scale:1.2;}
+html[data-reading-spacing="tight"]{--reading-leading:1.45;}
+html[data-reading-spacing="comfortable"]{--reading-leading:1.62;}
+html[data-reading-spacing="airy"]{--reading-leading:1.85;}
+
+#screen-quiz .stem{font-size:calc(var(--reading-stem-size,20px) * var(--reading-scale));line-height:var(--reading-leading);}
+#screen-quiz .opt{font-size:calc(15.5px * var(--reading-scale));line-height:var(--reading-leading);}
+#screen-quiz .opt .txt{line-height:var(--reading-leading);}
+#screen-quiz .expl{font-size:calc(15.5px * var(--reading-scale));line-height:var(--reading-leading);}
+#screen-quiz .ai-answer{font-size:calc(15px * var(--reading-scale));line-height:var(--reading-leading);}
+#screen-quiz .ai-note{font-size:calc(14.5px * var(--reading-scale));line-height:var(--reading-leading);}
+#screen-quiz .written-response{font-size:calc(15px * var(--reading-scale));line-height:var(--reading-leading);}
+#scratchpadText{font-size:calc(14px * var(--reading-scale));line-height:var(--reading-leading);}
+@media (max-width:560px){html{--reading-stem-size:18px;}}
+
+.reading-back{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:20px;background:color-mix(in srgb,var(--ink) 42%,transparent);}
+.reading-back.hidden{display:none;}
+.reading-modal{width:min(440px,100%);max-height:88vh;overflow:auto;padding:20px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink);box-shadow:0 24px 60px -12px color-mix(in srgb,var(--ink) 30%,transparent);}
+.reading-head{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.reading-head h3{font-size:18px;line-height:1.1;margin:0;letter-spacing:-.02em;}
+.reading-close{border:0;background:none;color:var(--muted);font:inherit;font-size:12px;font-weight:700;padding:4px;cursor:pointer;border-radius:6px;}
+.reading-close:hover{color:var(--accent);background:var(--accent-soft);}
+.reading-setting{border-top:1px solid var(--line);padding-top:12px;margin-top:12px;}
+.reading-setting:first-of-type{border-top:0;padding-top:0;margin-top:0;}
+.reading-label{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.reading-label span{font-size:10px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--accent);}
+.reading-seg{display:flex;gap:5px;flex-wrap:wrap;}
+.reading-seg button{border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--muted);font:inherit;font-size:11px;font-weight:700;padding:7px 9px;cursor:pointer;}
+.reading-seg button:hover{border-color:var(--accent);color:var(--accent);}
+.reading-seg button[aria-pressed="true"],.reading-seg button.active{background:var(--accent);border-color:var(--accent);color:var(--card);}
+.reading-preview{margin-top:14px;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg);}
+.reading-preview-label{font-family:"SFMono-Regular",Menlo,monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.reading-preview p{font-family:Georgia,"Times New Roman",serif;font-size:calc(13px * var(--reading-scale));line-height:var(--reading-leading);color:var(--ink);margin:0 0 8px;}
+.reading-preview-option{display:flex;gap:7px;align-items:center;font-size:calc(11px * var(--reading-scale));line-height:var(--reading-leading);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 7px;background:var(--card);}
+.reading-preview-option b{color:var(--accent);font-size:9px;}
+.reading-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);margin-top:14px;padding-top:12px;}
+.reading-btn{border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--accent);font:inherit;font-size:10px;font-weight:800;padding:7px 10px;cursor:pointer;}
+.reading-btn:hover{background:var(--accent-soft);border-color:var(--accent);}
+.reading-btn.primary{background:var(--accent);border-color:var(--accent);color:var(--card);}
+.reading-btn.primary:hover{filter:brightness(1.06);}
+.tool-icon{width:14px;height:14px;flex:0 0 auto;}
 </style>
 </head>
 <body>
@@ -2237,8 +2284,8 @@ html #passwordGate .password-card .password-field input:focus{outline:3px solid 
           <svg class="map-tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1.2"/><rect x="14" y="4" width="6" height="6" rx="1.2"/><rect x="4" y="14" width="6" height="6" rx="1.2"/><rect x="14" y="14" width="6" height="6" rx="1.2"/></svg>
           <span>Map</span>
         </button>
-        <button class="tool-btn" id="btnFlagQuestion" type="button" aria-pressed="false">Flag</button>
-        <button class="tool-btn" id="btnScratchpad" type="button" aria-haspopup="dialog">Notes</button>
+        <button class="tool-btn" id="btnFlagQuestion" type="button" aria-pressed="false"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3v18"/><path d="M6 4h11l-2.5 4L17 12H6"/></svg><span>Flag</span></button>
+        <button class="tool-btn" id="btnScratchpad" type="button" aria-haspopup="dialog"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L20 8l-4-4L4 16v4Z"/><path d="m14 6 4 4"/></svg><span>Notes</span></button>
         <div class="quiz-more-wrap">
           <button class="tool-btn icon" id="btnQuizMore" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="quizMoreMenu" aria-label="More question actions">⋯</button>
           <div class="quiz-more hidden" id="quizMoreMenu" role="menu" tabindex="-1">
@@ -2251,8 +2298,9 @@ html #passwordGate .password-card .password-field input:focus{outline:3px solid 
               </div>
               <p id="jumpError" role="alert" class="navigation-error"></p>
             </form>
+            <button class="quiz-menu-item" id="btnReadingSettings" type="button" aria-haspopup="dialog">Text Settings</button>
             <button class="quiz-menu-item" id="btnOpenFlags" type="button" aria-haspopup="dialog">Flagged (0)</button>
-            <button class="quiz-menu-item" id="btnFinishRun" type="button">Finish run</button>
+            <button class="quiz-menu-item" id="btnFinishRun" type="button">Finish Run</button>
             <button class="quiz-menu-item" id="btnSaveQuit" type="button">Save &amp; Quit</button>
             <button class="quiz-menu-item danger" id="btnQuit" type="button">Abandon</button>
           </div>
@@ -2496,6 +2544,41 @@ html #passwordGate .password-card .password-field input:focus{outline:3px solid 
     <div class="themes-body">
       <p class="themes-intro">Select a color theme below.</p>
       <div class="theme-options" id="themeOptions"></div>
+    </div>
+  </div>
+</div>
+
+<div class="reading-back hidden" id="readingModal" role="dialog" aria-modal="true" aria-labelledby="readingTitle">
+  <div class="reading-modal">
+    <div class="reading-head">
+      <h3 id="readingTitle">Text Settings</h3>
+      <button class="reading-close" id="btnCloseReading" type="button">Close</button>
+    </div>
+    <div class="reading-setting">
+      <div class="reading-label">Text size <span id="readingSizeLabel">Medium</span></div>
+      <div class="reading-seg" role="group" aria-label="Text size">
+        <button type="button" data-reading-size="s" aria-pressed="false">S</button>
+        <button type="button" data-reading-size="m" aria-pressed="true">M</button>
+        <button type="button" data-reading-size="l" aria-pressed="false">L</button>
+        <button type="button" data-reading-size="xl" aria-pressed="false">XL</button>
+      </div>
+    </div>
+    <div class="reading-setting">
+      <div class="reading-label">Line spacing <span id="readingSpacingLabel">Comfortable</span></div>
+      <div class="reading-seg" role="group" aria-label="Line spacing">
+        <button type="button" data-reading-spacing="tight" aria-pressed="false">Tight</button>
+        <button type="button" data-reading-spacing="comfortable" aria-pressed="true">Comfortable</button>
+        <button type="button" data-reading-spacing="airy" aria-pressed="false">Airy</button>
+      </div>
+    </div>
+    <div class="reading-preview" aria-hidden="true">
+      <div class="reading-preview-label">Preview</div>
+      <p>A 64-year-old man has exertional chest pain that resolves with rest.</p>
+      <div class="reading-preview-option"><b>B</b> Exercise treadmill ECG</div>
+    </div>
+    <div class="reading-actions">
+      <button class="reading-btn" id="btnResetReading" type="button">Reset to default</button>
+      <button class="reading-btn primary" id="btnDoneReading" type="button">Done</button>
     </div>
   </div>
 </div>
@@ -4387,7 +4470,8 @@ function renderQ(){
   const isMock = mode === "mock" && !!part.mock;
   $("feedbackZone").before($("qOpts"));
   $("qNum").textContent = `Question ${idx+1} / ${queue.length}` + (isMock ? " · mock exam" : part.mockReview ? " · mock review" : mode==="review" ? " · revision set" : "");
-  $("qTopic").textContent = topicName(q.topic) + " · " + questionYearLabel(q);
+  const yearLabel = questionYearLabel(q);
+  $("qTopic").textContent = yearLabel ? "Year examined · " + yearLabel : "Year examined";
   $("qStem").textContent = q.stem;
   $("qImages").innerHTML = (q.images || []).map(src => `<div class="expl-fig"><img src="${src}"${imageAttrs(src, true)} alt="Figure from question ${q.n}"></div>`).join("");
   $("qOpts").innerHTML = q.opts.map(o => {
@@ -5893,6 +5977,73 @@ document.addEventListener("keydown", event => {
   if(event.key === "Escape" && searchOpen) closeSearch();
 });
 
+/* ---------- Text Settings ---------- */
+const READING_KEY = "hku_mbbs_quiz_v1_text_settings_v1";
+const READING_DEFAULTS = { size:"m", spacing:"comfortable" };
+const READING_VALUES = {
+  size:{ s:"Small", m:"Medium", l:"Large", xl:"Extra large" },
+  spacing:{ tight:"Tight", comfortable:"Comfortable", airy:"Airy" }
+};
+const readingSettings = { ...READING_DEFAULTS };
+function loadReadingSettings(){
+  try{
+    const raw = JSON.parse(localStorage.getItem(READING_KEY));
+    if(raw && typeof raw === "object"){
+      for(const key of Object.keys(READING_DEFAULTS)){
+        if(READING_VALUES[key][raw[key]]) readingSettings[key] = raw[key];
+      }
+    }
+  }catch(error){}
+}
+function saveReadingSettings(){
+  try{ localStorage.setItem(READING_KEY, JSON.stringify(readingSettings)); }catch(error){}
+}
+function applyReadingSettings(){
+  document.documentElement.dataset.readingSize = readingSettings.size;
+  document.documentElement.dataset.readingSpacing = readingSettings.spacing;
+  for(const key of ["size","spacing"]){
+    document.querySelectorAll(`#readingModal [data-reading-${key}]`).forEach(button => {
+      const on = button.dataset["reading" + key.charAt(0).toUpperCase() + key.slice(1)] === readingSettings[key];
+      button.classList.toggle("active", on);
+      button.setAttribute("aria-pressed", String(on));
+    });
+  }
+  $("readingSizeLabel").textContent = READING_VALUES.size[readingSettings.size];
+  $("readingSpacingLabel").textContent = READING_VALUES.spacing[readingSettings.spacing];
+}
+function setReadingSetting(key, value){
+  if(!READING_VALUES[key] || !READING_VALUES[key][value]) return;
+  readingSettings[key] = value;
+  saveReadingSettings();
+  applyReadingSettings();
+}
+function openReadingSettings(){
+  closeQuizMore(false);
+  applyReadingSettings();
+  $("readingModal").classList.remove("hidden");
+  $("btnCloseReading").focus();
+}
+function closeReadingSettings(returnFocus=true){
+  $("readingModal").classList.add("hidden");
+  if(returnFocus) $("btnQuizMore").focus();
+}
+$("btnReadingSettings").addEventListener("click", openReadingSettings);
+$("btnCloseReading").addEventListener("click", () => closeReadingSettings());
+$("btnDoneReading").addEventListener("click", () => closeReadingSettings());
+$("btnResetReading").addEventListener("click", () => {
+  Object.assign(readingSettings, READING_DEFAULTS);
+  saveReadingSettings();
+  applyReadingSettings();
+});
+document.querySelectorAll("#readingModal [data-reading-size]").forEach(button => button.addEventListener("click", () => setReadingSetting("size", button.dataset.readingSize)));
+document.querySelectorAll("#readingModal [data-reading-spacing]").forEach(button => button.addEventListener("click", () => setReadingSetting("spacing", button.dataset.readingSpacing)));
+$("readingModal").addEventListener("click", event => { if(event.target === $("readingModal")) closeReadingSettings(); });
+document.addEventListener("keydown", event => {
+  if(event.key === "Escape" && !$("readingModal").classList.contains("hidden")) closeReadingSettings();
+});
+loadReadingSettings();
+applyReadingSettings();
+
 /* ---------- compact quiz overflow menu ---------- */
 function quizMoreOpen(){ return !$("quizMoreMenu").classList.contains("hidden"); }
 function openQuizMore(){
@@ -5929,7 +6080,7 @@ document.addEventListener("keydown", e=>{
   if(!unlocked || e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
   if(!$("flagPanel").classList.contains("hidden") || !$("highlightPopup").classList.contains("hidden")) return;
   if(window.getSelection() && !window.getSelection().isCollapsed) return;
-  if(!$("incompleteModal").classList.contains("hidden") || !$("resumeModal").classList.contains("hidden") || !$("aboutModal").classList.contains("hidden") || !$("guideModal").classList.contains("hidden") || !$("quizMoreMenu").classList.contains("hidden")) return;
+  if(!$("incompleteModal").classList.contains("hidden") || !$("resumeModal").classList.contains("hidden") || !$("aboutModal").classList.contains("hidden") || !$("guideModal").classList.contains("hidden") || !$("readingModal").classList.contains("hidden") || !$("quizMoreMenu").classList.contains("hidden")) return;
   if(part && QS()[queue[idx]] && QS()[queue[idx]].written && $("qOpts").classList.contains("hidden")) return;
   if(!$("screen-quiz").classList.contains("hidden")){
     const q = QS()[queue[idx]];
@@ -7032,12 +7183,12 @@ function saveScratchpad(){
 }
 function sizeScratchpad(width, height){
   const panel = $("scratchpadPanel");
-  const left = parseFloat(panel.style.left) || 8;
-  const top = parseFloat(panel.style.top) || 8;
-  panel.style.width = Math.max(240, Math.min(width, innerWidth - left - 8)) + "px";
-  panel.style.height = Math.max(230, Math.min(height, innerHeight - top - 8)) + "px";
-  panel.style.maxWidth = innerWidth - left - 8 + "px";
-  panel.style.maxHeight = innerHeight - top - 8 + "px";
+  const maxWidth = Math.max(240, innerWidth - 16);
+  const maxHeight = Math.max(230, innerHeight - 16);
+  panel.style.width = Math.max(240, Math.min(width, maxWidth)) + "px";
+  panel.style.height = Math.max(230, Math.min(height, maxHeight)) + "px";
+  panel.style.maxWidth = maxWidth + "px";
+  panel.style.maxHeight = maxHeight + "px";
 }
 function openScratchpad(){
   dismissHighlightPopup();
@@ -7064,8 +7215,10 @@ function openScratchpad(){
   }else{
     const left = parseFloat(panel.style.left) || 8;
     const top = parseFloat(panel.style.top) || 8;
-    panel.style.left = Math.max(8, Math.min(left, innerWidth - width - 8)) + "px";
-    panel.style.top = Math.max(8, Math.min(top, innerHeight - height - 8)) + "px";
+    const visibleX = Math.min(96, width);
+    const visibleY = Math.min(56, height);
+    panel.style.left = Math.max(-(width - visibleX), Math.min(left, innerWidth - visibleX)) + "px";
+    panel.style.top = Math.max(8, Math.min(top, innerHeight - visibleY)) + "px";
   }
   sizeScratchpad(width, height);
   $("scratchpadText").focus();
@@ -7135,8 +7288,10 @@ scratchpadHeader.addEventListener("pointerdown", event => {
   const move = current => {
     const width = panel.offsetWidth;
     const height = panel.offsetHeight;
-    const left = Math.max(8, Math.min(start.left + current.clientX - start.x, innerWidth - width - 8));
-    const top = Math.max(8, Math.min(start.top + current.clientY - start.y, innerHeight - height - 8));
+    const visibleX = Math.min(96, width);
+    const visibleY = Math.min(56, height);
+    const left = Math.max(-(width - visibleX), Math.min(start.left + current.clientX - start.x, innerWidth - visibleX));
+    const top = Math.max(8, Math.min(start.top + current.clientY - start.y, innerHeight - visibleY));
     panel.style.left = left + "px";
     panel.style.top = top + "px";
   };
