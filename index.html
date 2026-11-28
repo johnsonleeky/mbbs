@@ -79,14 +79,21 @@ try{
     font-size:13px; font-weight:800; white-space:nowrap;
   }
   .masthead-search{
-    margin-left:auto; display:inline-flex; align-items:center; gap:6px;
+    margin-left:auto; display:inline-flex; align-items:center; justify-content:center; gap:6px;
     border-radius:999px; font-size:13px; font-weight:800; white-space:nowrap;
+    min-width:104px;
   }
   .masthead-search svg{width:16px; height:16px; flex:0 0 auto;}
+  .masthead-sync{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    border-radius:999px; font-size:13px; font-weight:800; white-space:nowrap;
+    min-width:104px;
+  }
+  .masthead-sync svg{width:16px; height:16px; flex:0 0 auto;}
   @media (max-width:560px){
-    .masthead-search{padding:8px 10px;}
-    .masthead-search span{display:none;}
-    .masthead-search svg{width:17px; height:17px;}
+    .masthead-search, .masthead-sync{padding:8px 10px; min-width:40px; width:40px;}
+    .masthead-search span, .masthead-sync span{display:none;}
+    .masthead-search svg, .masthead-sync svg{width:17px; height:17px;}
   }
   .header-menu{
     position:absolute; top:calc(100% + 9px); left:20px; z-index:60;
@@ -2074,6 +2081,10 @@ html[data-reading-spacing="airy"]{--reading-leading:1.85;}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.2"/><path d="m16 16 4.2 4.2"/></svg>
       <span>Search</span>
     </button>
+    <button class="btn ghost small masthead-sync" id="btnSync" type="button" title="Sync progress now (⌘J / Ctrl J)" aria-label="Sync progress now" aria-keyshortcuts="Meta+J Control+J">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5"/><path d="M4 17v-5h5"/><path d="M6.1 9a7 7 0 0 1 11.6-2.2L20 9"/><path d="M17.9 15a7 7 0 0 1-11.6 2.2L4 15"/></svg>
+      <span>Sync</span>
+    </button>
     <button class="btn ghost small masthead-home" id="btnCategories" type="button">← Specialties</button>
     <div class="header-menu hidden" id="headerMenu" role="menu" aria-label="Quiz navigation">
       <button class="menu-item" id="btnAbout" role="menuitem" type="button" aria-haspopup="dialog">
@@ -2505,7 +2516,7 @@ html[data-reading-spacing="airy"]{--reading-leading:1.85;}
       <h4>Accounts and sync</h4>
       <p>This website syncs progress according to the <b>signed-in email account</b>, not the browser. Sign in with the same approved email on another device to load the same progress. Different accounts on the same browser keep separate progress.</p>
       <p>If you used the app before accounts were introduced, the existing local progress on that device is uploaded to the first account created there. A new account on a device with no previous progress starts empty. If you are signed out, changes are saved only in this browser and will not appear on other devices.</p>
-      <p>Cloud sync runs automatically at most once every 20 seconds while you are working. Press <b>⌘J</b> on a Mac or <b>Ctrl J</b> on Windows to sync immediately. The app also syncs when the page is hidden or closed, and retries unsynced changes the next time you open it. <b>Lock</b> signs you out but does not delete anything.</p>
+      <p>Cloud sync runs automatically at most once every 20 seconds while you are working. Press <b>⌘J</b> on a Mac or <b>Ctrl J</b> on Windows, or use the <b>Sync</b> button on the Specialties home, to sync immediately. The app also syncs when the page is hidden or closed, and retries unsynced changes the next time you open it. <b>Lock</b> signs you out but does not delete anything.</p>
       <p>New accounts need developer approval before they can sync. Until approved, the app shows <b>Pending approval. Please contact Johnson.</b></p>
 
       <h4>Progress and storage</h4>
@@ -4407,6 +4418,7 @@ function startReviewFrom(key, qids, m){
 function updateSearchAvailability(){
   const home = !$("screen-categories").classList.contains("hidden");
   $("btnSearch").classList.toggle("hidden", !home);
+  $("btnSync").classList.toggle("hidden", !home);
   if(!home && searchOpen) closeSearch(false);
 }
 function hideAll(){
@@ -8189,6 +8201,8 @@ $("passwordInput").focus();
   document.getElementById("btnLock")?.addEventListener("click", () => {
     auth.signOut().catch(console.error);
   }, true);
+
+  document.getElementById("btnSync")?.addEventListener("click", forceSync);
 
   document.addEventListener("keydown", event => {
     const key = String(event.key || "").toLowerCase();
