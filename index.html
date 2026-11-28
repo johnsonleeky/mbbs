@@ -7693,9 +7693,10 @@ $("passwordInput").focus();
   function authError(error) {
     const messages = {
       "auth/invalid-email": "That email address is not valid.",
-      "auth/user-not-found": "No account found for that email. Create one first.",
-      "auth/wrong-password": "Incorrect email or password.",
-      "auth/invalid-credential": "Incorrect email or password.",
+      "auth/user-not-found": "No account registered. Please create account.",
+      "auth/wrong-password": "No account registered. Please create account.",
+      "auth/invalid-credential": "No account registered. Please create account.",
+      "auth/invalid-login-credentials": "No account registered. Please create account.",
       "auth/email-already-in-use": "An account already exists for that email.",
       "auth/weak-password": "Use a password with at least 6 characters.",
       "auth/too-many-requests": "Too many attempts. Wait a minute and try again.",
