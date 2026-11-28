@@ -7753,7 +7753,7 @@ $("passwordInput").focus();
     try {
       const credential = await auth.createUserWithEmailAndPassword(email, password);
       await credential.user.sendEmailVerification();
-      setError("Account created. Check your email to verify it, then sign in.");
+      setError("Check your email (including spam) for verification, then wait for approval and sign in.");
     } catch (error) {
       setError(authError(error));
     } finally {
