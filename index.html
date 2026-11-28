@@ -7498,5 +7498,436 @@ $("passwordInput").focus();
   layer.innerHTML = bees.map(b => `<g class="bee bee-path-${b.path}" style="--dur:${b.dur}s;--delay:${b.delay}s;--wing-dur:${b.wing}s;--wing-delay:${b.wingDelay}s"><rect x="-4" y="-4" width="44" height="34" fill="none" aria-hidden="true"/><svg x="0" y="0" width="${b.w}" height="${b.h}" viewBox="0 0 36 26" fill="none" aria-hidden="true">${ART}</svg></g>`).join('');
 })();
 </script>
+
+<!-- Firebase Auth + Firestore sync -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+(() => {
+  const firebaseConfig = {
+    apiKey: "AIzaSyDz9H2H4z1OPzFfJqlMktYMG0qJ3FvcFGY",
+    authDomain: "mbbs-question-bank-79586.firebaseapp.com",
+    projectId: "mbbs-question-bank-79586",
+    storageBucket: "mbbs-question-bank-79586.firebasestorage.app",
+    messagingSenderId: "420066165682",
+    appId: "1:420066165682:web:4acf1cb0f6c81627abdaab"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  const MAX_DEVICES = 3; // change to 2, or Infinity for unlimited
+  const DEVICE_KEY = "hku_mbbs_device_id_v1";
+  const SYNC_AT_KEY = "hku_mbbs_sync_at_v1";
+  const SYNC_DIRTY_KEY = "hku_mbbs_sync_dirty_v1";
+  const PREFIX = "hku_mbbs_";
+
+  const deviceId = (() => {
+    let id = localStorage.getItem(DEVICE_KEY);
+    if (!id) {
+      id = (crypto.randomUUID && crypto.randomUUID()) ||
+        (Date.now() + "-" + Math.random().toString(36).slice(2));
+      localStorage.setItem(DEVICE_KEY, id);
+    }
+    return id;
+  })();
+
+  let currentUser = null;
+  let allowed = false;
+  let applyingRemote = false;
+  let syncTimer = null;
+
+  /* Replace the old shared-password form. */
+  const oldForm = document.getElementById("passwordForm");
+  if (!oldForm) return;
+
+  const form = oldForm.cloneNode(true);
+  oldForm.replaceWith(form);
+
+  const passwordField = form.querySelector(".password-field");
+  const emailField = document.createElement("div");
+  emailField.className = "password-field";
+  emailField.innerHTML = `
+    <svg class="field-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/>
+    </svg>
+    <input id="authEmail" type="email" autocomplete="email" placeholder="Email" aria-label="Email" required>`;
+  passwordField.before(emailField);
+
+  const passwordInput = form.querySelector("#passwordInput");
+  passwordInput.placeholder = "Password";
+  passwordInput.setAttribute("aria-label", "Password");
+
+  const submitButton = form.querySelector("#btnUnlock");
+  submitButton.textContent = "Sign in →";
+
+  const links = document.createElement("div");
+  links.className = "auth-links";
+  links.innerHTML = `
+    <button type="button" id="btnAuthSignUp">Create account</button>
+    <button type="button" id="btnAuthReset">Forgot password?</button>
+    <button type="button" id="btnAuthResend" class="hidden">Resend verification</button>`;
+  form.appendChild(links);
+
+  const style = document.createElement("style");
+  style.textContent = `
+    #passwordGate .password-field + .password-field{margin-top:10px;}
+    #passwordGate .auth-links{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-top:10px;}
+    #passwordGate .auth-links button{border:0;background:none;color:var(--accent);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;padding:4px 2px;}
+    #passwordGate .auth-links button:hover{text-decoration:underline;}
+  `;
+  document.head.appendChild(style);
+
+  const errorEl = form.querySelector("#passwordError");
+  const emailInput = form.querySelector("#authEmail");
+  const resendButton = form.querySelector("#btnAuthResend");
+
+  form.querySelector("#passwordEye")?.addEventListener("click", () => {
+    const eye = form.querySelector("#passwordEye");
+    const show = passwordInput.type === "password";
+    passwordInput.type = show ? "text" : "password";
+    eye.classList.toggle("on", show);
+    eye.setAttribute("aria-label", show ? "Hide password" : "Show password");
+    eye.setAttribute("aria-pressed", String(show));
+  });
+
+  function setError(message) {
+    errorEl.textContent = message;
+  }
+
+  function setBusy(busy) {
+    submitButton.disabled = busy;
+    emailInput.disabled = busy;
+    passwordInput.disabled = busy;
+  }
+
+  function authError(error) {
+    const messages = {
+      "auth/invalid-email": "That email address is not valid.",
+      "auth/user-not-found": "No account found for that email. Create one first.",
+      "auth/wrong-password": "Incorrect email or password.",
+      "auth/invalid-credential": "Incorrect email or password.",
+      "auth/email-already-in-use": "An account already exists for that email.",
+      "auth/weak-password": "Use a password with at least 6 characters.",
+      "auth/too-many-requests": "Too many attempts. Wait a minute and try again.",
+      "auth/network-request-failed": "Network error. Check your connection.",
+      "auth/unauthorized-domain": "This domain is not authorized in Firebase Authentication.",
+      "auth/operation-not-allowed": "Email/password sign-in is not enabled in Firebase."
+    };
+    return messages[error.code] || error.message;
+  }
+
+  function showGate(message = "") {
+    if (typeof lockQuiz === "function") lockQuiz();
+    else {
+      document.getElementById("appShell").classList.add("hidden");
+      document.getElementById("appShell").inert = true;
+      document.getElementById("passwordGate").classList.remove("hidden");
+    }
+    setError(message);
+    emailInput.focus();
+  }
+
+  function unlockApp() {
+    document.getElementById("passwordGate").classList.add("hidden");
+    const shell = document.getElementById("appShell");
+    shell.classList.remove("hidden");
+    shell.inert = false;
+    unlocked = true;
+    document.getElementById("btnMenuToggle")?.focus();
+  }
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    setError("");
+    setBusy(true);
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+    } catch (error) {
+      setError(authError(error));
+    } finally {
+      setBusy(false);
+    }
+  });
+
+  form.querySelector("#btnAuthSignUp").addEventListener("click", async () => {
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    if (!email || !password) {
+      setError("Enter an email and password first.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const credential = await auth.createUserWithEmailAndPassword(email, password);
+      await credential.user.sendEmailVerification();
+      setError("Account created. Check your email to verify it, then sign in.");
+    } catch (error) {
+      setError(authError(error));
+    } finally {
+      setBusy(false);
+    }
+  });
+
+  form.querySelector("#btnAuthReset").addEventListener("click", async () => {
+    const email = emailInput.value.trim();
+    if (!email) {
+      setError("Enter your email first.");
+      return;
+    }
+    try {
+      await auth.sendPasswordResetEmail(email);
+      setError("Password reset email sent. Check your inbox.");
+    } catch (error) {
+      setError(authError(error));
+    }
+  });
+
+  resendButton.addEventListener("click", async () => {
+    if (!auth.currentUser) return;
+    try {
+      await auth.currentUser.sendEmailVerification();
+      setError("Verification email sent. Check your inbox.");
+    } catch (error) {
+      setError(authError(error));
+    }
+  });
+
+  function isSyncedKey(key) {
+    return typeof key === "string"
+      && key.startsWith(PREFIX)
+      && key !== DEVICE_KEY
+      && key !== SYNC_AT_KEY
+      && key !== SYNC_DIRTY_KEY;
+  }
+
+  function collectState() {
+    const data = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (isSyncedKey(key)) data[key] = localStorage.getItem(key);
+    }
+    return data;
+  }
+
+  function applyState(data) {
+    if (!data || typeof data !== "object") return;
+    applyingRemote = true;
+    try {
+      const keys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (isSyncedKey(key)) keys.push(key);
+      }
+      keys.forEach(key => {
+        if (!(key in data)) localStorage.removeItem(key);
+      });
+      Object.entries(data).forEach(([key, value]) => {
+        if (isSyncedKey(key) && typeof value === "string") {
+          localStorage.setItem(key, value);
+        }
+      });
+    } finally {
+      applyingRemote = false;
+    }
+  }
+
+  function markDirty() {
+    if (!currentUser || !allowed) return;
+    localStorage.setItem(SYNC_DIRTY_KEY, "1");
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => pushState(currentUser), 2500);
+  }
+
+  const nativeSetItem = Storage.prototype.setItem;
+  const nativeRemoveItem = Storage.prototype.removeItem;
+
+  Storage.prototype.setItem = function (key, value) {
+    nativeSetItem.call(this, key, value);
+    if (this === localStorage && !applyingRemote && isSyncedKey(key)) markDirty();
+  };
+
+  Storage.prototype.removeItem = function (key) {
+    nativeRemoveItem.call(this, key);
+    if (this === localStorage && !applyingRemote && isSyncedKey(key)) markDirty();
+  };
+
+  async function pushState(user) {
+    if (!user || !allowed) return;
+    try {
+      await db.doc(`users/${user.uid}`).update({
+        data: collectState(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      localStorage.setItem(SYNC_AT_KEY, String(Date.now()));
+      localStorage.removeItem(SYNC_DIRTY_KEY);
+    } catch (error) {
+      console.error("Cloud sync failed", error);
+    }
+  }
+
+  function deviceLabel() {
+    const ua = navigator.userAgent;
+    if (/iPhone|iPad|iPod/.test(ua)) return "iOS device";
+    if (/Android/.test(ua)) return "Android device";
+    if (/Mac/.test(ua)) return "Mac";
+    if (/Windows/.test(ua)) return "Windows";
+    return "Browser";
+  }
+
+  async function ensureDevice(user) {
+    const ref = db.doc(`users/${user.uid}`);
+    let created = false;
+
+    await db.runTransaction(async transaction => {
+      const snap = await transaction.get(ref);
+      const devices = snap.exists ? (snap.data().devices || {}) : {};
+
+      if (!devices[deviceId] && Object.keys(devices).length >= MAX_DEVICES) {
+        throw new Error("DEVICE_LIMIT");
+      }
+
+      devices[deviceId] = { label: deviceLabel(), lastSeen: Date.now() };
+
+      if (!snap.exists) {
+        created = true;
+        transaction.set(ref, {
+          email: user.email.toLowerCase(),
+          data: collectState(),
+          devices,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } else {
+        transaction.update(ref, {
+          devices,
+          email: user.email.toLowerCase()
+        });
+      }
+    });
+
+    return created;
+  }
+
+  async function requestAccess(user) {
+    const ref = db.doc(`accessRequests/${user.uid}`);
+    const snap = await ref.get();
+    if (!snap.exists) {
+      await ref.set({
+        email: user.email.toLowerCase(),
+        status: "pending",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+  }
+
+  async function pullOrPush(user) {
+    const snap = await db.doc(`users/${user.uid}`).get();
+    if (!snap.exists) return false;
+
+    const cloud = snap.data();
+    const cloudAt = cloud.updatedAt?.toMillis?.() || 0;
+    const localAt = Number(localStorage.getItem(SYNC_AT_KEY) || 0);
+    const dirty = localStorage.getItem(SYNC_DIRTY_KEY) === "1";
+
+    if (dirty) {
+      await pushState(user);
+      return false;
+    }
+
+    if (cloud.data && cloudAt > localAt + 1000) {
+      applyState(cloud.data);
+      localStorage.setItem(SYNC_AT_KEY, String(cloudAt));
+      return true;
+    }
+
+    return false;
+  }
+
+  auth.onAuthStateChanged(async user => {
+    currentUser = user;
+    allowed = false;
+
+    if (!user) {
+      resendButton.classList.add("hidden");
+      const gate = document.getElementById("passwordGate");
+      const error = document.getElementById("passwordError");
+      if (gate.classList.contains("hidden") || !error.textContent) {
+        showGate();
+      } else {
+        emailInput.focus();
+      }
+      return;
+    }
+
+    const verified = user.emailVerified ||
+      user.providerData.some(provider => provider.providerId === "google.com");
+
+    if (!verified) {
+      resendButton.classList.remove("hidden");
+      showGate("Please verify your email, then sign in again.");
+      return;
+    }
+
+    resendButton.classList.add("hidden");
+
+    try {
+      const email = user.email.toLowerCase();
+      const allowSnap = await db.doc(`allowedUsers/${email}`).get();
+
+      if (!allowSnap.exists) {
+        await requestAccess(user);
+        showGate("Account created. Waiting for approval.");
+        return;
+      }
+
+      allowed = true;
+      const created = await ensureDevice(user);
+
+      if (created) {
+        localStorage.setItem(SYNC_AT_KEY, String(Date.now()));
+        unlockApp();
+        return;
+      }
+
+      const needsReload = await pullOrPush(user);
+      if (needsReload) {
+        location.reload();
+        return;
+      }
+
+      unlockApp();
+    } catch (error) {
+      console.error("Account check failed", error);
+      allowed = false;
+      showGate(error.message === "DEVICE_LIMIT"
+        ? `This account is already active on ${MAX_DEVICES} devices. Remove one before adding another.`
+        : "Could not load your account. Please try again.");
+    }
+  });
+
+  document.getElementById("btnLock")?.addEventListener("click", () => {
+    auth.signOut().catch(console.error);
+  }, true);
+
+  window.addEventListener("online", () => {
+    if (localStorage.getItem(SYNC_DIRTY_KEY) === "1") markDirty();
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden" &&
+        localStorage.getItem(SYNC_DIRTY_KEY) === "1") {
+      pushState(currentUser);
+    }
+  });
+
+  emailInput.focus();
+})();
+</script>
+
 </body>
 </html>
