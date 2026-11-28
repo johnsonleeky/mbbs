@@ -7519,7 +7519,7 @@ $("passwordInput").focus();
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  const MAX_DEVICES = 3; // change to 2, or Infinity for unlimited
+  const MAX_DEVICES = Infinity; // no device limit
   const DEVICE_KEY = "hku_mbbs_device_id_v1";
   const SYNC_AT_KEY = "hku_mbbs_sync_at_v1";
   const SYNC_DIRTY_KEY = "hku_mbbs_sync_dirty_v1";
@@ -7583,7 +7583,13 @@ $("passwordInput").focus();
 
   const errorEl = form.querySelector("#passwordError");
   const emailInput = form.querySelector("#authEmail");
+  const resetButton = form.querySelector("#btnAuthReset");
   const resendButton = form.querySelector("#btnAuthResend");
+
+  function setUnverified(unverified) {
+    resetButton.classList.toggle("hidden", unverified);
+    resendButton.classList.toggle("hidden", !unverified);
+  }
 
   form.querySelector("#passwordEye")?.addEventListener("click", () => {
     const eye = form.querySelector("#passwordEye");
@@ -7853,7 +7859,7 @@ $("passwordInput").focus();
     allowed = false;
 
     if (!user) {
-      resendButton.classList.add("hidden");
+      setUnverified(false);
       const gate = document.getElementById("passwordGate");
       const error = document.getElementById("passwordError");
       if (gate.classList.contains("hidden") || !error.textContent) {
@@ -7868,12 +7874,12 @@ $("passwordInput").focus();
       user.providerData.some(provider => provider.providerId === "google.com");
 
     if (!verified) {
-      resendButton.classList.remove("hidden");
+      setUnverified(true);
       showGate("Please verify your email, then sign in again.");
       return;
     }
 
-    resendButton.classList.add("hidden");
+    setUnverified(false);
 
     try {
       const email = user.email.toLowerCase();
@@ -7881,7 +7887,7 @@ $("passwordInput").focus();
 
       if (!allowSnap.exists) {
         await requestAccess(user);
-        showGate("Account created. Waiting for approval.");
+        showGate("Pending approval.");
         return;
       }
 
