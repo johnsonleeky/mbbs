@@ -1797,6 +1797,10 @@ html[data-theme]:not([data-theme="cosmic"]) #screen-quiz .expl-box{background:#f
 
 /* Quiz utility and ghost buttons follow the active theme in every palette. */
 #screen-quiz .tool-btn{background:var(--card);border-color:var(--line);color:var(--accent)}
+#screen-quiz .quiz-toolbar-actions #btnQuestionMap,
+#screen-quiz .quiz-toolbar-actions #btnFlagQuestion,
+#screen-quiz .quiz-toolbar-actions #btnScratchpad{width:80px;min-width:80px;padding-left:0;padding-right:0;justify-content:center;}
+
 #screen-quiz .tool-btn:hover,
 #screen-quiz .tool-btn:focus-visible{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-2)}
 #screen-quiz .tool-btn[aria-pressed="true"],
@@ -2301,7 +2305,6 @@ html[data-reading-spacing="airy"]{--reading-leading:1.85;}
             <button class="quiz-menu-item" id="btnReadingSettings" type="button" aria-haspopup="dialog">Text Settings</button>
             <button class="quiz-menu-item" id="btnOpenFlags" type="button" aria-haspopup="dialog">Flagged (0)</button>
             <button class="quiz-menu-item" id="btnFinishRun" type="button">Finish Run</button>
-            <button class="quiz-menu-item" id="btnSaveQuit" type="button">Save &amp; Quit</button>
             <button class="quiz-menu-item danger" id="btnQuit" type="button">Abandon</button>
           </div>
         </div>
@@ -2463,7 +2466,7 @@ html[data-reading-spacing="airy"]{--reading-leading:1.85;}
     </div>
     <div class="guide-body">
       <h4>Getting around</h4>
-      <p>Use the menu for <b>About</b>, <b>User Guide</b>, <b>Select Theme</b> and <b>Lock</b>. On the Specialties home, choose a specialty card or <b>Review</b>. Use <b>Save &amp; Quit</b> to pause a run; <b>Resume last run</b> reopens the newest paused run. On a specialty page, use <b>Find a topic</b> and the status chips to narrow a long topic list.</p>
+      <p>Use the menu for <b>About</b>, <b>User Guide</b>, <b>Select Theme</b> and <b>Lock</b>. On the Specialties home, choose a specialty card or <b>Review</b>. Runs save automatically; use <b>← All topics</b> to leave a run, and <b>Resume last run</b> reopens the newest saved run. On a specialty page, use <b>Find a topic</b> and the status chips to narrow a long topic list.</p>
 
       <h4>Search</h4>
       <p>Use the <b>Search</b> button on the Specialties home, or press <b>⌘K</b> on a Mac or <b>Ctrl K</b> on Windows, to search topics, question stems, answer choices, notes, flags and actions from any screen. Use <b>↑</b> and <b>↓</b> to move through the results and <b>Enter</b> to open one. Topics open their specialty page; questions open a preview without changing a saved run; notes and flags open their linked question; actions run the matching command.</p>
@@ -2478,7 +2481,7 @@ html[data-reading-spacing="airy"]{--reading-leading:1.85;}
       <p>Wrong answers are added to the topic's revision set. Answer them correctly in a later run, or delete the attempt that added them, to clear them.</p>
 
       <h4>Notes, flags and highlights</h4>
-      <p><b>Notes</b> saves automatically as you type; drag its header to move it, or its bottom-right corner to resize. <b>Flag</b> marks a question for attention; the <b>⋯</b> menu holds the flagged list, jump, finish, save and abandon actions. Select question text and choose <b>Save highlight</b> to highlight it. Notes, flags and highlights stay in this browser until you remove them; clearing attempt history does not remove them.</p>
+      <p><b>Notes</b> saves automatically as you type; drag its header to move it (it can sit partly off-screen), or its bottom-right corner to resize. <b>Flag</b> marks a question for attention; the <b>⋯</b> menu holds the <b>Jump</b> form, <b>Text Settings</b>, <b>Flagged</b>, <b>Finish Run</b> and <b>Abandon</b>. <b>Text Settings</b> changes text size and line spacing for questions, explanations and notes, and remembers the choice in this browser. Select question text and choose <b>Save highlight</b> to highlight it. Notes, flags and highlights stay in this browser until you remove them; clearing attempt history does not remove them.</p>
 
       <h4>Review</h4>
       <p><b>Review by shuffle</b> draws unseen questions first, then repeats when necessary. Choose the specialty, question type and run length. Wrong answers join the revision set of the specialty they came from.</p>
@@ -2489,7 +2492,7 @@ html[data-reading-spacing="airy"]{--reading-leading:1.85;}
       <p>Completed sessions keep a per-question log with your answer, the correct answer and the topic. Copy or download the log if you want a permanent record.</p>
 
       <h4>Progress and storage</h4>
-      <p>Progress, saved runs, notes, flags, highlights and revision sets are stored in <b>this browser's local storage only</b>. They are not synced between devices or different browsers, and there is no account or cloud backup. Autosave runs every five seconds and when the page is hidden or closed. <b>Lock</b> does not delete anything.</p>
+      <p>Progress, saved runs, notes, flags, highlights, revision sets and text settings are stored in <b>this browser's local storage only</b>. They are not synced between devices or different browsers, and there is no account or cloud backup. Autosave runs every five seconds and when the page is hidden or closed. <b>Lock</b> does not delete anything.</p>
       <p class="guide-warning"><b>Caution:</b> clearing browser or site data, using private/incognito browsing, changing browser or device, or resetting storage will lose your progress. Copy or download session logs before clearing anything you want to keep.</p>
     </div>
   </div>
@@ -4482,7 +4485,6 @@ function renderQ(){
   $("qOpts").querySelectorAll(".opt").forEach(b => b.addEventListener("click", ()=>select(b.dataset.l)));
   const lastLetter = q.opts[q.opts.length - 1].l;
   $("feedbackZone").innerHTML = "";
-  $("btnSaveQuit").classList.remove("hidden");
   $("btnQuit").classList.remove("hidden");
   prepareWritten(q);
   $("autosaveStatus").textContent = "Autosave every 5 seconds";
@@ -4503,7 +4505,7 @@ function renderQ(){
   }else{
     $("btnSubmit").classList.remove("hidden");
     $("btnNext").classList.add("hidden");
-    $("btnFinishRun").textContent = "Finish run";
+    $("btnFinishRun").textContent = "Finish Run";
     $("writtenInfo").textContent = "Write or think through your response, reveal the answer, then mark your own understanding.";
     $("kbdHint").innerHTML = q.opts.length > 5
       ? `Press <kbd>A</kbd>–<kbd>${lastLetter}</kbd> to choose <span class="kbd-sep">·</span> <kbd>Space</kbd> to check / next`
@@ -5105,7 +5107,6 @@ function downloadLog(rec){
 /* ================= events ================= */
 $("btnHubFromQuiz").addEventListener("click", saveAndQuit);
 $("btnQuit").addEventListener("click", ()=>{ if(mode === "preview"){ returnFromFlagPreview(); return; } if(confirm("Abandon this run and discard any saved progress for it?")){ clearSession(part.key); backToHub(); } });
-$("btnSaveQuit").addEventListener("click", saveAndQuit);
 $("btnHubFromRes").addEventListener("click", backToHub);
 $("btnHubFromLogs").addEventListener("click", backToHub);
 $("btnHubFromRev").addEventListener("click", backToHub);
@@ -6700,7 +6701,7 @@ function refreshQuestionFlag(){
   $("btnFlagQuestion").innerHTML = FLAG_ICON + (flagged ? " Unflag" : " Flag");
   $("btnFlagQuestion").setAttribute("aria-pressed", String(flagged));
   $("btnFlagQuestion").setAttribute("aria-label", (flagged ? "Unflag" : "Flag") + " question " + target.n);
-  $("btnOpenFlags").innerHTML = FLAG_ICON + " Flagged (" + flaggedQuestions(part.key).length + ")";
+  $("btnOpenFlags").innerHTML = "Flagged (" + flaggedQuestions(part.key).length + ")";
   $("btnOpenFlags").classList.toggle("hidden", !!part.flagged);
   const dockFlag = $("btnDockFlag");
   if(dockFlag){
@@ -6942,7 +6943,6 @@ function refreshAnnotations(){
   $("jumpForm").classList.toggle("hidden", preview);
   $("btnFinishRun").classList.toggle("hidden", preview);
   $("btnSkip").classList.toggle("hidden", preview || !!checked[QS()[queue[idx]].n]);
-  $("btnSaveQuit").classList.toggle("hidden", preview);
   $("btnQuit").classList.toggle("hidden", preview);
   if(preview){
     const isSearch = searchPreview;
