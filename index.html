@@ -7549,6 +7549,8 @@ $("passwordInput").focus();
   let allowed = false;
   let applyingRemote = false;
   let syncTimer = null;
+  let syncGeneration = 0;
+  const SYNC_INTERVAL = 20000;
 
   /* Replace the old shared-password form. */
   const oldForm = document.getElementById("passwordForm");
@@ -7887,11 +7889,20 @@ $("passwordInput").focus();
     }
   }
 
+  function scheduleSync() {
+    if (syncTimer || !currentUser || !allowed) return;
+    syncTimer = setTimeout(() => {
+      syncTimer = null;
+      if (!currentUser || !allowed) return;
+      pushState(currentUser);
+    }, SYNC_INTERVAL);
+  }
+
   function markDirty() {
     if (!currentUser || !allowed) return;
+    syncGeneration++;
     localStorage.setItem(syncDirtyKey(currentUser.uid), "1");
-    clearTimeout(syncTimer);
-    syncTimer = setTimeout(() => pushState(currentUser), 2500);
+    scheduleSync();
   }
 
   const nativeSetItem = Storage.prototype.setItem;
@@ -7909,16 +7920,22 @@ $("passwordInput").focus();
 
   async function pushState(user) {
     if (!user || !allowed) return false;
+    const generation = syncGeneration;
     try {
       await db.doc(`users/${user.uid}`).update({
         data: collectState(),
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       });
       localStorage.setItem(syncAtKey(user.uid), String(Date.now()));
-      localStorage.removeItem(syncDirtyKey(user.uid));
+      if (generation === syncGeneration) {
+        localStorage.removeItem(syncDirtyKey(user.uid));
+      } else {
+        scheduleSync();
+      }
       return true;
     } catch (error) {
       console.error("Cloud sync failed", error);
+      scheduleSync();
       return false;
     }
   }
@@ -8021,6 +8038,10 @@ $("passwordInput").focus();
   auth.onAuthStateChanged(async user => {
     currentUser = user;
     allowed = false;
+    if (syncTimer) {
+      clearTimeout(syncTimer);
+      syncTimer = null;
+    }
 
     if (!user) {
       setUnverified(false);
