@@ -7523,6 +7523,9 @@ $("passwordInput").focus();
   const DEVICE_KEY = "hku_mbbs_device_id_v1";
   const SYNC_AT_KEY = "hku_mbbs_sync_at_v1";
   const SYNC_DIRTY_KEY = "hku_mbbs_sync_dirty_v1";
+  const LOCAL_OWNER_KEY = "hku_mbbs_local_owner_v1";
+  const LOCAL_CLAIMED_KEY = "hku_mbbs_local_claimed_v1";
+  const BACKUP_PREFIX = "hku_mbbs_backup_";
   const PREFIX = "hku_mbbs_";
 
   const deviceId = (() => {
@@ -7709,7 +7712,10 @@ $("passwordInput").focus();
       && key.startsWith(PREFIX)
       && key !== DEVICE_KEY
       && key !== SYNC_AT_KEY
-      && key !== SYNC_DIRTY_KEY;
+      && key !== SYNC_DIRTY_KEY
+      && key !== LOCAL_OWNER_KEY
+      && key !== LOCAL_CLAIMED_KEY
+      && !key.startsWith(BACKUP_PREFIX);
   }
 
   function collectState() {
@@ -7719,6 +7725,88 @@ $("passwordInput").focus();
       if (isSyncedKey(key)) data[key] = localStorage.getItem(key);
     }
     return data;
+  }
+
+  function hasMeaningfulData(data) {
+    if (!data || typeof data !== "object") return false;
+    for (const [key, value] of Object.entries(data)) {
+      if (typeof value !== "string" || !value) continue;
+
+      if (key.endsWith("_records_v1")) {
+        if (value !== "[]") return true;
+        continue;
+      }
+
+      if (key.endsWith("_wrongset_v1")) {
+        if (value !== "{}") return true;
+        continue;
+      }
+
+      if (key.endsWith("_session_v1")) {
+        try {
+          const session = JSON.parse(value);
+          if (session && Array.isArray(session.q) && session.q.length) return true;
+        } catch (error) {}
+        continue;
+      }
+
+      if (key.endsWith("_flags_v1") || key.endsWith("_highlights_v1")) {
+        if (value !== "{}" && value !== "[]") return true;
+        continue;
+      }
+
+      if (key.endsWith("_scratchpad_v1")) {
+        if (value !== "{}" && value !== '""' && value.trim()) return true;
+      }
+    }
+    return false;
+  }
+
+  function hasMeaningfulLocalData() {
+    return hasMeaningfulData(collectState());
+  }
+
+  function backupLocalState(reason) {
+    const data = collectState();
+    if (!Object.keys(data).length) return;
+    try {
+      const key = BACKUP_PREFIX + Date.now() + "_v1";
+      localStorage.setItem(key, JSON.stringify({
+        at: new Date().toISOString(),
+        reason,
+        data
+      }));
+      const backups = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith(BACKUP_PREFIX)) backups.push(k);
+      }
+      backups.sort();
+      while (backups.length > 3) {
+        localStorage.removeItem(backups.shift());
+      }
+    } catch (error) {
+      console.warn("Could not back up local progress", error);
+    }
+  }
+
+  function clearLocalState() {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (isSyncedKey(key)) keys.push(key);
+    }
+    applyingRemote = true;
+    try {
+      keys.forEach(key => localStorage.removeItem(key));
+    } finally {
+      applyingRemote = false;
+    }
+  }
+
+  function claimLocalState(uid) {
+    localStorage.setItem(LOCAL_OWNER_KEY, uid);
+    localStorage.setItem(LOCAL_CLAIMED_KEY, "1");
   }
 
   function applyState(data) {
@@ -7764,7 +7852,7 @@ $("passwordInput").focus();
   };
 
   async function pushState(user) {
-    if (!user || !allowed) return;
+    if (!user || !allowed) return false;
     try {
       await db.doc(`users/${user.uid}`).update({
         data: collectState(),
@@ -7772,8 +7860,10 @@ $("passwordInput").focus();
       });
       localStorage.setItem(SYNC_AT_KEY, String(Date.now()));
       localStorage.removeItem(SYNC_DIRTY_KEY);
+      return true;
     } catch (error) {
       console.error("Cloud sync failed", error);
+      return false;
     }
   }
 
@@ -7891,28 +7981,70 @@ $("passwordInput").focus();
         return;
       }
 
+      const owner = localStorage.getItem(LOCAL_OWNER_KEY) || "";
+      const claimed = localStorage.getItem(LOCAL_CLAIMED_KEY) === "1";
+      const hadCloudSession = !!localStorage.getItem(SYNC_AT_KEY);
+      const localProgress = hasMeaningfulLocalData();
+      let discardLocal = false;
+
+      if (owner && owner !== user.uid) {
+        backupLocalState("account-switch");
+        clearLocalState();
+        discardLocal = true;
+      } else if (!owner && claimed) {
+        backupLocalState("unknown-owner");
+        clearLocalState();
+        discardLocal = true;
+      } else if (!owner && !claimed && hadCloudSession) {
+        backupLocalState("previous-cloud-session");
+        clearLocalState();
+        discardLocal = true;
+      } else if (!owner && !claimed && !localProgress) {
+        clearLocalState();
+        discardLocal = true;
+      }
+
       allowed = true;
+
+      const preSnap = await db.doc(`users/${user.uid}`).get();
+      const cloudData = preSnap.exists ? (preSnap.data().data || {}) : {};
+      const cloudProgress = hasMeaningfulData(cloudData);
+      const unclaimed = !owner && !claimed;
+      const forceUpload = !discardLocal && unclaimed && localProgress
+        && (!preSnap.exists || !cloudProgress);
+
+      if (unclaimed && localProgress && preSnap.exists && cloudProgress) {
+        backupLocalState("cloud-has-progress");
+      }
+
       const created = await ensureDevice(user);
+
+      if (forceUpload && !created) {
+        const uploaded = await pushState(user);
+        if (!uploaded) throw new Error("SYNC_UPLOAD_FAILED");
+      }
 
       if (created) {
         localStorage.setItem(SYNC_AT_KEY, String(Date.now()));
-        unlockApp();
-        return;
+      } else if (!forceUpload) {
+        const needsReload = await pullOrPush(user);
+        if (needsReload) {
+          claimLocalState(user.uid);
+          location.reload();
+          return;
+        }
       }
 
-      const needsReload = await pullOrPush(user);
-      if (needsReload) {
-        location.reload();
-        return;
-      }
-
+      claimLocalState(user.uid);
       unlockApp();
     } catch (error) {
       console.error("Account check failed", error);
       allowed = false;
       showGate(error.message === "DEVICE_LIMIT"
         ? `This account is already active on ${MAX_DEVICES} devices. Remove one before adding another.`
-        : "Could not load your account. Please try again.");
+        : error.message === "SYNC_UPLOAD_FAILED"
+          ? "Could not upload this device's progress. Check your connection and try again."
+          : "Could not load your account. Please try again.");
     }
   });
 
