@@ -557,7 +557,7 @@ html[data-theme="cosmic"] .saved-highlight{
 }
 .highlight-popup{position:fixed; z-index:80; display:flex; gap:6px; flex-wrap:wrap; max-width:calc(100vw - 16px); padding:8px; background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow);}
 .highlight-popup .btn{font-size:12px; padding:7px 10px;}
-#annotationStatus{font-size:12px; color:var(--muted); margin:8px 0;}
+#annotationStatus{font-size:11.5px; color:var(--muted); margin:0;}
 #annotationStatus.annotation-error{color:var(--bad); font-weight:700;}
 .flag-preview-note{font-size:13px; background:var(--accent-soft); border-radius:10px; padding:12px; margin:12px 0;}
 .flag-preview-note .btn{margin-left:8px;}
@@ -1067,6 +1067,8 @@ header.top{
 .quiz-status{display:flex; align-items:center; justify-content:space-between; gap:10px; margin:8px 0 16px; font-size:12px; color:var(--muted); flex-wrap:wrap;}
 .quiz-status .score-so-far{font-size:12px; color:var(--muted); font-weight:600;}
 .quiz-status .autosave-status{margin:0; font-size:11.5px; color:var(--muted);}
+.quiz-status-tools{display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-left:auto; flex-wrap:wrap;}
+.quiz-status-tools #annotationStatus{text-align:right;}
 .quiz-actions{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:20px; padding-top:16px; border-top:1px solid rgba(177,45,99,.14);}
 .quiz-nav-actions{display:flex; align-items:center; gap:8px;}
 .quiz-primary-actions{display:flex; align-items:center; gap:8px; margin-left:auto;}
@@ -2314,9 +2316,12 @@ html[data-reading-spacing="airy"]{--reading-leading:1.85;}
 <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     <div class="quiz-status">
       <span class="score-so-far" id="scoreSoFar"></span>
-      <span id="autosaveStatus" class="autosave-status">Autosave every 5 seconds</span>
+      <span class="quiz-status-tools">
+        <span id="annotationStatus" role="status"></span>
+        <span id="autosaveStatus" class="autosave-status">Autosave every 5 seconds</span>
+      </span>
     </div>
-    <div id="flagPreviewNote" class="flag-preview-note hidden"><span id="flagPreviewText">This flagged question is outside your saved run. Previewing it does not change that run or its score.</span> <button id="btnReturnFlagRun" class="btn ghost small">Return to saved run</button></div><p id="annotationStatus" role="status"></p>
+    <div id="flagPreviewNote" class="flag-preview-note hidden"><span id="flagPreviewText">This flagged question is outside your saved run. Previewing it does not change that run or its score.</span> <button id="btnReturnFlagRun" class="btn ghost small">Return to saved run</button></div>
 <div class="stem" id="qStem"></div>
       <div id="qImages"></div>
 <p id="writtenInfo" class="muted hidden">Write or think through your response, reveal the answer, then mark your own understanding.</p><textarea id="writtenResponse" class="written-response hidden" aria-label="Your written response" placeholder="Your response (optional; saved with this session)"></textarea>
@@ -2571,7 +2576,7 @@ html[data-reading-spacing="airy"]{--reading-leading:1.85;}
       <div class="reading-seg" role="group" aria-label="Line spacing">
         <button type="button" data-reading-spacing="tight" aria-pressed="false">Tight</button>
         <button type="button" data-reading-spacing="comfortable" aria-pressed="true">Comfortable</button>
-        <button type="button" data-reading-spacing="airy" aria-pressed="false">Airy</button>
+        <button type="button" data-reading-spacing="airy" aria-pressed="false">Loose</button>
       </div>
     </div>
     <div class="reading-preview" aria-hidden="true">
@@ -5983,7 +5988,7 @@ const READING_KEY = "hku_mbbs_quiz_v1_text_settings_v1";
 const READING_DEFAULTS = { size:"m", spacing:"comfortable" };
 const READING_VALUES = {
   size:{ s:"Small", m:"Medium", l:"Large", xl:"Extra large" },
-  spacing:{ tight:"Tight", comfortable:"Comfortable", airy:"Airy" }
+  spacing:{ tight:"Tight", comfortable:"Comfortable", airy:"Loose" }
 };
 const readingSettings = { ...READING_DEFAULTS };
 function loadReadingSettings(){
