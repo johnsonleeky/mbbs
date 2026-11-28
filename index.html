@@ -7616,6 +7616,22 @@ $("passwordInput").focus();
 
   const submitButton = form.querySelector("#btnUnlock");
   submitButton.textContent = "Sign in →";
+  submitButton.classList.add("hidden");
+
+  const switcher = document.createElement("div");
+  switcher.className = "auth-action-switch";
+  switcher.setAttribute("role", "group");
+  switcher.setAttribute("aria-label", "Sign in or create account");
+  switcher.innerHTML = `
+    <button type="button" data-mode="signin">
+      <span class="label">Sign in</span><span class="arrow" aria-hidden="true">→</span>
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h5v16h-5"/><path d="M3 12h11"/><path d="m10 8 4 4-4 4"/></svg>
+    </button>
+    <button type="button" data-mode="create">
+      <span class="label">Create account</span><span class="arrow" aria-hidden="true">→</span>
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><path d="M18 8v6M15 11h6"/></svg>
+    </button>`;
+  submitButton.before(switcher);
 
   const links = document.createElement("div");
   links.className = "auth-links";
@@ -7628,9 +7644,29 @@ $("passwordInput").focus();
   const style = document.createElement("style");
   style.textContent = `
     #passwordGate .password-field + .password-field{margin-top:10px;}
-    #passwordGate .auth-links{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-top:10px;}
+    #passwordGate .auth-action-switch{display:flex;width:100%;margin-top:14px;border:1px solid var(--accent);border-radius:999px;overflow:hidden;background:color-mix(in srgb,var(--accent-soft) 55%,var(--card));box-shadow:0 12px 26px -18px color-mix(in srgb,var(--accent) 55%,transparent);}
+    #passwordGate .auth-action-switch button{flex:1 1 0;min-width:0;border:0;background:transparent;color:var(--accent);font:inherit;font-size:13px;font-weight:800;padding:13px 10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;transition:flex-grow .38s cubic-bezier(.22,.61,.36,1),background-color .22s ease,color .22s ease;}
+    #passwordGate .auth-action-switch button + button{border-left:1px solid color-mix(in srgb,var(--accent) 28%,transparent);}
+    #passwordGate .auth-action-switch button.active{background:var(--accent);color:var(--card);}
+    #passwordGate .auth-action-switch.has-chosen button.active{flex-grow:3.2;}
+    #passwordGate .auth-action-switch.has-chosen button:not(.active){flex-grow:0.8;}
+    #passwordGate .auth-action-switch button:not(.active):hover{background:var(--accent-soft);}
+    #passwordGate .auth-action-switch button:disabled{opacity:.6;cursor:wait;}
+    #passwordGate .auth-action-switch button .label{display:inline-flex;}
+    #passwordGate .auth-action-switch button .arrow{display:none;font-size:15px;line-height:1;}
+    #passwordGate .auth-action-switch button.active .arrow{display:inline-flex;animation:authLabelIn .2s ease both;}
+    #passwordGate .auth-action-switch button.active .label{animation:authLabelIn .2s ease both;}
+    #passwordGate .auth-action-switch button .icon{display:none;width:18px;height:18px;flex:0 0 auto;}
+    #passwordGate .auth-action-switch.has-chosen button:not(.active) .label,
+    #passwordGate .auth-action-switch.has-chosen button:not(.active) .arrow{display:none;}
+    #passwordGate .auth-action-switch.has-chosen button:not(.active) .icon{display:block;animation:authIconIn .2s ease both;}
+    #passwordGate .auth-action-switch button.active .icon{display:none;}
+    @keyframes authLabelIn{from{opacity:0;transform:translateY(2px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes authIconIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+    #passwordGate .auth-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:10px;}
     #passwordGate .auth-links button{border:0;background:none;color:var(--accent);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;padding:4px 2px;}
     #passwordGate .auth-links button:hover{text-decoration:underline;}
+    #passwordGate .auth-links #btnAuthSignUp{display:none!important;}
   `;
   document.head.appendChild(style);
   document.getElementById("passwordGate").classList.add("auth-ready");
@@ -7639,6 +7675,24 @@ $("passwordInput").focus();
   const emailInput = form.querySelector("#authEmail");
   const resetButton = form.querySelector("#btnAuthReset");
   const resendButton = form.querySelector("#btnAuthResend");
+  let authMode = "signin";
+
+  function setAuthMode(mode, expand = true) {
+    authMode = mode;
+    const create = mode === "create";
+    switcher.classList.toggle("has-chosen", expand);
+    switcher.querySelectorAll("[data-mode]").forEach(button => {
+      const on = button.dataset.mode === mode;
+      const label = button.dataset.mode === "create" ? "Create account" : "Sign in";
+      button.classList.toggle("active", on);
+      button.setAttribute("aria-pressed", String(on));
+      button.setAttribute("aria-label", on ? label : "Switch to " + label);
+      button.title = on ? "" : label;
+    });
+    links.classList.toggle("hidden", create);
+  }
+
+  setAuthMode("signin", false);
 
   const syncToast = document.createElement("div");
   syncToast.className = "sync-toast";
@@ -7669,6 +7723,7 @@ $("passwordInput").focus();
   function setUnverified(unverified) {
     resetButton.classList.toggle("hidden", unverified);
     resendButton.classList.toggle("hidden", !unverified);
+    if (unverified) setAuthMode("signin", false);
   }
 
   form.querySelector("#passwordEye")?.addEventListener("click", () => {
@@ -7688,6 +7743,9 @@ $("passwordInput").focus();
     submitButton.disabled = busy;
     emailInput.disabled = busy;
     passwordInput.disabled = busy;
+    switcher.querySelectorAll("button").forEach(button => {
+      button.disabled = busy;
+    });
   }
 
   function authError(error) {
@@ -7734,7 +7792,13 @@ $("passwordInput").focus();
     setError("");
     setBusy(true);
     try {
-      await auth.signInWithEmailAndPassword(email, password);
+      if (authMode === "create") {
+        const credential = await auth.createUserWithEmailAndPassword(email, password);
+        await credential.user.sendEmailVerification();
+        setError("Check your email (including spam) for verification, then wait for approval and sign in.");
+      } else {
+        await auth.signInWithEmailAndPassword(email, password);
+      }
     } catch (error) {
       setError(authError(error));
     } finally {
@@ -7742,23 +7806,19 @@ $("passwordInput").focus();
     }
   });
 
-  form.querySelector("#btnAuthSignUp").addEventListener("click", async () => {
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
-    if (!email || !password) {
-      setError("Enter an email and password first.");
+  switcher.addEventListener("click", event => {
+    const button = event.target.closest("[data-mode]");
+    if (!button || button.disabled) return;
+
+    if (button.dataset.mode !== authMode) {
+      setAuthMode(button.dataset.mode, true);
       return;
     }
-    setBusy(true);
-    try {
-      const credential = await auth.createUserWithEmailAndPassword(email, password);
-      await credential.user.sendEmailVerification();
-      setError("Check your email (including spam) for verification, then wait for approval and sign in.");
-    } catch (error) {
-      setError(authError(error));
-    } finally {
-      setBusy(false);
+
+    if (!switcher.classList.contains("has-chosen")) {
+      setAuthMode(authMode, true);
     }
+    form.requestSubmit(submitButton);
   });
 
   form.querySelector("#btnAuthReset").addEventListener("click", async () => {
@@ -8088,6 +8148,7 @@ $("passwordInput").focus();
 
     if (!user) {
       setUnverified(false);
+      setAuthMode("signin", false);
       const gate = document.getElementById("passwordGate");
       const error = document.getElementById("passwordError");
       if (gate.classList.contains("hidden") || !error.textContent) {
