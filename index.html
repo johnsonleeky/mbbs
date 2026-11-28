@@ -2497,8 +2497,8 @@ html[data-reading-spacing="airy"]{--reading-leading:1.85;}
       <p>Completed sessions keep a per-question log with your answer, the correct answer and the topic. Copy or download the log if you want a permanent record.</p>
 
       <h4>Progress and storage</h4>
-      <p>Progress, saved runs, notes, flags, highlights, revision sets and text settings are stored in <b>this browser's local storage only</b>. They are not synced between devices or different browsers, and there is no account or cloud backup. Autosave runs every five seconds and when the page is hidden or closed. <b>Lock</b> does not delete anything.</p>
-      <p class="guide-warning"><b>Caution:</b> clearing browser or site data, using private/incognito browsing, changing browser or device, or resetting storage will lose your progress. Copy or download session logs before clearing anything you want to keep.</p>
+      <p>Progress, saved runs, notes, flags, highlights, revision sets and text settings are stored in this browser and, when you are signed in, synced to your account. Sign in with the same approved email on another device to load them. Autosave runs every five seconds, when the page is hidden or closed, and when you press <b>⌘J</b> on a Mac or <b>Ctrl J</b> on Windows. <b>Lock</b> signs you out but does not delete anything.</p>
+      <p class="guide-warning"><b>Caution:</b> clearing browser or site data while signed out, using private/incognito browsing, or resetting storage can lose unsynced progress. Sign in first so your progress is attached to your account. Copy or download session logs before clearing anything you want to keep.</p>
     </div>
   </div>
 </div>
@@ -7519,14 +7519,21 @@ $("passwordInput").focus();
   const auth = firebase.auth();
   const db = firebase.firestore();
 
+  db.enablePersistence({ synchronizeTabs: true }).catch(error => {
+    console.warn("Firestore offline persistence unavailable", error);
+  });
+
   const MAX_DEVICES = Infinity; // no device limit
   const DEVICE_KEY = "hku_mbbs_device_id_v1";
-  const SYNC_AT_KEY = "hku_mbbs_sync_at_v1";
-  const SYNC_DIRTY_KEY = "hku_mbbs_sync_dirty_v1";
+  const LEGACY_SYNC_AT_KEY = "hku_mbbs_sync_at_v1";
+  const LEGACY_SYNC_DIRTY_KEY = "hku_mbbs_sync_dirty_v1";
+  const CLOUD_USED_KEY = "hku_mbbs_cloud_used_v1";
   const LOCAL_OWNER_KEY = "hku_mbbs_local_owner_v1";
   const LOCAL_CLAIMED_KEY = "hku_mbbs_local_claimed_v1";
   const BACKUP_PREFIX = "hku_mbbs_backup_";
   const PREFIX = "hku_mbbs_";
+  const syncAtKey = uid => "hku_mbbs_sync_at_" + uid + "_v1";
+  const syncDirtyKey = uid => "hku_mbbs_sync_dirty_" + uid + "_v1";
 
   const deviceId = (() => {
     let id = localStorage.getItem(DEVICE_KEY);
@@ -7588,6 +7595,32 @@ $("passwordInput").focus();
   const emailInput = form.querySelector("#authEmail");
   const resetButton = form.querySelector("#btnAuthReset");
   const resendButton = form.querySelector("#btnAuthResend");
+
+  const syncToast = document.createElement("div");
+  syncToast.className = "sync-toast";
+  syncToast.setAttribute("role", "status");
+  syncToast.setAttribute("aria-live", "polite");
+  document.body.appendChild(syncToast);
+
+  const syncToastStyle = document.createElement("style");
+  syncToastStyle.textContent = `
+    .sync-toast{position:fixed;left:50%;bottom:24px;z-index:200;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);font:inherit;font-size:12.5px;font-weight:700;box-shadow:0 12px 30px -12px color-mix(in srgb,var(--ink) 30%,transparent);opacity:0;pointer-events:none;transform:translate(-50%,8px);transition:opacity .16s ease,transform .16s ease;}
+    .sync-toast.show{opacity:1;transform:translate(-50%,0);}
+    .sync-toast.error{color:var(--bad);border-color:var(--bad);}
+  `;
+  document.head.appendChild(syncToastStyle);
+
+  let syncToastTimer = null;
+  function showSyncToast(message, error = false) {
+    clearTimeout(syncToastTimer);
+    syncToast.textContent = message;
+    syncToast.classList.toggle("error", error);
+    syncToast.classList.add("show");
+    syncToastTimer = setTimeout(() => {
+      syncToast.classList.remove("show");
+      syncToast.classList.remove("error");
+    }, error ? 5000 : 2500);
+  }
 
   function setUnverified(unverified) {
     resetButton.classList.toggle("hidden", unverified);
@@ -7711,10 +7744,13 @@ $("passwordInput").focus();
     return typeof key === "string"
       && key.startsWith(PREFIX)
       && key !== DEVICE_KEY
-      && key !== SYNC_AT_KEY
-      && key !== SYNC_DIRTY_KEY
+      && key !== LEGACY_SYNC_AT_KEY
+      && key !== LEGACY_SYNC_DIRTY_KEY
+      && key !== CLOUD_USED_KEY
       && key !== LOCAL_OWNER_KEY
       && key !== LOCAL_CLAIMED_KEY
+      && !key.startsWith("hku_mbbs_sync_at_")
+      && !key.startsWith("hku_mbbs_sync_dirty_")
       && !key.startsWith(BACKUP_PREFIX);
   }
 
@@ -7804,9 +7840,29 @@ $("passwordInput").focus();
     }
   }
 
+  function clearAllDirtyFlags() {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith("hku_mbbs_sync_dirty_")) keys.push(key);
+    }
+    keys.forEach(key => localStorage.removeItem(key));
+  }
+
   function claimLocalState(uid) {
     localStorage.setItem(LOCAL_OWNER_KEY, uid);
     localStorage.setItem(LOCAL_CLAIMED_KEY, "1");
+    localStorage.setItem(CLOUD_USED_KEY, "1");
+  }
+
+  function hasCloudHistory() {
+    if (localStorage.getItem(CLOUD_USED_KEY) === "1") return true;
+    if (localStorage.getItem(LEGACY_SYNC_AT_KEY)) return true;
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith("hku_mbbs_sync_at_")) return true;
+    }
+    return false;
   }
 
   function applyState(data) {
@@ -7833,7 +7889,7 @@ $("passwordInput").focus();
 
   function markDirty() {
     if (!currentUser || !allowed) return;
-    localStorage.setItem(SYNC_DIRTY_KEY, "1");
+    localStorage.setItem(syncDirtyKey(currentUser.uid), "1");
     clearTimeout(syncTimer);
     syncTimer = setTimeout(() => pushState(currentUser), 2500);
   }
@@ -7858,13 +7914,31 @@ $("passwordInput").focus();
         data: collectState(),
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-      localStorage.setItem(SYNC_AT_KEY, String(Date.now()));
-      localStorage.removeItem(SYNC_DIRTY_KEY);
+      localStorage.setItem(syncAtKey(user.uid), String(Date.now()));
+      localStorage.removeItem(syncDirtyKey(user.uid));
       return true;
     } catch (error) {
       console.error("Cloud sync failed", error);
       return false;
     }
+  }
+
+  async function forceSync() {
+    if (!currentUser || !allowed) {
+      showSyncToast("Sign in to sync.", true);
+      return;
+    }
+    clearTimeout(syncTimer);
+    syncTimer = null;
+    showSyncToast("Syncing…");
+    const synced = await pushState(currentUser);
+    showSyncToast(synced ? "Progress synced." : "Sync failed. Check your connection.", !synced);
+  }
+
+  function hasPendingSync() {
+    return !!currentUser
+      && allowed
+      && localStorage.getItem(syncDirtyKey(currentUser.uid)) === "1";
   }
 
   function deviceLabel() {
@@ -7927,8 +8001,8 @@ $("passwordInput").focus();
 
     const cloud = snap.data();
     const cloudAt = cloud.updatedAt?.toMillis?.() || 0;
-    const localAt = Number(localStorage.getItem(SYNC_AT_KEY) || 0);
-    const dirty = localStorage.getItem(SYNC_DIRTY_KEY) === "1";
+    const localAt = Number(localStorage.getItem(syncAtKey(user.uid)) || 0);
+    const dirty = localStorage.getItem(syncDirtyKey(user.uid)) === "1";
 
     if (dirty) {
       await pushState(user);
@@ -7937,7 +8011,7 @@ $("passwordInput").focus();
 
     if (cloud.data && cloudAt > localAt + 1000) {
       applyState(cloud.data);
-      localStorage.setItem(SYNC_AT_KEY, String(cloudAt));
+      localStorage.setItem(syncAtKey(user.uid), String(cloudAt));
       return true;
     }
 
@@ -7983,7 +8057,7 @@ $("passwordInput").focus();
 
       const owner = localStorage.getItem(LOCAL_OWNER_KEY) || "";
       const claimed = localStorage.getItem(LOCAL_CLAIMED_KEY) === "1";
-      const hadCloudSession = !!localStorage.getItem(SYNC_AT_KEY);
+      const hadCloudSession = hasCloudHistory();
       const localProgress = hasMeaningfulLocalData();
       let discardLocal = false;
 
@@ -8008,6 +8082,7 @@ $("passwordInput").focus();
 
       const preSnap = await db.doc(`users/${user.uid}`).get();
       const cloudData = preSnap.exists ? (preSnap.data().data || {}) : {};
+      const cloudAt = preSnap.exists ? (preSnap.data().updatedAt?.toMillis?.() || 0) : 0;
       const cloudProgress = hasMeaningfulData(cloudData);
       const unclaimed = !owner && !claimed;
       const forceUpload = !discardLocal && unclaimed && localProgress
@@ -8019,13 +8094,27 @@ $("passwordInput").focus();
 
       const created = await ensureDevice(user);
 
+      if (discardLocal) {
+        if (preSnap.exists) {
+          applyState(cloudData);
+          localStorage.setItem(syncAtKey(user.uid), String(cloudAt || Date.now()));
+        } else {
+          localStorage.setItem(syncAtKey(user.uid), String(Date.now()));
+        }
+        clearAllDirtyFlags();
+        claimLocalState(user.uid);
+        location.reload();
+        return;
+      }
+
       if (forceUpload && !created) {
         const uploaded = await pushState(user);
         if (!uploaded) throw new Error("SYNC_UPLOAD_FAILED");
       }
 
       if (created) {
-        localStorage.setItem(SYNC_AT_KEY, String(Date.now()));
+        localStorage.setItem(syncAtKey(user.uid), String(Date.now()));
+        localStorage.removeItem(syncDirtyKey(user.uid));
       } else if (!forceUpload) {
         const needsReload = await pullOrPush(user);
         if (needsReload) {
@@ -8052,15 +8141,31 @@ $("passwordInput").focus();
     auth.signOut().catch(console.error);
   }, true);
 
+  document.addEventListener("keydown", event => {
+    const key = String(event.key || "").toLowerCase();
+    if (!event.repeat && (event.metaKey || event.ctrlKey) && key === "j") {
+      event.preventDefault();
+      event.stopPropagation();
+      forceSync();
+    }
+  }, true);
+
   window.addEventListener("online", () => {
-    if (localStorage.getItem(SYNC_DIRTY_KEY) === "1") markDirty();
+    if (hasPendingSync()) markDirty();
   });
 
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "hidden" &&
-        localStorage.getItem(SYNC_DIRTY_KEY) === "1") {
+    if (document.visibilityState === "hidden" && hasPendingSync()) {
       pushState(currentUser);
     }
+  });
+
+  window.addEventListener("pagehide", () => {
+    if (hasPendingSync()) pushState(currentUser);
+  });
+
+  window.addEventListener("beforeunload", () => {
+    if (hasPendingSync()) pushState(currentUser);
   });
 
   emailInput.focus();
