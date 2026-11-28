@@ -943,6 +943,11 @@ header.top{
 /* ==========  LOCK SCREEN - TULIP BOUQUET  ============================ */
 /* ===================================================================== */
 #passwordGate{padding:0; overflow:hidden;}
+#passwordGate .auth-loading{display:none; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:2; width:min(280px,70%); color:var(--muted); font-size:13px; font-weight:700; line-height:1.5; text-align:center;}
+#passwordGate:not(.auth-ready) #passwordForm{visibility:hidden;}
+#passwordGate:not(.auth-ready) .auth-loading{display:block;}
+#passwordGate.auth-failed #passwordForm{visibility:hidden;}
+#passwordGate.auth-failed .auth-loading{display:block; color:var(--bad);}
 #passwordGate .pw-scene{
   position:relative; width:min(760px,100%,calc(84vh * 760 / 520)); aspect-ratio:760/520;
   display:flex; align-items:center; justify-content:center; container-type:inline-size;
@@ -2050,6 +2055,7 @@ html[data-reading-spacing="airy"]{--reading-leading:1.85;}
     <button class="btn" id="btnUnlock" type="submit">Unlock →</button>
     <noscript>JavaScript must be enabled to unlock and use this quiz.</noscript>
   </form>
+  <div class="auth-loading" role="status">Loading sign-in…</div>
   </div>
 </div>
 
@@ -7511,6 +7517,14 @@ $("passwordInput").focus();
 
 <script>
 (() => {
+  if (typeof firebase === "undefined") {
+    const gate = document.getElementById("passwordGate");
+    const loading = gate?.querySelector(".auth-loading");
+    if (gate) gate.classList.add("auth-failed");
+    if (loading) loading.textContent = "Could not load sign-in. Check your connection and refresh.";
+    return;
+  }
+
   const firebaseConfig = {
     apiKey: "AIzaSyDz9H2H4z1OPzFfJqlMktYMG0qJ3FvcFGY",
     authDomain: "mbbs-question-bank-79586.firebaseapp.com",
@@ -7520,7 +7534,15 @@ $("passwordInput").focus();
     appId: "1:420066165682:web:4acf1cb0f6c81627abdaab"
   };
 
-  firebase.initializeApp(firebaseConfig);
+  try {
+    firebase.initializeApp(firebaseConfig);
+  } catch (error) {
+    const gate = document.getElementById("passwordGate");
+    const loading = gate?.querySelector(".auth-loading");
+    if (gate) gate.classList.add("auth-failed");
+    if (loading) loading.textContent = "Could not load sign-in. Check your connection and refresh.";
+    return;
+  }
   const auth = firebase.auth();
   const db = firebase.firestore();
 
@@ -7597,6 +7619,7 @@ $("passwordInput").focus();
     #passwordGate .auth-links button:hover{text-decoration:underline;}
   `;
   document.head.appendChild(style);
+  document.getElementById("passwordGate").classList.add("auth-ready");
 
   const errorEl = form.querySelector("#passwordError");
   const emailInput = form.querySelector("#authEmail");
