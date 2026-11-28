@@ -7604,11 +7604,34 @@ $("passwordInput").focus();
   const emailField = document.createElement("div");
   emailField.className = "password-field";
   emailField.innerHTML = `
-    <svg class="field-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/>
-    </svg>
+    <button type="button" class="field-help" id="emailHelp" aria-label="About email verification" aria-expanded="false">
+      <svg class="field-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/>
+      </svg>
+    </button>
     <input id="authEmail" type="email" autocomplete="email" placeholder="Email" aria-label="Email" required>`;
   passwordField.before(emailField);
+
+  const passwordIcon = passwordField.querySelector(".field-lock");
+  const passwordHelp = document.createElement("button");
+  passwordHelp.type = "button";
+  passwordHelp.className = "field-help";
+  passwordHelp.id = "passwordHelp";
+  passwordHelp.setAttribute("aria-label", "About passwords");
+  passwordHelp.setAttribute("aria-expanded", "false");
+  passwordHelp.innerHTML = passwordIcon
+    ? passwordIcon.outerHTML
+    : '<svg class="field-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="9" rx="2.4"/><path d="M8.2 10.5V7.6a3.8 3.8 0 0 1 7.6 0v2.9"/><circle cx="12" cy="15" r="1.2"/></svg>';
+  if (passwordIcon) passwordIcon.replaceWith(passwordHelp);
+  else passwordField.prepend(passwordHelp);
+
+  const helpBox = document.createElement("div");
+  helpBox.className = "auth-field-help hidden";
+  helpBox.setAttribute("role", "status");
+  helpBox.setAttribute("aria-live", "polite");
+  helpBox.innerHTML = '<button type="button" class="auth-help-close" aria-label="Close help">×</button><div class="auth-help-copy"></div>';
+  passwordField.after(helpBox);
+  const helpCopy = helpBox.querySelector(".auth-help-copy");
 
   const passwordInput = form.querySelector("#passwordInput");
   passwordInput.placeholder = "Password";
@@ -7667,15 +7690,75 @@ $("passwordInput").focus();
     #passwordGate .auth-links button{border:0;background:none;color:var(--accent);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;padding:4px 2px;}
     #passwordGate .auth-links button:hover{text-decoration:underline;}
     #passwordGate .auth-links #btnAuthSignUp{display:none!important;}
+    #passwordGate .field-help{position:absolute;left:8px;top:50%;width:30px;height:30px;transform:translateY(-50%);display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:none;color:var(--muted);cursor:pointer;z-index:2;}
+    #passwordGate .field-help .field-lock{position:static;left:auto;top:auto;width:14px;height:14px;transform:none;pointer-events:none;color:inherit;}
+    #passwordGate .field-help:disabled{cursor:default;pointer-events:none;}
+    #passwordGate .field-help:not(:disabled):hover,#passwordGate .field-help:not(:disabled):focus-visible,#passwordGate .field-help.active{color:var(--accent);background:var(--accent-soft);outline:none;}
+    #passwordGate .auth-field-help{position:absolute;z-index:12;margin:0;padding:10px 30px 10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:11.5px;line-height:1.5;text-align:left;box-shadow:0 16px 40px -20px color-mix(in srgb,var(--ink) 45%,transparent);opacity:1;visibility:visible;transform:translateY(0);transition:opacity .16s ease,transform .16s ease,visibility .16s;}
+    #passwordGate .auth-field-help.hidden{opacity:0;visibility:hidden;pointer-events:none;transform:translateY(3px);}
+    #passwordGate .auth-field-help::before{content:"";position:absolute;top:-6px;left:var(--tail-left,22px);width:10px;height:10px;background:var(--card);border-left:1px solid var(--line);border-top:1px solid var(--line);transform:rotate(45deg);}
+    #passwordGate .auth-help-close{position:absolute;top:5px;right:5px;width:20px;height:20px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:none;color:var(--muted);font:inherit;font-size:14px;line-height:1;cursor:pointer;}
+    #passwordGate .auth-help-close:hover{color:var(--accent);background:var(--accent-soft);}
+    #passwordGate .auth-help-copy{display:block;}
   `;
   document.head.appendChild(style);
   document.getElementById("passwordGate").classList.add("auth-ready");
 
   const errorEl = form.querySelector("#passwordError");
   const emailInput = form.querySelector("#authEmail");
+  const emailHelp = form.querySelector("#emailHelp");
   const resetButton = form.querySelector("#btnAuthReset");
   const resendButton = form.querySelector("#btnAuthResend");
   let authMode = "signin";
+  let helpTimer = null;
+
+  const FIELD_HELP = {
+    email: "Enter a valid e-mail address. Check your spam or junk folders if you do not receive a verification email. Verification works best with Gmail.",
+    password: "Enter any desired password. Your password is encrypted and never known to anyone else but yourself. If you forget it, you can reset it anytime."
+  };
+
+  function hideFieldHelp() {
+    if (helpTimer) {
+      clearTimeout(helpTimer);
+      helpTimer = null;
+    }
+    helpBox.classList.add("hidden");
+    helpCopy.textContent = "";
+    emailHelp.setAttribute("aria-expanded", "false");
+    passwordHelp.setAttribute("aria-expanded", "false");
+    emailHelp.classList.remove("active");
+    passwordHelp.classList.remove("active");
+    delete helpBox.dataset.kind;
+  }
+
+  function positionFieldHelp(kind) {
+    const field = kind === "email" ? emailField : passwordField;
+    const icon = kind === "email" ? emailHelp : passwordHelp;
+    const formRect = form.getBoundingClientRect();
+    const fieldRect = field.getBoundingClientRect();
+    const iconRect = icon.getBoundingClientRect();
+    const width = Math.min(280, window.innerWidth - 48);
+    helpBox.style.width = width + "px";
+    const iconCenter = iconRect.left + iconRect.width / 2 - formRect.left;
+    const left = Math.max(8, Math.min(iconCenter - 24, formRect.width - width - 8));
+    helpBox.style.left = left + "px";
+    helpBox.style.top = (fieldRect.bottom - formRect.top + 8) + "px";
+    helpBox.style.setProperty("--tail-left", Math.max(14, Math.min(iconCenter - left, width - 24)) + "px");
+  }
+
+  function showFieldHelp(kind) {
+    if (authMode !== "create") return;
+    helpCopy.textContent = FIELD_HELP[kind];
+    helpBox.classList.remove("hidden");
+    positionFieldHelp(kind);
+    clearTimeout(helpTimer);
+    helpTimer = setTimeout(hideFieldHelp, 5000);
+    helpBox.dataset.kind = kind;
+    emailHelp.setAttribute("aria-expanded", String(kind === "email"));
+    passwordHelp.setAttribute("aria-expanded", String(kind === "password"));
+    emailHelp.classList.toggle("active", kind === "email");
+    passwordHelp.classList.toggle("active", kind === "password");
+  }
 
   function setAuthMode(mode, expand = true) {
     authMode = mode;
@@ -7690,9 +7773,32 @@ $("passwordInput").focus();
       button.title = on ? "" : label;
     });
     links.classList.toggle("hidden", create);
+    emailHelp.disabled = !create;
+    passwordHelp.disabled = !create;
+    if (!create) hideFieldHelp();
   }
 
   setAuthMode("signin", false);
+
+  emailHelp.addEventListener("click", () => {
+    if (authMode !== "create") return;
+    if (helpBox.dataset.kind === "email") hideFieldHelp();
+    else showFieldHelp("email");
+  });
+
+  passwordHelp.addEventListener("click", () => {
+    if (authMode !== "create") return;
+    if (helpBox.dataset.kind === "password") hideFieldHelp();
+    else showFieldHelp("password");
+  });
+
+  document.addEventListener("click", event => {
+    if (helpBox.classList.contains("hidden")) return;
+    if (event.target.closest(".field-help") || event.target.closest(".auth-field-help")) return;
+    hideFieldHelp();
+  }, true);
+
+  helpBox.querySelector(".auth-help-close").addEventListener("click", hideFieldHelp);
 
   const syncToast = document.createElement("div");
   syncToast.className = "sync-toast";
